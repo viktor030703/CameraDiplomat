@@ -1,0 +1,86 @@
+﻿@inject ConfigurationService configurationService
+
+<div class="MessageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
+
+<div class="MessageBox">
+	<div class="container">
+		<div class="headerPlace textHeader">
+			Настройки
+		</div>
+
+		@if (SelectColor)
+		{
+			<ColorSelector ColorIsSelected="HideColorSelector"/>
+		}
+		else
+		{
+
+
+			@* 		<div class="textPlace textContent">
+		<div class="textContent">
+		IP камеры:
+		</div>
+		<div class="textContent">
+		<input type="text" />
+		</div>
+		</div>
+
+		<div class="textPlace textContent">
+		<div class="textContent">
+		порт камеры:
+		</div>
+		<div class="textContent">
+		<input type="number" />
+		</div>
+		</div> *@
+
+			<button class="buttonPlace btn btn-primary" @onclick="()=>buttonClose.InvokeAsync()">
+				Изменить параметры камеры
+			</button>
+
+			<button class="buttonPlace btn btn-primary" @onclick="ShowColorSelector">
+				Настроить цвет панелей
+			</button>
+
+			<button class="buttonPlace btn btn-primary" @onclick="ShowColorSelector">
+				Настроить цвет кнопок
+			</button>
+
+			<button class="buttonPlace btn btn-primary" @onclick="()=>buttonClose.InvokeAsync()">
+				Сменить аккаунт
+			</button>
+
+			<button class="buttonPlace btn btn-primary" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		}
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private bool AdminSettings;
+
+	private bool SelectColor = false;
+
+
+	protected override void OnInitialized()
+	{
+		if (configurationService.ActiveUserRole == "admin")
+		{
+			AdminSettings = true;
+		}
+	}
+
+
+	private void ShowColorSelector()
+	{
+		SelectColor = true;
+	}
+
+	private void HideColorSelector(string color)
+	{
+		SelectColor = false;
+	}
+}

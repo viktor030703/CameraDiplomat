@@ -1,0 +1,12 @@
+﻿.paralax{
+	background-image: url(mtn.png);
+	height: 20vh;
+	width: 100%;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	transition-delay: 1s;
+}
+.paralax:hover{
+	transform: rotateZ(45deg);
+}
+

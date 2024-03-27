@@ -1,0 +1,111 @@
+﻿@page "/login"
+@inject UsersDbService userService
+@inject NavigationManager navigationManager
+
+<div class="PageGrid">
+
+	@* <div class="navigationItemPlace">
+	<button class="btn objectFullScale">
+	<div class="oi oi-lock-locked headerIconics" />
+	</button>
+	</div> *@
+
+	<div class="navigationItemPlace">
+		<div class="objectFullScale">
+			<div class="oi oi-lock-locked headerIconics" />
+		</div>
+	</div>
+
+
+	<div class="appTitlePlace">
+		<span class="applicationHeader">
+			Camera Diplomat
+		</span>
+	</div>
+
+	<div class="settingsIconPlace">
+		<div class="objectFullScale">
+			<div class="oi oi-cog headerIconics" />
+		</div>
+	</div>
+
+
+
+	<div class="userIconPlace">
+		<center>
+			<div class="oi oi-person userIcon" />
+		</center>
+	</div>
+
+
+
+	<div class="loginTextPlace textDisplay">
+		Логин:
+	</div>
+
+	<div class="loginInputPlace textInput">
+		<input type="text" class="objectPartScale inputBlockStyle" @bind="login" />
+	</div>
+
+
+	<div class="passwordTextPlace textDisplay">
+		Пароль:
+	</div>
+
+	<div class="passwordInputPlace textInput">
+		<input type="password" class="objectPartScale inputBlockStyle" @bind="password"/>
+	</div>
+
+	<div class="buttonLoginPlace">
+		<div class="textDisplay customButton" @onclick="buttonLoginClick">
+			Войти
+		</div>
+	</div>
+
+	@if (IsLoginFail)
+	{
+		<LoginErrorMessageBox buttonClose="CloseMessageBox" />
+	}
+
+</div>
+
+
+@code {
+
+	private string login;
+	private string password;
+	private bool IsLoginFail = false;
+
+	private void buttonLoginClick()
+	{
+		string autintificateStatus = userService.Authentificate(login, password);
+		if (autintificateStatus.Equals("success"))
+		{
+			navigationManager.NavigateTo("/home");
+		}
+		else
+		{
+			IsLoginFail = true;
+		}
+	}
+
+	private void CloseMessageBox()
+	{
+		IsLoginFail = false;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

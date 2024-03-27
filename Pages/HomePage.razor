@@ -1,0 +1,181 @@
+﻿@page "/"
+@inject TCPService tcp
+@inject NavigationManager nav
+@inject MessageDecoder messageDecoder
+@inject ProductsDbService ProductsDb
+
+@if(ShowSettingsMessageBox)
+{
+<SettingMessageBox buttonClose="HideSettings"/>
+}
+
+<div class="PageGrid">
+
+	<div class="navigationItemPlace">
+		<div class="objectFullScale">
+			<div class="oi oi-home headerIconics" />
+		</div>
+	</div>
+
+
+	<div class="appTitlePlace">
+		<span class="applicationHeader">
+			Camera Diplomat
+		</span>
+	</div>
+
+	<div class="settingsIconPlace">
+		<div class="objectFullScale">
+			<div class="oi oi-cog headerIconics" @onclick="ShowSettings"/>
+		</div>
+	</div>
+
+
+
+	<div class="mainContentPlace">
+		<ProductDetail product="productDataToView" />
+	</div>
+
+	<div class="statisticsPlace">
+		<div class="textDisplay">
+			@statistic
+		</div>
+	</div>
+
+@* 	<div class="buttonsPlace">
+		<button class="btn btn-primary userButtonsStyle">
+			one
+		</button>
+
+		<button class="btn btn-primary userButtonsStyle">
+			two
+		</button>
+
+
+		<button class="btn btn-primary userButtonsStyle">
+			three
+		</button>
+
+	</div> *@
+
+	<div class="buttonsPlace">
+		<button class="btn btn-primary adminButtonsStyle">
+			one
+		</button>
+
+		<button class="btn btn-primary adminButtonsStyle">
+			two
+		</button>
+
+
+		<button class="btn btn-primary adminButtonsStyle">
+			three
+		</button>
+
+		<button class="btn btn-primary adminButtonsStyle">
+			four
+		</button>
+	</div>
+</div>
+
+
+
+
+@code {
+	private string statistic = "продуктов считано 1000, из них брковано 10 (1%)";
+
+	private bool ShowSettingsMessageBox = false;
+
+	private ProductViewModel productDataToView;
+
+	private void NewMessageGet(string msg)
+	{
+		statistic = msg;
+
+
+		ProductDataDecoded newProduct = messageDecoder.MessegeDiplomat(msg);
+		if(newProduct!=null)
+		{
+
+			productDataToView.Text = newProduct.text;
+			productDataToView.QRCode = newProduct.code;
+			productDataToView.Quality = newProduct.percent.ToString();
+			productDataToView.Name = newProduct.productName;
+			productDataToView.CodeCorrect = newProduct.quality;
+
+			ProductsDb.CreateProduct(newProduct);
+
+		}
+
+
+		InvokeAsync(StateHasChanged);
+	}
+
+	protected override async void OnInitialized()
+	{
+		productDataToView = new ProductViewModel(true, true, true, true,
+		"Название продукта", "Процент качества", "QR при наличии", "Текстовые надписи при наличии");
+
+		Task.Run(tcp.GetMessages);
+
+		tcp.MessageReceived += NewMessageGet;
+
+		// nav.NavigateTo("/login");
+
+	}
+
+	private void ShowSettings()
+	{
+		ShowSettingsMessageBox = true;
+	}
+
+
+	private void HideSettings()
+	{
+		ShowSettingsMessageBox = false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// Определение делегата
+	// public delegate string MessageReceivedDelegate(string message);
+
+	// // Метод, который соответствует сигнатуре делегата
+	// public string OnMessageReceived(string message)
+	// {
+	// 	// Обработка сообщения и возврат текста
+	// 	string response = $"Получено сообщение: {message}";
+	// 	return response;
+	// }
+
+	// // Использование делегата
+	// public void UseDelegate()
+	// {
+	// 	// Создание экземпляра делегата
+	// 	MessageReceivedDelegate messageDelegate = OnMessageReceived;
+
+	// 	// Получение сообщения
+	// 	string message = "Привет, мир!";
+
+	// 	// Вызов делегата и получение текста
+	// 	string response = messageDelegate(message);
+
+	// 	// Вывод ответа
+	// 	Console.WriteLine(response);
+	// }
+
+}
+
+
+

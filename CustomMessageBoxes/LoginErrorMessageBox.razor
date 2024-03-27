@@ -1,0 +1,22 @@
+﻿<div class="MessageBoxBackground"/>
+
+<div class="MessageBox">
+	<div class="container">
+		<div class="headerPlace textHeader">
+			Неверный логин или пароль!
+		</div>
+
+		<div class="textPlace textContent">
+			Пожалуйста, проверьте введенные данные и повторите попытку
+		</div>
+
+		<button class="buttonPlace btn btn-primary" @onclick="()=>buttonClose.InvokeAsync()">
+			Повторить
+		</button>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+}
