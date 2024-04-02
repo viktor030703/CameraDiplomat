@@ -32,6 +32,7 @@ namespace CameraDiplomat
 			builder.Services.AddSingleton<MessageDecoder>();
 			builder.Services.AddSingleton<UsersDbService>();
 			builder.Services.AddSingleton<ProductsDbService>();
+			builder.Services.AddSingleton<PasswordHasher>();
 			
 
 			UsersDbService serv = new UsersDbService();

@@ -11,8 +11,10 @@ namespace CameraDiplomat.Services
 	{
 		public string ActiveUserRole = "admin";
 
-		public string CameraIP = "127.0.0.3";
-		public int CameraPort = 8080;
+		//public string CameraIP = "10.162.3.240";
+		public int CameraPort = 6000;
+		public string CameraIP = "192.168.1.3";
+
 
 		public string PathToDb;
 
@@ -23,6 +25,12 @@ namespace CameraDiplomat.Services
 		public ConfigurationService() 
 		{
 			PathToDb = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "CamerasDimplomat.db");
+		}
+
+		public void GetCameraIPandPort(out string ip, out int port)
+		{
+			ip = CameraIP;
+			port = CameraPort;
 		}
 	}
 }

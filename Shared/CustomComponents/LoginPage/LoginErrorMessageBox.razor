@@ -1,4 +1,4 @@
-﻿<div class="MessageBoxBackground"/>
+﻿<div class="MessageBoxBackground" @onclick="buttonClose"/>
 
 <div class="MessageBox">
 	<div class="container">
@@ -19,4 +19,6 @@
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
+
+
 }

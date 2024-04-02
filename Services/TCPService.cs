@@ -4,20 +4,21 @@ namespace CameraDiplomat.Services
 {
 	public class TCPService
 	{
-		public delegate void MessageReceivedHandler(string message);
-		public event MessageReceivedHandler MessageReceived;
+		public delegate void NewMessageGetter(string message);
+		public delegate void MessageSenderFeedback(string message);
+		public delegate void MesssageCameraUnavalible();
 
-		public void ReceiveMessage(string message)
-		{
-			// Вызов события
-			MessageReceived?.Invoke(message);
-		}
+		public event NewMessageGetter EventNewMessageGet;
+		public event NewMessageGetter EventSenderFeedback;
+		public event MesssageCameraUnavalible EventCameraUnavalible;
 
+
+		private SemaphoreSlim _readLock = new SemaphoreSlim(1, 1);
 
 
 		//Взять с сервиса!
-		public string CameraIP = "127.0.0.3";
-		public int CameraPort = 8080;
+		public string CameraIP = "10.162.3.240";
+		public int CameraPort = 6000;
 		//Взять с сервиса!
 
 		private TcpClient _tcpClient;
@@ -26,83 +27,162 @@ namespace CameraDiplomat.Services
 		private NetworkStream stream;
 		public TCPService()
 		{
+			ConnectToCamera();
+		}
+
+
+
+
+		public void EventCheckCameraStatus()
+		{
+			if (_tcpClient == null || _reader == null || _writer == null)
+			{
+				EventCameraUnavalible?.Invoke();
+			}
+		}
+
+
+		public bool BooleanCheckCameraStatus()
+		{
+			if (_tcpClient == null || _reader == null || _writer == null)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+
+		public void ConnectToCamera()
+		{
 			try
 			{
-				while (true)
+
+				_tcpClient = new TcpClient(CameraIP, CameraPort);
+
+				if (_tcpClient.Connected)
 				{
+					stream = _tcpClient.GetStream();
+					_reader = new StreamReader(stream);
+					_writer = new StreamWriter(stream);
 
-					_tcpClient = new TcpClient(CameraIP, CameraPort);
 
-					if (_tcpClient.Connected)
-					{
-						stream = _tcpClient.GetStream();
-						_reader = new StreamReader(stream);
-						_writer = new StreamWriter(stream);
-						break;
-					}
-					else
-					{
-						ReceiveMessage("Camera is unavalible");
-					}
 				}
+				else
+				{
+					EventCameraUnavalible?.Invoke();
+				}
+			}
+			catch (SocketException ex)
+			{
+				EventCameraUnavalible?.Invoke();
 			}
 			catch (Exception E)
 			{
-				ReceiveMessage("Camera is unavalible");
+				EventCameraUnavalible?.Invoke();
 			}
+		}
+
+		public void ConnectToCamera(string IP, int port)
+		{
+
+
+			try
+			{
+				//Disconnect();
+				_tcpClient = new TcpClient(IP, port);
+
+				if (_tcpClient.Connected)
+				{
+					stream = _tcpClient.GetStream();
+					_reader = new StreamReader(stream);
+					_writer = new StreamWriter(stream);
+				}
+				else
+				{
+					EventCameraUnavalible?.Invoke();
+				}
+			}
+			catch (SocketException ex)
+			{
+				EventCameraUnavalible?.Invoke();
+			}
+			catch (Exception E)
+			{
+				EventCameraUnavalible?.Invoke();
+			}
+
 		}
 
 
 		public async void GetMessages()
 		{
 			string? messageFromServer;
-			if (_reader != null & _writer != null)
+
 			{
 
 				while (true)
 				{
-
-
-
-					messageFromServer = await _reader.ReadToEndAsync();
-					if (!String.IsNullOrEmpty(messageFromServer))
+					if (_reader != null & _writer != null)
 					{
-						//
-						ReceiveMessage(messageFromServer);
-						//ReceiveMessage(messageFromServer);
-						//Console.WriteLine(messageFromServer);
-						//вывод сообщения
-						//Console.WriteLine(MessegeDiplomat("<start>Quality<is>false<percent>50<codeIs>123456789abcdef<end>"));
+						try
+						{
+							await _readLock.WaitAsync();
 
+							messageFromServer = await _reader.ReadLineAsync();
+							if (!String.IsNullOrEmpty(messageFromServer))
+							{
+								EventNewMessageGet?.Invoke(messageFromServer);
+							}
+							Thread.Sleep(1000);
+						}
+						catch (Exception E)
+						{
+
+						}
+						finally
+						{
+							_readLock.Release();
+						}
 					}
-					Thread.Sleep(10);
+					else
+					{
+						Disconnect();
+						EventCameraUnavalible?.Invoke();
+						break;
+					}
 				}
-			}
-			else
-			{
-				ReceiveMessage("Камера недоступна");
 			}
 		}
 
-		public async Task<string> SendMessage(string message)
+		public async Task SendMessage(string message)
 		{
-			if (_reader != null & _writer != null)
+			if (_tcpClient == null & _reader != null & _writer != null)
 			{
 				try
 				{
 					await _writer.WriteAsync(message);
 					await _writer.FlushAsync();
-					return "message sended sucessfully!";
+					EventSenderFeedback("ok");
 				}
 				catch (Exception ex)
 				{
-					return ex.Message;
+					EventCameraUnavalible?.Invoke();
 				}
 			}
 			else
 			{
-				return "камера недоступна";
+				EventCameraUnavalible?.Invoke();
 			}
+		}
+
+		public void Disconnect()
+		{
+			_tcpClient?.Close();
+			_reader?.Close();
+			_writer?.Close();
+
 		}
 	}
 }

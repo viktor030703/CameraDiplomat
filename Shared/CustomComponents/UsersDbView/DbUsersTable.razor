@@ -1,0 +1,52 @@
+﻿<div class="tableM">
+	<div class="item">
+		<div class="addBorderToHeader itemPart"> Логин </div>
+		<div class="addBorderToHeader itemPart"> Пароль </div>
+		<div class="addBorderToHeader itemPart"> Роль </div>
+		<div class="addBorderToHeader itemPart"> Входил </div>
+	</div>
+
+	@foreach (User user in usersFromDb)
+	{
+		@if (user == userToAddBackgroung)
+		{
+			<div class="item addBackgroungToElement" @onclick="()=>selectedUser.InvokeAsync(user)">
+				<div class="addBorderToElement itemPart"> @user.login </div>
+				<div class="addBorderToElement itemPart"> @user.password </div>
+				<div class="addBorderToElement itemPart"> @user.role </div>
+				<div class="addBorderToElement itemPart"> @user.lastLoginData </div>
+			</div>
+		}
+		else
+		{
+			<div class="itemToSelect" @onclick="()=>UserSelectSmb(user)">
+				<div class="addBorderToElement itemPart"> @user.login </div>
+				<div class="addBorderToElement itemPart"> @user.password </div>
+				<div class="addBorderToElement itemPart"> @user.role </div>
+				<div class="addBorderToElement itemPart"> @user.lastLoginData </div>
+			</div>
+		}
+	}
+</div>
+
+
+@code {
+	[Parameter] public List<User> usersFromDb { get; set; }
+
+	[Parameter] public EventCallback<User> selectedUser { get; set; }
+
+	private User userToAddBackgroung { get; set; }
+
+	private async Task UserSelectSmb(User user)
+	{
+		userToAddBackgroung = user;
+		ReturnSelectedUser(user);
+		StateHasChanged();
+	}
+
+
+	private async Task ReturnSelectedUser(User user)
+	{
+		await selectedUser.InvokeAsync(user);
+	}
+}

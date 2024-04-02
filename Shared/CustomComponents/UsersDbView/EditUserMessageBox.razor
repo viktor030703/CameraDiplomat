@@ -1,0 +1,149 @@
+﻿@inject UsersDbService dbService
+
+
+<div class="MessageBoxBackground" @onclick="buttonClose" />
+
+<div class="MessageBox">
+	<div class="container">
+		<div class="headerPlace textHeader">
+			Добавление пользователя
+		</div>
+
+		@if (thereIsError)
+		{
+			<div class="textPlace textErrorContent">
+				@message
+			</div>
+		}
+		else
+		{
+			<div class="textPlace textSuccessContent">
+				@message
+			</div>
+		}
+
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Имя:
+				</div>
+				<div class="textSuccessContent">
+					<input type="text" class="fullScale" @bind=newLogin />
+				</div>
+			</div>
+		</div>
+
+
+		<div class="textPlace textSuccessContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Пароль:
+				</div>
+				<div class="textSuccessContent">
+					<input type="text" class="fullScale" @bind=newPassword />
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textSuccessContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Роль
+				</div>
+				<div class="textSuccessContent">
+					<select class="form-select" aria-label="default exapmple" @bind=newRole>
+						<option selected>Выбрать роль</option>
+						<option value="admin">Администратор</option>
+						<option value="master">Мастер</option>
+						<option value="user">Рабочий</option>
+						<option value="student">Студент</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="subContainer">
+			<button class="btn btn-danger fullScale" @onclick="editUser">
+				Изменить
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	[Parameter] public User userToEdit{ get; set; }
+
+	private string newLogin { get; set; }
+	private string newPassword { get; set; }
+	private string newRole { get; set; }
+	private string newLoginData { get; set; }
+
+	private string message = "Измените необходимые данные";
+	private bool thereIsError = false;
+
+
+	protected override void OnInitialized()
+	{
+		if(userToEdit != null)
+		{
+			newLogin = userToEdit.login;
+			newPassword = userToEdit.password;
+			newRole = userToEdit.role;
+			newLoginData = userToEdit.lastLoginData;
+		}
+	}
+
+	private async void editUser()
+	{
+		if (!String.IsNullOrEmpty(newLogin) & !String.IsNullOrEmpty(newPassword) & !String.IsNullOrEmpty(newRole))
+		{
+			try
+			{
+				User newUserData = new User
+					{
+						//we leave old id
+						login = newLogin,
+						password = newPassword,
+						role = newRole,
+						lastLoginData = newLoginData,
+					};
+
+				message = await dbService.EditUserAsync(userToEdit, newUserData);
+
+				if(String.Equals(message,"success"))
+				{
+					thereIsError = false;
+					await buttonClose.InvokeAsync();
+				}
+				else
+				{
+					thereIsError = true;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				thereIsError = true;
+				message = ex.Message.ToString();
+			}
+		}
+		else
+		{
+			thereIsError = true;
+			message = "Введены некорректные данные";
+		}
+	}
+}
+
+
+}

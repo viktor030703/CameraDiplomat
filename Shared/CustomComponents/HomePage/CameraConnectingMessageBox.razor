@@ -1,0 +1,69 @@
+﻿@inject TCPService tcpService
+@inject ConfigurationService configurationService;
+
+<div class="MessageBoxBackground" @onclick="buttonClose" />
+
+<div class="MessageBox">
+	<div class="container">
+		<div class="headerPlace textHeader">
+			Потеря соединения с камерой
+		</div>
+
+		<div class="textPlace textContent">
+			Проверьте подключение к камере и нажмите повторить или закройе это сообщение
+		</div>
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					IP камеры:
+				</div>
+				<div class="textContent">
+					<input type="text" @bind=cameraIP />
+				</div>
+			</div>
+		</div>
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					порт камеры:
+				</div>
+				<div class="textContent">
+					<input type="number" @bind=cameraPort />
+				</div>
+			</div>
+		</div>
+
+
+		<button class="buttonPlace btn btn-primary" @onclick="TryToConnected">
+			Подключиться
+		</button>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private string cameraIP;
+	private int cameraPort;
+
+	protected override void OnInitialized()
+	{
+		configurationService.GetCameraIPandPort(out cameraIP, out cameraPort);
+	}
+
+	public void TryToConnected()
+	{
+		tcpService.ConnectToCamera(cameraIP, cameraPort);
+		if(tcpService.BooleanCheckCameraStatus())
+		{
+			Task.Run(()=>tcpService.GetMessages());
+			buttonClose.InvokeAsync();
+		}
+	}
+
+}

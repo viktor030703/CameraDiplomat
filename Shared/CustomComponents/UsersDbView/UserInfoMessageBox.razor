@@ -1,0 +1,111 @@
+﻿@inject UsersDbService dbService
+
+
+<div class="MessageBoxBackground" @onclick="buttonClose" />
+
+<div class="MessageBox">
+	<div class="container">
+		<div class="headerPlace textHeader">
+			Данные пользователя
+		</div>
+
+		@if (thereIsError)
+		{
+			<div class="textPlace textErrorContent">
+				@message
+			</div>
+		}
+		else
+		{
+			<div class="textSuccessContent">
+				@message
+			</div>
+		}
+
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Имя:
+				</div>
+				<div class="textSuccessContent">
+					@Login
+				</div>
+			</div>
+		</div>
+
+
+		<div class="textPlace textSuccessContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Пароль: 
+				</div>
+				<div class="textSuccessContent textScroll">
+					@Password
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textSuccessContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Роль:
+				</div>
+				<div class="textSuccessContent">
+					@Role
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textSuccessContent">
+			<div class="subContainer">
+				<div class="textSuccessContent">
+					Последний вход:
+				</div>
+				<div class="textSuccessContent">
+					@LoginData
+				</div>
+			</div>
+		</div>
+
+		<div class="subContainer">
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	[Parameter] public User userToGetInfo { get; set; }
+
+	private string Login { get; set; }
+	private string Password { get; set; }
+	private string Role { get; set; }
+	private string LoginData { get; set; }
+
+	private string message = "Данные загружены";
+	private bool thereIsError = false;
+
+
+	protected override void OnInitialized()
+	{
+		if (userToGetInfo != null)
+		{
+			Login = userToGetInfo.login;
+			Password = userToGetInfo.password;
+			Role = userToGetInfo.role;
+			LoginData = userToGetInfo.lastLoginData;
+		}
+		else
+		{
+			message = "пользователь не выбран";
+			thereIsError = true;
+		}
+	}
+}
+

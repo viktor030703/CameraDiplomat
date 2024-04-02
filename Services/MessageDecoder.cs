@@ -11,13 +11,13 @@ namespace CameraDiplomat.Services
 	{
 		public ProductDataDecoded MessegeDiplomat(string messageToDiplomating)
 		{
-			//message must to have a json format or <start>Quality<is>false<percent>50<codeIs>123456789abcdef<textIs>none<end>
+			//message must to have a json format or <start>Quality<is>false3<percent>50<codeIs>123456789abcdef<textIs>none<end>
 			// *start*Quality*is*false*percent*50*codeIs*123456789abcdef*textIs*none*end*
 			try
 			{
 				string[] messages;
-				messages = messageToDiplomating.Split('*');
-				//messages = messageToDiplomating.Split('<', '>');
+				//messages = messageToDiplomating.Split('*');
+				messages = messageToDiplomating.Split('<', '>');
 
 				if (messages.Count() == 13)
 				{

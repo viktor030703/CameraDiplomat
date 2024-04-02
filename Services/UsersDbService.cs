@@ -1,5 +1,6 @@
 ﻿using CameraDiplomat.Context;
 using CameraDiplomat.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CameraDiplomat.Services
 {
@@ -19,33 +20,46 @@ namespace CameraDiplomat.Services
 			db.SaveChanges();
 		}
 
-		public  void CreateUser(User newUser)
+		public async Task CreateUserAsync(User newUser)
 		{
+			newUser.password = PasswordHasher.HashPassword(newUser.password);
+
 			db.Users.Add(newUser);
-			db.SaveChanges();
+			await db.SaveChangesAsync();
 		}
 
-		public void ChangeUser(User oldUser, User newUser)
+		public async Task<string> EditUserAsync(User oldUser, User newUser)
 		{
-			db.Users.Find(oldUser);
-			if(!String.IsNullOrEmpty(newUser.id))
-				oldUser.id = newUser.id;
-			if (!String.IsNullOrEmpty(newUser.login))
-				oldUser.login = newUser.login;
-			if (!String.IsNullOrEmpty(newUser.password))
-				oldUser.password = newUser.password;
-			if (!String.IsNullOrEmpty(newUser.role))
-				oldUser.role = newUser.role;
-			if (!String.IsNullOrEmpty(newUser.lastLoginData))
-				oldUser.lastLoginData = newUser.lastLoginData;
-			db.SaveChanges();
+			try
+			{
+				var response = await db.Users.FindAsync(oldUser.id);
+				if (response == null)
+				{
+					return "selected user not found!";
+				}
 
+				if (!String.IsNullOrEmpty(newUser.login))
+					oldUser.login = newUser.login;
+				if (!String.IsNullOrEmpty(newUser.password))
+					oldUser.password = PasswordHasher.HashPassword(newUser.password);
+				if (!String.IsNullOrEmpty(newUser.role))
+					oldUser.role = newUser.role;
+				if (!String.IsNullOrEmpty(newUser.lastLoginData))
+					oldUser.lastLoginData = newUser.lastLoginData;
+
+				await db.SaveChangesAsync();
+				return "success";
+			}
+			catch (Exception ex)
+			{
+				return ex.Message.ToString();
+			}
 		}
 
-		public void DeleteUser(User userToDelete)
+		public async Task DeleteUserAsync(User userToDelete)
 		{
 			db.Users.Remove(userToDelete);
-			db.SaveChanges();
+			await db.SaveChangesAsync();
 		}
 
 		public List<User> GetUsers()
@@ -57,9 +71,13 @@ namespace CameraDiplomat.Services
 		public string Authentificate(string _login, string _password)
 		{
 			User userWhoTryEnter = db.Users.FirstOrDefault(l => l.login == _login);
-			if(userWhoTryEnter != null)
+
+			_password = PasswordHasher.HashPassword(_password);
+
+			if (userWhoTryEnter != null)
 			{
-				if(userWhoTryEnter.password == _password)
+				//userWhoTryEnter.password == _password
+				if(PasswordHasher.VerificatePassword(userWhoTryEnter.password, _password))
 				{
 					return "success";
 				}

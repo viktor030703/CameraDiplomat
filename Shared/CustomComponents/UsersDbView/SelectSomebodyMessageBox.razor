@@ -1,0 +1,26 @@
+﻿@inject UsersDbService dbService
+
+
+<div class="MessageBoxBackground" @onclick="buttonClose" />
+
+<div class="MessageBox">
+	<div class="container">
+		<div class="headerPlace textHeader">
+			Не выбран объект
+		</div>
+
+		<div class="textContent">
+			Пожалуйста, выберите объект из таблицы
+		</div>
+
+		<button class="btn btn-primary buttonPlace" @onclick="()=>buttonClose.InvokeAsync()">
+			Закрыть и выбрать
+		</button>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+}
+
