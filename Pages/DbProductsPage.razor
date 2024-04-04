@@ -1,0 +1,174 @@
+﻿@inject ProductsDbService productService
+
+@if (showAddProductMBState)
+{
+	<AddProductMessageBox buttonClose="ChangeAddProductMBState" />
+}
+
+@if (showProductInformationMBState)
+{
+	<ProductInfoMessageBox buttonClose="ChangeGetProductInfoMBState" productToShowInfo="selectedProduct" />
+}
+
+@if (showClearDbProductsMBState)
+{
+	<DeleteProductsDbMessageBox buttonClose="ChangeDeleteProductsDbMBState" />
+}
+
+@if (showDeleteProductMBState)
+{
+	<DeleteProductMessageBox buttonClose="ChangeDeleteProductMBState" productToDelete="selectedProduct" buttonDelete="ClearSelectedProduct" />
+}
+
+@if (showSelectProductMBState)
+{
+	<SelectProductMessageBox buttonClose="ChangeSelectSomebodyMBState" />
+}
+
+<div class="PageGrid">
+	<div class="navigationItemPlace">
+		<div class="objectFullScale">
+			<div class="oi oi-chevron-left headerIconics customButton" @onclick="()=>buttonClose.InvokeAsync()" />
+		</div>
+	</div>
+
+	<div class="appTitlePlace">
+		<span class="applicationHeader">
+			Camera Diplomat
+		</span>
+	</div>
+
+	<div class="settingsIconPlace">
+		<div class="objectFullScale">
+			<div class="oi oi-cog headerIconics customButton" @onclick="()=>openSettings.InvokeAsync()" />
+		</div>
+	</div>
+
+	<div class="dbGridPlace">
+		<DbProductsTable selectedProduct="SmtWichSelectedProduct" productsFromDb="productsFromDb" />
+	</div>
+
+	<div class="buttonsPlace">
+		<div class="buttonsContainer">
+			<button class="btn btn-primary customButton" @onclick="ChangeAddProductMBState">Добавить</button>
+			<button class="btn btn-danger customButton" @onclick="ChangeDeleteProductMBState">Удалить</button>
+			<button class="btn btn-primary customButton" @onclick="ChangeGetProductInfoMBState">Подробнее</button>
+			<button class="btn btn-danger customButton" @onclick="ChangeDeleteProductsDbMBState">Удалить всё</button>
+		</div>
+	</div>
+</div>
+
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+	[Parameter] public EventCallback openSettings { get; set; }
+
+	private List<Product> productsFromDb;
+
+	private Product selectedProduct = null;
+
+	private bool showAddProductMBState = false;
+	private bool showClearDbProductsMBState = false;//diabled
+	private bool showDeleteProductMBState = false;
+	private bool showProductInformationMBState = false;
+
+	private bool showSelectProductMBState = false;
+
+	protected override void OnInitialized()
+	{
+		//Add linq filter???
+		productsFromDb = productService.GetProducts();
+		InvokeAsync(StateHasChanged);
+	}
+
+	private void SmtWichSelectedProduct(Product productFromTable)
+	{
+		selectedProduct = productFromTable;
+	}
+
+	private void ChangeAddProductMBState()
+	{
+		if (!showAddProductMBState)
+		{
+			showAddProductMBState = true;
+		}
+		else
+		{
+			showAddProductMBState = false;
+			RefreshProductFromDb();
+		}
+	}
+
+	private void ChangeDeleteProductsDbMBState()
+	{
+		if (!showClearDbProductsMBState)
+		{
+			showClearDbProductsMBState = true;
+		}
+		else
+		{
+			showClearDbProductsMBState = false;
+			RefreshProductFromDb();
+		}
+	}
+
+	private void ChangeDeleteProductMBState()
+	{
+		if (!showDeleteProductMBState)
+		{
+			if (selectedProduct == null)
+			{
+				ChangeSelectSomebodyMBState();
+			}
+			else
+			{
+				showDeleteProductMBState = !showDeleteProductMBState;
+			}
+		}
+		else
+		{
+			showDeleteProductMBState = !showDeleteProductMBState;
+			RefreshProductFromDb();
+			// selectedProduct = null;
+		}
+	}
+
+	private void ClearSelectedProduct()
+	{
+		selectedProduct = null;
+	}
+
+	private void ChangeGetProductInfoMBState()
+	{
+		if (!showProductInformationMBState)
+		{
+			if (selectedProduct == null)
+			{
+				ChangeSelectSomebodyMBState();
+			}
+			else
+			{
+				showProductInformationMBState = !showProductInformationMBState;
+			}
+		}
+		else
+		{
+			showProductInformationMBState = !showProductInformationMBState;
+			RefreshProductFromDb();
+		}
+	}
+
+
+	private void ChangeSelectSomebodyMBState()
+	{
+		showSelectProductMBState = !showSelectProductMBState;
+	}
+
+	private void RefreshProductFromDb()
+	{
+		productsFromDb = productService.GetProducts();
+		InvokeAsync(StateHasChanged);
+	}
+
+
+}

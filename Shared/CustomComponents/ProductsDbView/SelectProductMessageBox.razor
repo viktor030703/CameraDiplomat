@@ -1,11 +1,9 @@
-﻿@inject UsersDbService dbService
-
-<div class="messageBoxBackground" @onclick="buttonClose" />
+﻿<div class="messageBoxBackground" @onclick="buttonClose" />
 
 <div class="messageBox errorContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader addBottomBorder errorTextShadows">
-			Не выбран объект
+		<div class="headerPlace textHeader addBottomBorder errorTextShadows ">
+			Не выбран продукт
 		</div>
 
 		<div class="textContent">
@@ -15,7 +13,6 @@
 		<button class="btn btn-primary buttonPlace" @onclick="()=>buttonClose.InvokeAsync()">
 			Закрыть и выбрать
 		</button>
-
 	</div>
 </div>
 

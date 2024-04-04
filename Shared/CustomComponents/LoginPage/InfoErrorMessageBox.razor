@@ -1,0 +1,24 @@
+﻿<div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
+
+<div class="messageBox successContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader successTextShadows">
+			ПО CameraDiplomat
+		</div>
+
+		<div class="textPlace textContent">
+			Данное программное обеспечение разработано студентом БрГТУ в качестве дипломного проекта, оно предназначено для
+			взаимодействия с настроенной камерой, обладающей машинным зрением. ПО позволяет получать, декодировать, представлять 
+			сообщения от камеры и отправлять ей команды. Доступ после авторизации.
+		</div>
+
+		<button class="buttonPlace btn btn-primary buttonUp customButton" @onclick="()=>buttonClose.InvokeAsync()">
+			Закрыть окно
+		</button>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+}

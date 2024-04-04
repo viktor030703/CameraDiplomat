@@ -1,0 +1,39 @@
+﻿@inject ProductsDbService productService
+
+
+<div class="messageBoxBackground" @onclick="buttonClose" />
+
+<div class="messageBox">
+	<div class="container errorContainerShadows">
+		<div class="headerPlace textHeader errorTextShadows addBottomBorder">
+			Удалить ВСЕ продукты
+		</div>
+
+		<div class="textPlace textContent">
+			Вы уверены, что хотите удалить ВСЕ ПРОДУКТЫ?
+		</div>
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="DeleteProduct">
+				Удалить
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private async Task DeleteProduct()
+	{
+		await productService.ClearProductDbAsync();
+		await buttonClose.InvokeAsync();
+	}
+
+
+
+}

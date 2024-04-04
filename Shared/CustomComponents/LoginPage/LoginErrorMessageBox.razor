@@ -1,8 +1,8 @@
-﻿<div class="MessageBoxBackground" @onclick="buttonClose"/>
+﻿<div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
 
-<div class="MessageBox">
+<div class="messageBox errorContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader">
+		<div class="headerPlace textHeader errorTextShadows">
 			Неверный логин или пароль!
 		</div>
 
@@ -10,15 +10,12 @@
 			Пожалуйста, проверьте введенные данные и повторите попытку
 		</div>
 
-		<button class="buttonPlace btn btn-primary" @onclick="()=>buttonClose.InvokeAsync()">
+		<button class="buttonPlace btn btn-primary buttonUp customButton" @onclick="()=>buttonClose.InvokeAsync()">
 			Повторить
 		</button>
-
 	</div>
 </div>
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
-
-
 }

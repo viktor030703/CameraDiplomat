@@ -1,0 +1,7 @@
+﻿.headerPlace {
+	flex: 1;
+	position: relative;
+	top: 2vh;
+}
+
+/*the styles have been finalized and moved to app.css*/

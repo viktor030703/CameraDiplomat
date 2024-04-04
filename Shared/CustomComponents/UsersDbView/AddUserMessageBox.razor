@@ -1,58 +1,54 @@
 ﻿@inject UsersDbService dbService
 
+<div class="messageBoxBackground" @onclick="buttonClose" />
 
-<div class="MessageBoxBackground" @onclick="buttonClose" />
-
-<div class="MessageBox">
+<div class="messageBox successContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows">
 			Добавление пользователя
 		</div>
 
 		@if (thereIsError)
 		{
-			<div class="textPlace textErrorContent">
+			<div class="textPlace textContent errorTextShadows">
 				@message
 			</div>
 		}
 		else
 		{
-			<div class="textPlace textSuccessContent">
+			<div class="textPlace textContent textSuccessContent">
 				@message
 			</div>
 		}
 		
-
-
 		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class="textContent textSuccessContent">
 					Имя:
 				</div>
-				<div class="textSuccessContent">
+				<div class="textContent textSuccessContent">
 					<input type="text" class="fullScale" @bind=userLogin />
 				</div>
 			</div>
 		</div>
 
-
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class="textContent textSuccessContent">
 					Пароль:
 				</div>
-				<div class="textSuccessContent">
+				<div class="textContent textSuccessContent">
 					<input type="text" class="fullScale" @bind=userPassword />
 				</div>
 			</div>
 		</div>
 
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class="textContent textSuccessContent">
 					Роль
 				</div>
-				<div class="textSuccessContent">
+				<div class="textContent textSuccessContent">
 					<select class="form-select" aria-label="default exapmple" @bind="userRole">
 						<option selected>Выбрать роль</option>
 						<option value="admin">Администратор</option>
@@ -64,9 +60,7 @@
 			</div>
 		</div>
 
-
-
-		<div class="subContainer">
+		<div class="subContainer buttonUp">
 			<button class="btn btn-danger fullScale" @onclick="createUser">
 				Создать
 			</button>
@@ -103,9 +97,16 @@
 						role = userRole,
 						lastLoginData = "-"
 					};
-				await dbService.CreateUserAsync(newUser);
-				thereIsError = false;
-				buttonClose.InvokeAsync();
+				thereIsError = await dbService.CreateUserAsync(newUser);
+				if(thereIsError)
+				{
+					thereIsError = false;
+					await buttonClose.InvokeAsync();
+				}
+				else
+				{
+					message = "Нкобходим пароль";
+				}
 			}
 			catch (Exception ex)
 			{

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CameraDiplomat.Entities
 {
-	public class ProductDataDecoded
+	public class Product
 	{
 			public string Id { get; set; }
 			public string productName { get; set; }
@@ -14,5 +14,6 @@ namespace CameraDiplomat.Entities
 			public int percent { get; set; }
 			public string code { get; set; }
 			public string text { get; set; }
+			public string data { get ; set; }
 	}
 }

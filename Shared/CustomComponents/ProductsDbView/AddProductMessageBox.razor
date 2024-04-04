@@ -1,0 +1,164 @@
+﻿@inject ProductsDbService productService
+
+
+<div class="messageBoxBackground" @onclick="buttonClose" />
+
+<div class="messageBox">
+	<div class="container successContainerShadows">
+		<div class="textHeader successTextShadows addBottomBorder">
+			Добавление продукта
+		</div>
+
+		@if (thereIsError)
+		{
+			<div class="textPlace textContent textErrorContent">
+				@message
+			</div>
+		}
+		else
+		{
+			<div class="textPlace textContent textSuccessContent">
+				@message
+			</div>
+		}
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Название:
+				</div>
+				<div class="textContent">
+					<input type="text" class="fullScale" @bind=name />
+				</div>
+			</div>
+		</div>
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Качество
+				</div>
+				<div class="textContent">
+					<select class="form-select" aria-label="default exapmple" @bind=quality>
+						<option selected>Выбрать качество</option>
+						<option value="true">Хорошее</option>
+						<option value="false">Брак</option>
+					</select>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Уверенность:
+				</div>
+				<div class="textContent">
+					<input type="text" class="fullScale" @bind=percent />
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Код:
+				</div>
+				<div class="textContent">
+					<input type="text" class="fullScale" @bind=code />
+				</div>
+			</div>
+		</div>
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Надпись:
+				</div>
+				<div class="textContent">
+					<input type="text" class="fullScale" @bind=text />
+				</div>
+			</div>
+		</div>
+
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="createUser">
+				Создать
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private string name { get; set; }
+	private string quality { get; set; }
+	private string percent { get; set; }
+	private string code { get; set; }
+	private string text { get; set; }
+
+
+	private string message = "Введите данные нового продукта";
+	private bool thereIsError = false;
+
+	protected override void OnInitialized()
+	{
+		code = "-";
+		text = "-";
+	}
+
+	private async Task createUser()
+	{
+		if (!String.IsNullOrEmpty(name) & !String.IsNullOrEmpty(quality) & !String.IsNullOrEmpty(percent) & !String.IsNullOrEmpty(code) & !String.IsNullOrEmpty(text))
+		{
+			try
+			{
+				Product newProduct = new Product();
+
+				newProduct.data = DateTime.Now.ToString();
+				newProduct.Id = Guid.NewGuid().ToString();
+				newProduct.productName = name;
+				newProduct.quality = Boolean.Parse(quality);
+				newProduct.text = text;
+				newProduct.code = code;
+				try
+				{
+					newProduct.percent = Int32.Parse(percent);
+				}
+				catch (Exception ex)
+				{
+					thereIsError = true;
+					message = "Правильно введите % уверенности";
+					return;
+				}
+
+				await productService.CreateProductAsync(newProduct);
+
+				thereIsError = false;
+				await buttonClose.InvokeAsync();
+			}
+			catch (Exception ex)
+			{
+				thereIsError = true;
+				message = ex.Message.ToString();
+			}
+		}
+		else
+		{
+			thereIsError = true;
+			message = "Введены некорректные данные";
+		}
+	}
+}
+
+
+

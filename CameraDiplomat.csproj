@@ -50,7 +50,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Remove="AppConfiguretion.json" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Remove="Pages\DbCodesPage.razor.css" />
+      <None Remove="Pages\DbProductsPage.razor.css" />
       <None Remove="Pages\DbUsersPage.razor.css" />
       <None Remove="Shared\CustomComponents\CameraCloseConnectionMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\CameraConnectingMessageBox.razor.css" />
@@ -62,12 +67,26 @@
       <None Remove="Shared\CustomComponents\HomePage\ProductDetail.razor.css" />
       <None Remove="Shared\CustomComponents\LoginErrorMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\LoginErrorMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\LoginPage\InfoErrorMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\LoginPage\LoginErrorMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\LoginPage\LoginErrorMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\MessageBoxWaring.razor.css" />
       <None Remove="Pages\HomePage.razor.css" />
       <None Remove="Pages\LoginPage.razor.css" />
       <None Remove="Pages\Scroll.razor.css" />
       <None Remove="Shared\CustomComponents\ProductDetail.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\AddProductMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\AddUserMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\DbUsersTable.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\DeleteProductMessageBox - Копировать.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\DeleteProductMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\DeleteProductsDbMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\DeleteUserMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\ProductInfoMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\SelectProductMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\SelectSomebodyMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\ProductsDbView\UserInfoMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\Settings\ColorSelector.razor.css" />
       <None Remove="Shared\CustomComponents\UsersDbView\AddUserMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\UsersDbView\AddUserMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\UsersDbView\DbUsersTable.razor.css" />
@@ -79,21 +98,33 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Pages\DbCodesPage.razor.css" />
+      <Content Include="Pages\DbProductsPage.razor.css" />
       <Content Include="Pages\DbUsersPage.razor.css" />
-      <Content Include="Shared\CustomComponents\ColorSelector.razor.css" />
       <Content Include="Shared\CustomComponents\HomePage\CameraConnectingMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\HomePage\ProductDetail.razor.css" />
       <Content Include="Pages\HomePage.razor.css" />
       <Content Include="Pages\LoginPage.razor.css" />
       <Content Include="Pages\Scroll.razor.css" />
+      <Content Include="Shared\CustomComponents\LoginPage\InfoErrorMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\LoginPage\LoginErrorMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\ProductsDbView\AddProductMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\ProductsDbView\DeleteProductMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\ProductsDbView\DeleteProductsDbMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\ProductsDbView\ProductInfoMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\ProductsDbView\SelectProductMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\Settings\ColorSelector.razor.css" />
       <Content Include="Shared\CustomComponents\UsersDbView\DbUsersTable.razor.css" />
       <Content Include="Shared\CustomComponents\UsersDbView\DeleteUserMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\UsersDbView\AddUserMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\UsersDbView\EditUserMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\UsersDbView\SelectSomebodyMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\UsersDbView\UserInfoMessageBox.razor.css" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="AppConfiguretion.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

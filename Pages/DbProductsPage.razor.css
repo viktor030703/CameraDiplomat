@@ -63,17 +63,6 @@
 	}
 
 
-.applicationHeader {
-	display: grid;
-	width: 100%;
-	height: 100%;
-	font-size: 5vw;
-	font-family: Georgia;
-	letter-spacing: 2px;
-	text-shadow: 3px 3px 5px gray;
-	place-items: center;
-}
-
 .headerIconics {
 	display: grid;
 	font-size: 6vw;

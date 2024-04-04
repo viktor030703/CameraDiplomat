@@ -20,12 +20,20 @@ namespace CameraDiplomat.Services
 			db.SaveChanges();
 		}
 
-		public async Task CreateUserAsync(User newUser)
+		public async Task<bool> CreateUserAsync(User newUser)
 		{
-			newUser.password = PasswordHasher.HashPassword(newUser.password);
-
-			db.Users.Add(newUser);
-			await db.SaveChangesAsync();
+			string messageFromHaser = PasswordHasher.HashPassword(newUser.password);
+			if (!String.Equals(messageFromHaser, "error"))
+			{
+				newUser.password = messageFromHaser;
+				db.Users.Add(newUser);
+				await db.SaveChangesAsync();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public async Task<string> EditUserAsync(User oldUser, User newUser)
@@ -72,12 +80,12 @@ namespace CameraDiplomat.Services
 		{
 			User userWhoTryEnter = db.Users.FirstOrDefault(l => l.login == _login);
 
-			_password = PasswordHasher.HashPassword(_password);
+			//_password = PasswordHasher.HashPassword(_password);
 
 			if (userWhoTryEnter != null)
 			{
 				//userWhoTryEnter.password == _password
-				if(PasswordHasher.VerificatePassword(userWhoTryEnter.password, _password))
+				if (PasswordHasher.VerificatePassword(_password, userWhoTryEnter.password))
 				{
 					return "success";
 				}

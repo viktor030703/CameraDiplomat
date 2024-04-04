@@ -1,33 +1,29 @@
-﻿.tableM{
+﻿.flexTable {
 	height: 100%;
-	max-height:100%;
-	max-width:100%;
+	max-height: 100%;
+	max-width: 100%;
 	background-color: silver;
 	box-shadow: 0px 0px 20px 3px black;
 	text-align: center;
 	margin: 2vh 0vh 2vh 2vh;
-	background-color:silver;
-
-/*	display: flex;*/
+	background-color: silver;
 }
 
-.addBorderToHeader{
-	border:solid black 0.5vh;
+.addWideBorderToCell {
+	border: solid black 0.5vh;
 }
 
-.addBorderToElement{
-	border:solid black 0.1vh;
+.addNarrowBorderToCell {
+	border: solid black 0.1vh;
 }
-
-
 
 .item {
 	display: flex;
 	width: 100%;
 }
 
-.itemToSelect{
-	display:flex;
+.itemToSelect {
+	display: flex;
 	width: 100%;
 	transition-duration: 0.3s;
 }
@@ -36,13 +32,12 @@
 		background-color: lightsteelblue;
 	}
 
-.itemPart{
-	/*законспектировать!!!!*/
-	flex-grow:1;
+.cell {
+	flex-grow: 1;
 	flex-basis: 25%;
-	overflow:hidden;
-	white-space:nowrap;
-	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .addBackgroungToElement {

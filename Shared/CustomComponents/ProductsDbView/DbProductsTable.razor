@@ -1,0 +1,58 @@
+﻿<div class="flexTable">
+	<div class="item">
+		<div class="addWideBorderToCell cell"> Название </div>
+		<div class="addWideBorderToCell cell"> Качество </div>
+		<div class="addWideBorderToCell cell"> Процент </div>
+		<div class="addWideBorderToCell cell"> Код </div>
+		<div class="addWideBorderToCell cell"> Надпись </div>
+		<div class="addWideBorderToCell cell"> Дата </div>
+	</div>
+
+	@foreach (Product product in productsFromDb)
+	{
+		@if (product == userToAddBackgroung)
+		{
+			<div class="item addBackgroungToElement" @onclick="()=>selectedProduct.InvokeAsync(product)">
+				<div class="addNarrowBorderToCell cell"> @product.productName </div>
+				<div class="addNarrowBorderToCell cell"> @product.quality </div>
+				<div class="addNarrowBorderToCell cell"> @product.percent </div>
+				<div class="addNarrowBorderToCell cell"> @product.code </div>
+				<div class="addNarrowBorderToCell cell"> @product.text </div>
+				<div class="addNarrowBorderToCell cell"> @product.data </div>
+			</div>
+		}
+		else
+		{
+			<div class="itemToSelect" @onclick="()=>UserSelectSmb(product)">
+				<div class="addNarrowBorderToCell cell"> @product.productName </div>
+				<div class="addNarrowBorderToCell cell"> @product.quality </div>
+				<div class="addNarrowBorderToCell cell"> @product.percent </div>
+				<div class="addNarrowBorderToCell cell"> @product.code </div>
+				<div class="addNarrowBorderToCell cell"> @product.text </div>
+				<div class="addNarrowBorderToCell cell"> @product.data </div>
+			</div>
+		}
+	}
+</div>
+
+
+@code {
+	[Parameter] public List<Product> productsFromDb { get; set; }
+
+	[Parameter] public EventCallback<Product> selectedProduct{ get; set; }
+
+	private Product userToAddBackgroung { get; set; }
+
+	private async Task UserSelectSmb(Product productUserClicked)
+	{
+		userToAddBackgroung = productUserClicked;
+		await ReturnSelectedProduct(productUserClicked);
+		StateHasChanged();
+	}
+
+
+	private async Task ReturnSelectedProduct(Product product)
+	{
+		await selectedProduct.InvokeAsync(product);
+	}
+}

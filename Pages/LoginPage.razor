@@ -1,21 +1,13 @@
-﻿@page "/login"
+﻿@page "/"
 @inject UsersDbService userService
 @inject NavigationManager navigationManager
 
 <div class="PageGrid">
-
-	@* <div class="navigationItemPlace">
-	<button class="btn objectFullScale">
-	<div class="oi oi-lock-locked headerIconics" />
-	</button>
-	</div> *@
-
 	<div class="navigationItemPlace">
 		<div class="objectFullScale">
-			<div class="oi oi-lock-locked headerIconics" />
+			<div class="oi oi-lock-locked headerIconics customButton" @onclick="ChangeShowInfoMBState" />
 		</div>
 	</div>
-
 
 	<div class="appTitlePlace">
 		<span class="applicationHeader">
@@ -25,11 +17,9 @@
 
 	<div class="settingsIconPlace">
 		<div class="objectFullScale">
-			<div class="oi oi-cog headerIconics" />
+			<div class="oi oi-lock-locked headerIconics  customButton" />
 		</div>
 	</div>
-
-
 
 	<div class="userIconPlace">
 		<center>
@@ -37,37 +27,44 @@
 		</center>
 	</div>
 
-
-
-	<div class="loginTextPlace textDisplay">
+	<div class="loginTextPlace textContent">
 		Логин:
 	</div>
 
-	<div class="loginInputPlace textInput">
+	<div class="loginInputPlace textContent">
 		<input type="text" class="objectPartScale inputBlockStyle" @bind="login" />
 	</div>
 
 
-	<div class="passwordTextPlace textDisplay">
+	<div class="passwordTextPlace textContent">
 		Пароль:
 	</div>
 
-	<div class="passwordInputPlace textInput">
+	<div class="passwordInputPlace textContent">
 		<input type="password" class="objectPartScale inputBlockStyle" @bind="password"/>
 	</div>
 
 	<div class="buttonLoginPlace">
-		<div class="textDisplay customButton" @onclick="buttonLoginClick">
+		<div class="textContent customButton" @onclick="buttonLoginClick">
 			Войти
 		</div>
 	</div>
-
-	@if (IsLoginFail)
-	{
-		<LoginErrorMessageBox buttonClose="CloseMessageBox" />
-	}
-
 </div>
+
+@if (IsLoginFail)
+{
+	<LoginErrorMessageBox buttonClose="CloseMessageBox" />
+}
+
+@if (ShowInfoMessageBox)
+{
+	<InfoErrorMessageBox buttonClose="CloseMessageBox" />
+}
+
+@if (ShowSettingsMessageBox)
+{
+	<SettingMessageBox buttonClose="ChangeSettingsMBState"/>
+}
 
 
 @code {
@@ -75,6 +72,9 @@
 	private string login;
 	private string password;
 	private bool IsLoginFail = false;
+
+	private bool ShowSettingsMessageBox = false;
+	private bool ShowInfoMessageBox = false;
 
 	private void buttonLoginClick()
 	{
@@ -92,6 +92,17 @@
 	private void CloseMessageBox()
 	{
 		IsLoginFail = false;
+	}
+
+
+	private void ChangeSettingsMBState()
+	{
+		ShowSettingsMessageBox = !ShowSettingsMessageBox;
+	}
+
+	private void ChangeShowInfoMBState()
+	{
+		ShowInfoMessageBox = !ShowInfoMessageBox;
 	}
 }
 

@@ -1,76 +1,72 @@
 ﻿@inject UsersDbService dbService
 
+<div class="messageBoxBackground" @onclick="buttonClose" />
 
-<div class="MessageBoxBackground" @onclick="buttonClose" />
-
-<div class="MessageBox">
+<div class="messageBox successContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader">
+		<div class="headerPlace textHeader successTextShadows addBottomBorder">
 			Данные пользователя
 		</div>
 
 		@if (thereIsError)
 		{
-			<div class="textPlace textErrorContent">
+			<div class="textPlace textContent errorTextShadows">
 				@message
 			</div>
 		}
 		else
 		{
-			<div class="textSuccessContent">
+			<div class="textContent textContent successTextShadows">
 				@message
 			</div>
 		}
 
-
-
 		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class="textContent">
 					Имя:
 				</div>
-				<div class="textSuccessContent">
+				<div class="textContent">
 					@Login
 				</div>
 			</div>
 		</div>
 
-
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
-					Пароль: 
+				<div class="textContent">
+					Пароль:
 				</div>
-				<div class="textSuccessContent textScroll">
+				<div class="textContent textScroll">
 					@Password
 				</div>
 			</div>
 		</div>
 
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class="textContent">
 					Роль:
 				</div>
-				<div class="textSuccessContent">
+				<div class="textContent">
 					@Role
 				</div>
 			</div>
 		</div>
 
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class="textContent">
 					Последний вход:
 				</div>
-				<div class="textSuccessContent">
+				<div class="textContent">
 					@LoginData
 				</div>
 			</div>
 		</div>
 
-		<div class="subContainer">
-			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+		<div class="textPlace">
+			<button class="btn btn-primary buttonUp fullScale" @onclick="()=>buttonClose.InvokeAsync()">
 				Закрыть
 			</button>
 		</div>
@@ -80,7 +76,6 @@
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
-
 	[Parameter] public User userToGetInfo { get; set; }
 
 	private string Login { get; set; }
@@ -90,7 +85,6 @@
 
 	private string message = "Данные загружены";
 	private bool thereIsError = false;
-
 
 	protected override void OnInitialized()
 	{

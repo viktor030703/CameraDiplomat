@@ -12,25 +12,53 @@ namespace CameraDiplomat.Services
 		public event NewMessageGetter EventSenderFeedback;
 		public event MesssageCameraUnavalible EventCameraUnavalible;
 
-
 		private SemaphoreSlim _readLock = new SemaphoreSlim(1, 1);
 
 
 		//Взять с сервиса!
-		public string CameraIP = "10.162.3.240";
-		public int CameraPort = 6000;
+		private ConfigurationService _configurationService;
+		public string CameraIP;
+		public int CameraPort;
 		//Взять с сервиса!
 
 		private TcpClient _tcpClient;
 		private StreamReader _reader;
 		private StreamWriter _writer;
 		private NetworkStream stream;
-		public TCPService()
+
+
+		private int millisecondsToTimerEplisted = 500;
+
+		private System.Timers.Timer timer = new System.Timers.Timer();
+		private int interval = 500;
+
+		public void StartTimer()
 		{
+			timer.Interval = interval;
+			timer.AutoReset = true;
+			timer.Start();
+			timer.Elapsed += (e, args) => MonitorIfCameraConnectedByTimer();
+		}
+
+		public TCPService(ConfigurationService service)
+		{
+			_configurationService = service;
+			CameraIP = service.CameraIP;
+			CameraPort = service.CameraPort;
+
+
+
 			ConnectToCamera();
+
+
 		}
 
 
+		public void MonitorIfCameraConnectedByTimer()
+		{
+			//if (_tcpClient.)
+			//EventCameraUnavalible.Invoke();
+		}
 
 
 		public void EventCheckCameraStatus()

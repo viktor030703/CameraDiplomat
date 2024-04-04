@@ -1,10 +1,10 @@
 ﻿@inject UsersDbService dbService
 
-<div class="MessageBoxBackground" @onclick="buttonClose" />
+<div class="messageBoxBackground" @onclick="buttonClose" />
 
-<div class="MessageBox">
-	<div class="mainContainer">
-		<div class="headerPlace textHeader">
+<div class="messageBox errorContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader errorTextShadows addBottomBorder">
 			Удалить пользователя
 		</div>
 
@@ -12,22 +12,20 @@
 			Вы уверены, что хотите удалить пользователя @userToDelete.login
 		</div>
 
-
-		<div class="subContainer">
-			<button class="btn btn-danger buttonStyle" @onclick="deleteUser">
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="deleteUser">
 				Удалить
 			</button>
-			<button class="btn btn-primary buttonStyle" @onclick="()=>buttonClose.InvokeAsync()">
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
 				Назад
 			</button>
 		</div>
-
-
 	</div>
 </div>
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
+	[Parameter] public EventCallback buttonDelete { get; set; }
 
 	[Parameter] public User userToDelete { get; set; }
 
@@ -35,8 +33,6 @@
 	{
 		await dbService.DeleteUserAsync(userToDelete);
 		await buttonClose.InvokeAsync();
+		await buttonDelete.InvokeAsync();
 	}
-
-
-
 }

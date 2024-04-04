@@ -1,0 +1,120 @@
+﻿<div class="messageBoxBackground" @onclick="buttonClose" />
+
+<div class="messageBox successContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows">
+			Информация о продукте
+		</div>
+
+		@if (thereIsError)
+		{
+			<div class="textPlace textContent errorTextShadows">
+				@message
+			</div>
+		}
+		else
+		{
+			<div class="textPlace textContent successTextShadows">
+				@message
+			</div>
+		}
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent ">
+					Название:
+				</div>
+				<div class="textContent">
+					@name
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Качество
+				</div>
+				<div class="textContent">
+					@quality
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Уверенность:
+				</div>
+				<div class="textContent">
+					@percent
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Код:
+				</div>
+				<div class="textContent textScroll">
+					@QrCode
+				</div>
+			</div>
+		</div>
+
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Надпись:
+				</div>
+				<div class="textContent textScroll">
+					@text
+				</div>
+			</div>
+		</div>
+
+		<div class="subContainer ">
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+	[Parameter] public Product productToShowInfo { get; set; }
+
+	private string name { get; set; }
+	private string quality { get; set; }
+	private string percent { get; set; }
+	private string QrCode { get; set; }
+	private string text { get; set; }
+
+
+	private string message = "Информация о продукте";
+	private bool thereIsError = false;
+
+	protected override void OnInitialized()
+	{
+		if (productToShowInfo != null)
+		{
+			name = productToShowInfo.productName;
+			quality = productToShowInfo.quality.ToString();
+			percent = productToShowInfo.percent.ToString() + "%";
+			QrCode = productToShowInfo.code;
+			text = productToShowInfo.text;
+		}
+		else
+		{
+			thereIsError = true;
+			message = "Введены некорректные данные";
+		}
+	}
+}
+
+
+

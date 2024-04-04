@@ -1,5 +1,5 @@
-﻿@page "/"
-@* @inject TCPService tcpService *@
+﻿@page "/home"
+@* @inject TCPService tcpService  *@
 @inject NavigationManager nav
 @inject MessageDecoder messageDecoder
 @inject ProductsDbService ProductsDb
@@ -19,26 +19,38 @@
 	<DbUsersPage buttonClose="ChangeDbUsersMBState" openSettings="ChangeSettingsMBState"/>
 }
 
+@if (ShowDbProductsMessageBox)
+{
+	<DbProductsPage buttonClose="ChangeDbProductsMBState" openSettings="ChangeSettingsMBState"/>
+}
+
 @if (ShowMainContent)
 {
 	<div class="PageGrid">
 
-		<div class="navigationItemPlace">
+		<div class="CameraStatusItemPlace">
 			<div class="objectFullScale">
-				<div class="oi oi-home headerIconics" />
+				@if(IsCameraConnected)
+				{
+					<div class="oi oi-camera-slr headerIconics defaultBackground defaultContainerShadows" />
+				}
+				else
+				{
+					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" />
+				}
 			</div>
 		</div>
 
 
 		<div class="appTitlePlace">
-			<span class="applicationHeader">
+			<span class="applicationHeader ">
 				Camera Diplomat
 			</span>
 		</div>
 
 		<div class="settingsIconPlace">
 			<div class="objectFullScale">
-				<div class="oi oi-cog headerIconics" @onclick="ChangeSettingsMBState" />
+				<div class="oi oi-cog headerIconics customButton" @onclick="ChangeSettingsMBState" />
 			</div>
 		</div>
 
@@ -48,7 +60,7 @@
 			<ProductDetail product="productDataToView" />
 		</div>
 
-		<div class="statisticsPlace">
+		<div class="statisticsPlace" style="text-align:center">
 			<div class="textDisplay">
 				@statistic
 			</div>
@@ -73,6 +85,8 @@
 	</div> *@
 
 		<div class="buttonsPlace">
+			<div class="subContainer">
+
 			<button class="btn btn-primary adminButtonsStyle" @onclick="TestConnection">
 				one
 			</button>
@@ -82,13 +96,14 @@
 			</button>
 
 
-			<button class="btn btn-primary adminButtonsStyle">
-				three
+			<button class="btn btn-primary adminButtonsStyle" @onclick="ChangeDbProductsMBState" >
+				БД продукты
 			</button>
 
 			<button class="btn btn-primary adminButtonsStyle" @onclick="ButtonFourClicked">
 				four
 			</button>
+			</div>
 		</div>
 	</div>
 
@@ -101,17 +116,18 @@
 	private bool ShowCameraUnavalibleMessageBox = false;
 
 	private bool ShowDbUsersMessageBox = false;
-	private bool ShowDbCodesMessageBox = false;//false
+	private bool ShowDbProductsMessageBox = false;
 
-	private bool ShowMainContent = true;//true
+	private bool ShowMainContent = true;
 
 	private ProductViewModel productDataToView;
+	private bool IsCameraConnected = true;
 
 
 	private void NewMessageGet(string msg)
 	{
 		statistic = msg;
-		ProductDataDecoded newProduct = messageDecoder.MessegeDiplomat(msg);
+		Product newProduct = messageDecoder.MessegeDiplomat(msg);
 		if (newProduct != null)
 		{
 
@@ -129,6 +145,7 @@
 	private void TestConnection()
 	{
 		// tcpService.SendMessage("so");
+		nav.NavigateTo("/login");
 	}
 
 
@@ -173,6 +190,12 @@
 		ShowMainContent = !ShowMainContent;
 	}
 
+
+	private void ChangeDbProductsMBState()
+	{
+		ShowDbProductsMessageBox = !ShowDbProductsMessageBox;
+		ShowMainContent = !ShowMainContent;
+	}
 
 	private void ButtonFourClicked()
 	{

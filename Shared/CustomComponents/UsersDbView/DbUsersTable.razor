@@ -1,9 +1,9 @@
-﻿<div class="tableM">
+﻿<div class="flexTable">
 	<div class="item">
-		<div class="addBorderToHeader itemPart"> Логин </div>
-		<div class="addBorderToHeader itemPart"> Пароль </div>
-		<div class="addBorderToHeader itemPart"> Роль </div>
-		<div class="addBorderToHeader itemPart"> Входил </div>
+		<div class="addWideBorderToCell cell"> Логин </div>
+		<div class="addWideBorderToCell cell"> Пароль </div>
+		<div class="addWideBorderToCell cell"> Роль </div>
+		<div class="addWideBorderToCell cell"> Входил </div>
 	</div>
 
 	@foreach (User user in usersFromDb)
@@ -11,28 +11,26 @@
 		@if (user == userToAddBackgroung)
 		{
 			<div class="item addBackgroungToElement" @onclick="()=>selectedUser.InvokeAsync(user)">
-				<div class="addBorderToElement itemPart"> @user.login </div>
-				<div class="addBorderToElement itemPart"> @user.password </div>
-				<div class="addBorderToElement itemPart"> @user.role </div>
-				<div class="addBorderToElement itemPart"> @user.lastLoginData </div>
+				<div class="addNarrowBorderToCell cell"> @user.login </div>
+				<div class="addNarrowBorderToCell cell"> @user.password </div>
+				<div class="addNarrowBorderToCell cell"> @user.role </div>
+				<div class="addNarrowBorderToCell cell"> @user.lastLoginData </div>
 			</div>
 		}
 		else
 		{
 			<div class="itemToSelect" @onclick="()=>UserSelectSmb(user)">
-				<div class="addBorderToElement itemPart"> @user.login </div>
-				<div class="addBorderToElement itemPart"> @user.password </div>
-				<div class="addBorderToElement itemPart"> @user.role </div>
-				<div class="addBorderToElement itemPart"> @user.lastLoginData </div>
+				<div class="addNarrowBorderToCell cell"> @user.login </div>
+				<div class="addNarrowBorderToCell cell"> @user.password </div>
+				<div class="addNarrowBorderToCell cell"> @user.role </div>
+				<div class="addNarrowBorderToCell cell"> @user.lastLoginData </div>
 			</div>
 		}
 	}
 </div>
 
-
 @code {
 	[Parameter] public List<User> usersFromDb { get; set; }
-
 	[Parameter] public EventCallback<User> selectedUser { get; set; }
 
 	private User userToAddBackgroung { get; set; }
@@ -40,10 +38,9 @@
 	private async Task UserSelectSmb(User user)
 	{
 		userToAddBackgroung = user;
-		ReturnSelectedUser(user);
+		await ReturnSelectedUser(user);
 		StateHasChanged();
 	}
-
 
 	private async Task ReturnSelectedUser(User user)
 	{

@@ -12,7 +12,7 @@
 
 @if (showDeleteUserMBState)
 {
-	<DeleteUserMessageBox buttonClose="ChangeDeleteUserMBState" userToDelete="selectedUser" />
+	<DeleteUserMessageBox buttonClose="ChangeDeleteUserMBState" userToDelete="selectedUser" buttonDelete="ClearSelectedUser"/>
 }
 
 
@@ -22,21 +22,18 @@
 	<UserInfoMessageBox buttonClose="ChangeGetUserInfoMBState" userToGetInfo="selectedUser" />
 }
 
-
 @if (showSelectSomebodyMBState)
 {
 	<SelectSomebodyMessageBox buttonClose="ChangeSelectSomebodyMBState" />
 }
 
-
 <div class="PageGrid">
 
 	<div class="navigationItemPlace">
 		<div class="objectFullScale">
-			<div class="oi oi-chevron-left headerIconics" @onclick="()=>buttonClose.InvokeAsync()"/>
+			<div class="oi oi-chevron-left headerIconics customButton" @onclick="()=>buttonClose.InvokeAsync()" />
 		</div>
 	</div>
-
 
 	<div class="appTitlePlace">
 		<span class="applicationHeader">
@@ -46,15 +43,13 @@
 
 	<div class="settingsIconPlace">
 		<div class="objectFullScale">
-			<div class="oi oi-cog headerIconics" @onclick="()=>openSettings.InvokeAsync()"/>
+			<div class="oi oi-cog headerIconics customButton" @onclick="()=>openSettings.InvokeAsync()" />
 		</div>
 	</div>
 
-
 	<div class="dbGridPlace">
-		<DbUsersTable usersFromDb="usersFromDb" selectedUser="SmtWithSelectedUser"/>
+		<DbUsersTable usersFromDb="usersFromDb" selectedUser="SmtWichSelectedUser"/>
 	</div>
-
 
 	<div class="buttonsPlace">
 		<div class="buttonsContainer">
@@ -65,12 +60,6 @@
 		</div>
 	</div>
 </div>
-
-
-
-
-
-
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
@@ -93,8 +82,7 @@
 		InvokeAsync(StateHasChanged);
 	}
 
-
-	private void SmtWithSelectedUser(User userFromTable)
+	private void SmtWichSelectedUser(User userFromTable)
 	{
 		selectedUser = userFromTable;
 	}
@@ -149,13 +137,13 @@
 		{
 			showDeleteUserMBState = !showDeleteUserMBState;
 			RefreshUsersFromDb();
-			selectedUser = null;
+			// selectedUser = null;
 		}
 	}
 
 	private void ChangeGetUserInfoMBState()
 	{
-		if (!showChangeUserMBState)
+		if (!showUserInformationMBState)
 		{
 			if (selectedUser == null)
 			{
@@ -163,16 +151,20 @@
 			}
 			else
 			{
-				showChangeUserMBState = !showChangeUserMBState;
+				showUserInformationMBState = !showUserInformationMBState;
 			}
 		}
 		else
 		{
-			showChangeUserMBState = !showChangeUserMBState;
+			showUserInformationMBState = !showUserInformationMBState;
 			RefreshUsersFromDb();
 		}
 	}
 
+	private void ClearSelectedUser()
+	{
+		selectedUser = null;
+	}
 
 	private void ChangeSelectSomebodyMBState()
 	{
@@ -184,6 +176,4 @@
 		usersFromDb = userService.GetUsers();
 		InvokeAsync(StateHasChanged);
 	}
-
-
 }

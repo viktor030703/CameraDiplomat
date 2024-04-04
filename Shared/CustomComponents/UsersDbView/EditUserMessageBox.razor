@@ -1,58 +1,54 @@
 ﻿@inject UsersDbService dbService
 
+<div class="messageBoxBackground" @onclick="buttonClose" />
 
-<div class="MessageBoxBackground" @onclick="buttonClose" />
-
-<div class="MessageBox">
+<div class="messageBox successContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader">
+		<div class="headerPlace textHeader successTextShadows addBottomBorder">
 			Добавление пользователя
 		</div>
 
 		@if (thereIsError)
 		{
-			<div class="textPlace textErrorContent">
+			<div class="textPlace textContent errorTextShadows">
 				@message
 			</div>
 		}
 		else
 		{
-			<div class="textPlace textSuccessContent">
+			<div class="textPlace textContent successTextShadows">
 				@message
 			</div>
 		}
 
-
-
 		<div class="textPlace textContent">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class=" textContent successTextShadows">
 					Имя:
 				</div>
-				<div class="textSuccessContent">
+				<div class=" textContent successTextShadows">
 					<input type="text" class="fullScale" @bind=newLogin />
 				</div>
 			</div>
 		</div>
 
-
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace  textContent successTextShadows">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class=" textContent successTextShadows">
 					Пароль:
 				</div>
-				<div class="textSuccessContent">
+				<div class=" textContent successTextShadows">
 					<input type="text" class="fullScale" @bind=newPassword />
 				</div>
 			</div>
 		</div>
 
-		<div class="textPlace textSuccessContent">
+		<div class="textPlace  textContent successTextShadows">
 			<div class="subContainer">
-				<div class="textSuccessContent">
+				<div class=" textContent successTextShadows">
 					Роль
 				</div>
-				<div class="textSuccessContent">
+				<div class=" textContent successTextShadows">
 					<select class="form-select" aria-label="default exapmple" @bind=newRole>
 						<option selected>Выбрать роль</option>
 						<option value="admin">Администратор</option>
@@ -64,9 +60,7 @@
 			</div>
 		</div>
 
-
-
-		<div class="subContainer">
+		<div class="subContainer buttonUp">
 			<button class="btn btn-danger fullScale" @onclick="editUser">
 				Изменить
 			</button>
@@ -74,14 +68,12 @@
 				Закрыть
 			</button>
 		</div>
-
 	</div>
 </div>
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
-
-	[Parameter] public User userToEdit{ get; set; }
+	[Parameter] public User userToEdit { get; set; }
 
 	private string newLogin { get; set; }
 	private string newPassword { get; set; }
@@ -91,10 +83,9 @@
 	private string message = "Измените необходимые данные";
 	private bool thereIsError = false;
 
-
 	protected override void OnInitialized()
 	{
-		if(userToEdit != null)
+		if (userToEdit != null)
 		{
 			newLogin = userToEdit.login;
 			newPassword = userToEdit.password;
@@ -117,10 +108,9 @@
 						role = newRole,
 						lastLoginData = newLoginData,
 					};
-
 				message = await dbService.EditUserAsync(userToEdit, newUserData);
 
-				if(String.Equals(message,"success"))
+				if (String.Equals(message, "success"))
 				{
 					thereIsError = false;
 					await buttonClose.InvokeAsync();
@@ -143,7 +133,4 @@
 			message = "Введены некорректные данные";
 		}
 	}
-}
-
-
 }

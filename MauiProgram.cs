@@ -2,7 +2,9 @@
 using CameraDiplomat.Data;
 using CameraDiplomat.Entities;
 using CameraDiplomat.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 
 namespace CameraDiplomat
@@ -26,6 +28,14 @@ namespace CameraDiplomat
 			builder.Logging.AddDebug();
 #endif
 
+			// Adding configuration file
+			var a = Assembly.GetExecutingAssembly();
+			using var stream = a.GetManifestResourceStream("CameraDiplomat.AppConfiguretion.json");
+			var config = new ConfigurationBuilder()
+						.AddJsonStream(stream)
+						.Build();
+			builder.Configuration.AddConfiguration(config);
+
 			builder.Services.AddSingleton<ConfigurationService>();
 			builder.Services.AddSingleton<ApplicationContext>();
 			builder.Services.AddSingleton<TCPService>();
@@ -38,8 +48,9 @@ namespace CameraDiplomat
 			UsersDbService serv = new UsersDbService();
 
 			//serv.DropDb();
+			
 
-			serv.CheckDbExist();
+			//serv.CheckDbExist();
 
 			//Entities.User user = new Entities.User()
 			//{
@@ -53,7 +64,7 @@ namespace CameraDiplomat
 
 			ProductsDbService db = new ProductsDbService();
 
-			List<ProductDataDecoded> ourList= db.GetProducts(); 
+			List<Product> ourList= db.GetProducts(); 
 
 
 			return builder.Build();

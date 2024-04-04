@@ -82,3 +82,200 @@ a, .btn-link {
         padding-left: env(safe-area-inset-left);
     }
 }
+
+
+
+
+
+
+.applicationHeader {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    font-size: 5vw;
+    font-family: Georgia;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 5px gray;
+    place-items: center;
+}
+
+
+
+
+
+.textHeader {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    font-size: clamp(10px, 6vh, 32px);
+    font-family: Georgia;
+    letter-spacing: 3px;
+    place-items: center;
+    text-align: center;
+}
+
+
+.textContent {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    font-size: clamp(6px, 4vh, 20px);
+    font-family: Georgia;
+    letter-spacing: 3px;
+    place-items: center;
+    text-align: center;
+}
+
+.messageBoxBackground {
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    background-color: black;
+    opacity: 0.8;
+    z-index: 4;
+    overflow: hidden;
+}
+
+.messageBox {
+    position: absolute;
+    height: 90vh;
+    width: 70%;
+    left: 15%;
+    top: 5vh;
+    border-radius: 5px;
+    background-color: white;
+    border: solid black 2px;
+    z-index: 5;
+}
+
+.errorContainerShadows {
+    box-shadow: 0px 0px 35px 3px red;
+}
+.errorTextShadows {
+    text-shadow: 2px 2px 20px red;
+}
+
+.errorBackground {
+    background-color: red;
+    border-radius: 5px;
+    border: solid black 2px;
+    /*opacity: 0.9;*/
+}
+
+.successBackground {
+    background-color: green;
+    border-radius: 5px;
+    border: solid black 2px;
+    /*opacity: 0.3;*/
+}
+
+
+.defaultBackground {
+    background-color: silver;
+    border-radius: 5px;
+    border: solid black 2px;
+    /*opacity: 0.3;*/
+}
+
+.defaultContainerShadows {
+    box-shadow: 0px 0px 35px 3px silver;
+}
+
+.successContainerShadows {
+    box-shadow: 0px 0px 35px 3px green;
+}
+
+
+.successTextShadows {
+    text-shadow: 2px 2px 20px green;
+}
+
+.addBottomBorder{
+    position:relative;
+    border-bottom:black solid 2px;
+    top:0.2vh;
+    left: 7%;
+    width: 86%;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+}
+
+
+.subContainer {
+    display: flex;
+    height: 10vh;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: space-around;
+
+}
+
+.fullScale {
+    width: 100%;
+    text-align: center;
+}
+
+.buttonUp {
+    position: relative;
+    bottom: 1vh;
+}
+
+
+.customButton {
+    background-color: silver;
+    border-radius: 5px;
+    border: solid 2px black;
+    box-shadow: 0px 0px 15px 1px silver;
+    transition-duration: 1s;
+    color: black;
+    
+}
+
+    .customButton:hover {
+        box-shadow: 0px 0px 15px 1px cornflowerblue;
+        background-color: cornflowerblue;
+        border: solid 2px black;
+        color: black;
+    }
+
+    .customButton:active {
+        box-shadow: 0px 0px 30px 1px blue;
+        background-color: cornflowerblue;
+        border: solid 2px black;
+        color: black;
+    }
+
+
+.headerIconics {
+    display: grid;
+    font-size: 6vw;
+    padding: 1vh;
+    place-items: center;
+    text-shadow: 3px 3px 5px gray;
+}
+
+    .headerIconics:hover {
+        /*box-shadow: 0px 0px 15px 3px green;*/
+        text-shadow: 0px 0px 25px blue;
+    }
+
+
+.objectFullScale {
+    height: 100%;
+    width: 100%;
+}
+
+.inputBlockStyle {
+    box-shadow: 0px 0px 9px 1px gray;
+}
+
+    .inputBlockStyle:focus {
+        box-shadow: 0px 0px 25px 1px blue;
+    }

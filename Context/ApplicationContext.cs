@@ -13,7 +13,7 @@ namespace CameraDiplomat.Context
 	{
 
 		public DbSet<User> Users { get; set; }
-		public DbSet<ProductDataDecoded> Products { get; set; }
+		public DbSet<Product> Products { get; set; }
 
 		private string _pathToDb;
 	
