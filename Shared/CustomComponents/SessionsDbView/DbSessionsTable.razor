@@ -1,0 +1,52 @@
+﻿<div class="flexTable">
+	<div class="item">
+		<div class="addWideBorderToCell bigCell"> Добавил </div>
+		<div class="addWideBorderToCell cell"> Всего </div>
+		<div class="addWideBorderToCell cell"> Брак </div>
+		<div class="addWideBorderToCell cell"> Процент </div>
+		<div class="addWideBorderToCell bigCell"> Начал/завершил </div>
+	</div>
+
+	@foreach (Session session in sessionsFromDb)
+	{
+		@if (session == sessionToAddBackgroung)
+		{
+			<div class="item addBackgroungToElement" @onclick="()=>newSelectedSession.InvokeAsync(session)">
+				<div class="addNarrowBorderToCell bigCell"> @session.creatorsLogin</div>
+				<div class="addNarrowBorderToCell cell"> @session.TotalCount </div>
+				<div class="addNarrowBorderToCell cell"> @session.MarriageCount </div>
+				<div class="addNarrowBorderToCell cell"> @session.MarriagePercent </div>
+				<div class="addNarrowBorderToCell bigCell"> @session.Data </div>
+			</div>
+		}
+		else
+		{
+			<div class="itemToSelect" @onclick="()=>UserSelectSmt(session)">
+				<div class="addNarrowBorderToCell bigCell"> @session.creatorsLogin </div>
+				<div class="addNarrowBorderToCell cell"> @session.TotalCount </div>
+				<div class="addNarrowBorderToCell cell"> @session.MarriageCount </div>
+				<div class="addNarrowBorderToCell cell"> @session.MarriagePercent </div>
+				<div class="addNarrowBorderToCell bigCell"> @session.Data </div>
+			</div>
+		}
+	}
+</div>
+
+@code {
+	[Parameter] public List<Session> sessionsFromDb { get; set; }
+	[Parameter] public EventCallback<Session> newSelectedSession { get; set; }
+
+	private Session sessionToAddBackgroung { get; set; }
+
+	private async Task UserSelectSmt(Session session)
+	{
+		sessionToAddBackgroung = session;
+		await ReturnSelectedUser(session);
+		StateHasChanged();
+	}
+
+	private async Task ReturnSelectedUser(Session session)
+	{
+		await newSelectedSession.InvokeAsync(session);
+	}
+}

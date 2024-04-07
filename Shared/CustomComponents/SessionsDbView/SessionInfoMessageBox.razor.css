@@ -1,0 +1,7 @@
+﻿.textScroll {
+	overflow: scroll;
+}
+
+.subContainer {
+	overflow: hidden;
+}

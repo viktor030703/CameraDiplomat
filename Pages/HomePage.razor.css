@@ -1,4 +1,4 @@
-﻿.PageGrid {
+﻿.pageGrid {
 	display: grid;
 	height: 100vh;
 	width: 100%;
@@ -31,27 +31,20 @@
 .mainContentPlace {
 	grid-row: 4/11;
 	grid-column: 1/10;
-	margin: 1vw;
-	background-color: blue;
-	border-radius: 5px;
-
-	box-shadow: 0px 0px 5px 3px #000000;
 }
 
 .statisticsPlace {
 	grid-row: 12/13;
 	grid-column: 1/10;
+
 	margin: 1vw;
-	background-color: blue;
-	border-radius: 5px;
-	box-shadow: 0px 0px 5px 3px #000000;
+	text-align:center;
 }
 
 .buttonsPlace {
 	grid-row: 14/16;
 	grid-column: 1/10;
 	margin: 1vw;
-	/*background-color: darkblue;*/
 
 	display: flex;
 	justify-content: space-between;
@@ -59,36 +52,11 @@
 }
 
 .adminButtonsStyle {
-	width: 23%;
+	width: 20%;
 	height: 100%;
-	background-color: blue;
-	box-shadow: 0px 0px 5px 3px #000000
 }
 
 .userButtonsStyle {
 	width: 32%;
 	height: 100%;
-	background-color: blue;
-	box-shadow: 0px 0px 5px 3px #000000
 }
-
-
-
-
-
-
-
-
-.headerIconics {
-	display: grid;
-	font-size: 6vw;
-	padding: 1vh;
-	place-items: center;
-	text-shadow: 3px 3px 5px gray;
-}
-
-	.headerIconics:hover {
-		/*box-shadow: 0px 0px 15px 3px green;*/
-		text-shadow: 0px 0px 25px blue;
-	}
-

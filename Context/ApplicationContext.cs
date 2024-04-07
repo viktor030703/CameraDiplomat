@@ -11,12 +11,13 @@ namespace CameraDiplomat.Context
 {
 	public class ApplicationContext : DbContext
 	{
-
+		
 		public DbSet<User> Users { get; set; }
 		public DbSet<Product> Products { get; set; }
+		public DbSet<Session> Sessions { get; set; }
 
 		private string _pathToDb;
-	
+
 
 		public ApplicationContext()
 		{
@@ -24,10 +25,11 @@ namespace CameraDiplomat.Context
 			_pathToDb = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "CamerasDimplomat.db");
 		}
 
-		
+
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
+			base.OnConfiguring(optionsBuilder);
 			optionsBuilder.UseSqlite($"Data Source={_pathToDb}");
 		}
 

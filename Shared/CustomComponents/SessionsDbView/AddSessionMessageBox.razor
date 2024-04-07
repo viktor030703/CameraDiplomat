@@ -1,0 +1,115 @@
+﻿@inject SessionsDbService dbService
+@inject SessionCustomDesigner sessionDesigner
+
+<div class="messageBoxBackground" @onclick="buttonClose" />
+
+<div class="messageBox successContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows">
+			Добавление сессии
+		</div>
+
+		@if (thereIsError)
+		{
+			<div class="textPlace textContent errorTextShadows">
+				@message
+			</div>
+		}
+		else
+		{
+			<div class="textPlace textContent textSuccessContent">
+				@message
+			</div>
+		}
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent textSuccessContent">
+					Всего продукции (штук):
+				</div>
+				<div class="textContent textSuccessContent">
+					<input type="number" class="fullScale" @bind=totalCount />
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent textSuccessContent">
+					Брак (штук):
+				</div>
+				<div class="textContent textSuccessContent">
+					<input type="number" class="fullScale" @bind=marriageCount />
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent textSuccessContent">
+					Начали (дата):
+				</div>
+				<div class="textContent textSuccessContent">
+					<input type="datetime" class="fullScale" @bind=startTime />
+				</div>
+			</div>
+		</div>
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="createSession">
+				Создать
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private int totalCount { get; set; }
+	private int marriageCount { get; set; }
+	private DateTime startTime { get; set; }
+
+
+	private string message = "Введите данные нового пользователя";
+	private bool thereIsError = false;
+
+	protected override void OnInitialized()
+	{
+		startTime = DateTime.Now;
+	}
+
+	private async Task createSession()
+	{
+		if (totalCount > marriageCount & startTime != DateTime.MinValue)
+		{
+			try
+			{
+				Session newSessionForDb = sessionDesigner.DesigneNewEntity(startTime, totalCount, marriageCount);
+				bool response = await dbService.CreateSessionAsync(newSessionForDb);
+				if(response)
+				{
+					message = "success";
+					await buttonClose.InvokeAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				thereIsError = true;
+				message = ex.Message.ToString();
+			}
+		}
+		else
+		{
+			thereIsError = true;
+			message = "Введены некорректные данные";
+		}
+	}
+}
+
+
+

@@ -1,25 +1,24 @@
-﻿@inject ConfigurationService AppConfig
-
-<div class="ComponentGrid">
-
+﻿<div class="componentGrid defaultBackground defaultContainerShadows">
+	@if(product != null)
+	{
+		
 	@if (product.NameCorrect)
 	{
-		<div class="productNamePlace textDisplay" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productNamePlac textContent successBackground">
 			@product.Name
 		</div>
 
-		<div class="productStatusNamePlace Iconics" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
-
+		<div class="productStatusNamePlace Iconics successBackground">
 			<div class="oi oi-check" />
 		</div>
 	}
 	else
 	{
-		<div class="productNamePlace textDisplay" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productNamePlace textContent errorBackground">
 			@product.Name
 		</div>
 
-		<div class="productStatusNamePlace Iconics" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productStatusNamePlace Iconics errorBackground">
 			<div class="oi oi-x" />
 		</div>
 	}
@@ -29,21 +28,21 @@
 
 	@if (product.QualityCorrect)
 	{
-		<div class="productQualityPercentPlace textDisplay" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productQualityPercentPlace textContent  successBackground">
 			@product.Quality
 		</div>
 
-		<div class="productStatusQualityPercentPlace Iconics" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productStatusQualityPercentPlace Iconics successBackground">
 			<div class="oi oi-check" />
 		</div>
 	}
 	else
 	{
-		<div class="productQualityPercentPlace textDisplay" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productQualityPercentPlace textContent errorBackground">
 			@product.Quality
 		</div>
 
-		<div class="productStatusQualityPercentPlace Iconics" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productStatusQualityPercentPlace Iconics errorBackground">
 			<div class="oi oi-x" />
 		</div>
 	}
@@ -52,65 +51,70 @@
 
 	@if (product.CodeCorrect)
 	{
-		<div class="productCodePlace textDisplay" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productCodePlace textContent  successBackground">
 			@product.QRCode
 		</div>
 
-		<div class="productStatusCodePlace Iconics" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productStatusCodePlace Iconics  successBackground">
 			<div class="oi oi-check" />
 		</div>
 
 	}
 	else
 	{
-		<div class="productCodePlace textDisplay" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productCodePlace textContent errorBackground">
 			@product.QRCode
 		</div>
 
-		<div class="productStatusCodePlace Iconics" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productStatusCodePlace Iconics errorBackground">
 			<div class="oi oi-x" />
 		</div>
 	}
 
 	@if (product.TextCorrect)
 	{
-		<div class="productTextPlace textDisplay" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productTextPlace textContent successBackground">
 			@product.Text
 		</div>
 
-		<div class="productStatusTextPlace Iconics" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productStatusTextPlace Iconics successBackground">
 			<div class="oi oi-check" />
 		</div>
 
 	}
 	else
 	{
-		<div class="productTextPlace textDisplay" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productTextPlace textContent errorBackground">
 			@product.Text
 		</div>
 
-		<div class="productStatusTextPlace Iconics" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productStatusTextPlace Iconics errorBackground">
 			<div class="oi oi-x" />
 		</div>
 	}
 
 	@if (@product.NameCorrect & @product.QualityCorrect & @product.CodeCorrect & product.TextCorrect)
 	{
-		<div class="productResaultPlace MainIconic" style="background-color:@AppConfig.trueColor; box-shadow: 0px 0px 25px 3px @AppConfig.trueColor">
+		<div class="productResaultPlace MainIconic  successBackground">
 			<div class="oi oi-check" />
 		</div>
 	}
 	else
 	{
-		<div class="productResaultPlace MainIconic" style="background-color:@AppConfig.errorColor; box-shadow: 0px 0px 40px 3px @AppConfig.errorColor">
+		<div class="productResaultPlace MainIconic errorBackground">
 			<div class="oi oi-x" />
+		</div>
+		}
+	}
+	else
+	{
+		<div class="productNamePlac textContent  successTextShadows">
+			Загрузка
 		</div>
 	}
 
 </div>
 
 @code {
-
 	[Parameter] public ProductViewModel product { get; set; }
-
 }

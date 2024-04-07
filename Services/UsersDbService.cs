@@ -1,23 +1,16 @@
 ﻿using CameraDiplomat.Context;
 using CameraDiplomat.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace CameraDiplomat.Services
 {
-	//Добавить хэширование паролей!!!!
 	public class UsersDbService
 	{
-		ApplicationContext db = new ApplicationContext();
-
-		public void DropDb()
+		private ConfigurationService _configurationService;
+		ApplicationContext _db = new ApplicationContext();
+		public UsersDbService(ConfigurationService configurationService, ApplicationContext db)
 		{
-			db.Database.EnsureDeleted();
-			db.SaveChanges();
-		}
-		public void CheckDbExist()
-		{
-			db.Database.EnsureCreated();
-			db.SaveChanges();
+			_configurationService = configurationService;
+			_db = db;
 		}
 
 		public async Task<bool> CreateUserAsync(User newUser)
@@ -26,8 +19,8 @@ namespace CameraDiplomat.Services
 			if (!String.Equals(messageFromHaser, "error"))
 			{
 				newUser.password = messageFromHaser;
-				db.Users.Add(newUser);
-				await db.SaveChangesAsync();
+				_db.Users.Add(newUser);
+				await _db.SaveChangesAsync();
 				return true;
 			}
 			else
@@ -40,7 +33,7 @@ namespace CameraDiplomat.Services
 		{
 			try
 			{
-				var response = await db.Users.FindAsync(oldUser.id);
+				var response = await _db.Users.FindAsync(oldUser.id);
 				if (response == null)
 				{
 					return "selected user not found!";
@@ -55,7 +48,7 @@ namespace CameraDiplomat.Services
 				if (!String.IsNullOrEmpty(newUser.lastLoginData))
 					oldUser.lastLoginData = newUser.lastLoginData;
 
-				await db.SaveChangesAsync();
+				await _db.SaveChangesAsync();
 				return "success";
 			}
 			catch (Exception ex)
@@ -66,19 +59,17 @@ namespace CameraDiplomat.Services
 
 		public async Task DeleteUserAsync(User userToDelete)
 		{
-			db.Users.Remove(userToDelete);
-			await db.SaveChangesAsync();
+			_db.Users.Remove(userToDelete);
+			await _db.SaveChangesAsync();
 		}
 
 		public List<User> GetUsers()
 		{
-			return db.Users.ToList();
+			return _db.Users.ToList();
 		}
-
-
 		public string Authentificate(string _login, string _password)
 		{
-			User userWhoTryEnter = db.Users.FirstOrDefault(l => l.login == _login);
+			User userWhoTryEnter = _db.Users.FirstOrDefault(l => l.login == _login);
 
 			//_password = PasswordHasher.HashPassword(_password);
 
@@ -87,6 +78,7 @@ namespace CameraDiplomat.Services
 				//userWhoTryEnter.password == _password
 				if (PasswordHasher.VerificatePassword(_password, userWhoTryEnter.password))
 				{
+					_configurationService.activeUser = userWhoTryEnter;
 					return "success";
 				}
 				else
@@ -98,7 +90,6 @@ namespace CameraDiplomat.Services
 			{
 				return "error";
 			}
-
 		}
 	}
 }

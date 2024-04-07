@@ -1,0 +1,43 @@
+﻿@inject ConfigurationService configurationService
+
+<div class="messageBoxBackground" @onclick="() => buttonClose.InvokeAsync()" />
+
+<div class="messageBox successContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows">
+			Отлично
+		</div>
+
+		<div class="textContent">
+			Последние приготовления
+		</div>
+
+
+
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="OffLine">
+				Отключить линию
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="DisableMonitorMarriageProcent">
+				Отключить проверку
+			</button>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private void DisableMonitorMarriageProcent()
+	{
+		buttonClose.InvokeAsync();
+		configurationService.MonitorMarriagePercent = false;
+	}
+
+	private void OffLine()
+	{
+		buttonClose.InvokeAsync();
+		//Метод для отправки сообщения на камеру. Какой - хз
+	}
+}

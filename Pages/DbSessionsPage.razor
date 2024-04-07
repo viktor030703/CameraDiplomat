@@ -1,0 +1,187 @@
+﻿@inject SessionsDbService sessionDbService
+
+@if (showAddsessionMBState)
+{
+	<AddSessionMessageBox buttonClose="ChangeAddSessionMBState" />
+}
+
+@if (showDeletesessionMBState)
+{
+	<DeleteSessionMessageBox buttonClose="ChangeDeleteSessionMBState" sessionToDelete="selectedSession"/>
+}
+
+
+@if (showSessionInformationMBState)
+{
+	<SessionInfoMessageBox buttonClose="ChangeGetSessionInfoMBState" sessionToGetInfo="selectedSession"/>
+}
+
+@if (showUploadSessionMBState)
+{
+	<UploadSessionMessageBox buttonClose="ChangeUploadSessionMBState" sessionToUpdate="selectedSession"/>
+}
+
+@if (showSelectSessionMBState)
+{
+	<SelectSessionMessageBox buttonClose="ChangeSelectSomethingMBState" />
+}
+
+<div class="PageGrid">
+
+	<div class="navigationItemPlace">
+		<div class="objectFullScale customButton">
+			<div class="oi oi-chevron-left headerIconics" @onclick="()=>buttonClose.InvokeAsync()" />
+		</div>
+	</div>
+
+	<div class="appTitlePlace">
+		<span class="applicationHeader">
+			Camera Diplomat
+		</span>
+	</div>
+
+	<div class="settingsIconPlace">
+		<div class="objectFullScale customButton">
+			<div class="oi oi-cog headerIconics" @onclick="()=>openSettings.InvokeAsync()" />
+		</div>
+	</div>
+
+	<div class="dbGridPlace">
+		<DbSessionsTable sessionsFromDb="sessionsFromDb" newSelectedSession="changeSelectedSession"/>
+	</div>
+
+	<div class="buttonsPlace">
+		<div class="buttonsContainer">
+			<button class="btn customButton" @onclick="ChangeAddSessionMBState">Добавить</button>
+			<button class="btn customButton errorBackground" @onclick="ChangeDeleteSessionMBState">Удалить</button>
+			<button class="btn customButton" @onclick="ChangeGetSessionInfoMBState">Подробнее</button>
+			<button  class="btn customButton" @onclick="ChangeUploadSessionMBState">Загрузить</button>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+	[Parameter] public EventCallback openSettings { get; set; }
+	private List<Session> sessionsFromDb;
+
+	Session selectedSession = null;
+
+	private bool showAddsessionMBState = false;
+	private bool showDeletesessionMBState = false;
+	private bool showSessionInformationMBState = false;
+	private bool showUploadSessionMBState = false;
+
+	private bool showSelectSessionMBState = false;
+
+	protected async override Task OnInitializedAsync()
+	{
+		//Add linq filter???
+		sessionsFromDb = await sessionDbService.GetSessionsAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private void SmtWichSelectedUser(Session sessionFromTable)
+	{
+		selectedSession = sessionFromTable;
+	}
+
+	private async Task ChangeAddSessionMBState()
+	{
+		if (!showAddsessionMBState)
+		{
+			showAddsessionMBState = true;
+		}
+		else
+		{
+			showAddsessionMBState = false;
+			await RefreshSessionsFromDb();
+		}
+	}
+
+
+
+	private async Task ChangeDeleteSessionMBState()
+	{
+		if (!showDeletesessionMBState)
+		{
+			if (selectedSession == null)
+			{
+				ChangeSelectSomethingMBState();
+			}
+			else
+			{
+				showDeletesessionMBState = !showDeletesessionMBState;
+			}
+		}
+		else
+		{
+			showDeletesessionMBState = !showDeletesessionMBState;
+			ClearSelectedSession();
+			await RefreshSessionsFromDb();
+		}
+	}
+
+
+	private async Task ChangeUploadSessionMBState()
+	{
+		if (!showUploadSessionMBState)
+		{
+			if (selectedSession == null)
+			{
+				ChangeSelectSomethingMBState();
+			}
+			else
+			{
+				showUploadSessionMBState = !showUploadSessionMBState;
+			}
+		}
+		else
+		{
+			showUploadSessionMBState = !showUploadSessionMBState;
+		}
+	}
+
+	
+
+	private async Task ChangeGetSessionInfoMBState()
+	{
+		if (!showSessionInformationMBState)
+		{
+			if (selectedSession == null)
+			{
+				ChangeSelectSomethingMBState();
+			}
+			else
+			{
+				showSessionInformationMBState = !showSessionInformationMBState;
+			}
+		}
+		else
+		{
+			showSessionInformationMBState = !showSessionInformationMBState;
+			await RefreshSessionsFromDb();
+		}
+	}
+
+	private void ClearSelectedSession()
+	{
+		selectedSession = null;
+	}
+
+	private void ChangeSelectSomethingMBState()
+	{
+		showSelectSessionMBState = !showSelectSessionMBState;
+	}
+
+	private async Task RefreshSessionsFromDb()
+	{
+		sessionsFromDb = await sessionDbService.GetSessionsAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private void changeSelectedSession(Session newSelectedSession)
+	{
+		selectedSession = newSelectedSession;
+	}
+}

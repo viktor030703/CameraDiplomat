@@ -1,0 +1,38 @@
+﻿@inject SessionsDbService dbService
+
+<div class="messageBoxBackground" @onclick="buttonClose" />
+
+<div class="messageBox errorContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader errorTextShadows addBottomBorder">
+			Удалить сессию
+		</div>
+
+		<div class="textPlace textContent">
+			Вы уверены, что хотите удалить сессию @sessionToDelete.Data
+		</div>
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="deleteSession">
+				Удалить
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Назад
+			</button>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+	[Parameter] public EventCallback buttonDelete { get; set; }
+
+	[Parameter] public Session sessionToDelete { get; set; }
+
+	private async Task deleteSession()
+	{
+		await dbService.DeleteSessionAsync(sessionToDelete);
+		await buttonClose.InvokeAsync();
+		await buttonDelete.InvokeAsync();
+	}
+}

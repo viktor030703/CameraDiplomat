@@ -10,8 +10,6 @@ namespace CameraDiplomat.Services
 		private const int HashSize = 32;
 		private const int Iterations = 10000;
 
-
-		//алгоритм PBKDF2
 		public static string HashPassword(string passwordToHash)
 		{
 			try
@@ -34,8 +32,6 @@ namespace CameraDiplomat.Services
 				return "error";
 			}
 		}
-
-
 		public static bool VerificatePassword(string password, string hashPasswordFromDb)
 		{
 			try

@@ -1,0 +1,7 @@
+﻿.messageBoxBackground{
+	z-index: 6;
+}
+
+.messageBox{
+	z-index: 7;
+}

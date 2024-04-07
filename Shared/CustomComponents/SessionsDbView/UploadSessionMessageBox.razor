@@ -1,0 +1,39 @@
+﻿@inject SessionsDbService dbService
+@inject StatsService statsService
+
+<div class="messageBoxBackground" @onclick="buttonClose"/>
+
+<div class="messageBox successContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader successTextShadows addBottomBorder">
+			Загрузить сессию
+		</div>
+
+		<div class="textPlace textContent">
+			Вы уверены, что хотите загрузить сессию @sessionToUpdate.Data
+		</div>
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="loadSession">
+				Загрузить
+			</button>
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Назад
+			</button>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	[Parameter] public Session sessionToUpdate { get; set; }
+
+	private async Task loadSession()
+	{
+		await statsService.AutoUpdateOrCreateSession();
+		statsService.LoadSessionFromDb(sessionToUpdate);
+		statsService.InvokeUpdateSessionView();
+		await buttonClose.InvokeAsync();
+		}
+}

@@ -1,9 +1,9 @@
 ﻿@inject TCPService tcpService
 @inject ConfigurationService configurationService;
 
-<div class="MessageBoxBackground" @onclick="buttonClose" />
+<div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
 
-<div class="MessageBox">
+<div class="messageBox">
 	<div class="container">
 		<div class="headerPlace textHeader">
 			Потеря соединения с камерой
@@ -38,7 +38,7 @@
 		</div>
 
 
-		<button class="buttonPlace btn btn-primary" @onclick="TryToConnected">
+		<button class="buttonPlace btn btn-primary buttonUp" @onclick="TryToConnected">
 			Подключиться
 		</button>
 
@@ -50,6 +50,8 @@
 
 	private string cameraIP;
 	private int cameraPort;
+
+
 
 	protected override void OnInitialized()
 	{

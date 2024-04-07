@@ -1,42 +1,68 @@
-﻿@page "/home"
-@* @inject TCPService tcpService  *@
-@inject NavigationManager nav
+﻿@page "/"
+@inject TCPService tcpService 
 @inject MessageDecoder messageDecoder
 @inject ProductsDbService ProductsDb
+@inject SessionsDbService SessionsDb
+@inject StatsService statsService
+@inject ConfigurationService configurationService
 
 @if (ShowSettingsMessageBox)
 {
-	<SettingMessageBox buttonClose="ChangeSettingsMBState" />
+	<SettingMessageBox buttonClose="ChangeSettingsMBState"/>
 }
 
 @if (ShowCameraUnavalibleMessageBox)
 {
-	<CameraConnectingMessageBox buttonClose="ChangeCantConnectToCameraMBState" />
+	<CameraConnectingMessageBox buttonClose="ChangeCameraLostConnectionMBState" />
 }
 
 @if (ShowDbUsersMessageBox)
 {
-	<DbUsersPage buttonClose="ChangeDbUsersMBState" openSettings="ChangeSettingsMBState"/>
+	<DbUsersPage buttonClose="ChangeDbUsersMBState" openSettings="ChangeSettingsMBState" />
 }
 
 @if (ShowDbProductsMessageBox)
 {
-	<DbProductsPage buttonClose="ChangeDbProductsMBState" openSettings="ChangeSettingsMBState"/>
+	<DbProductsPage buttonClose="ChangeDbProductsMBState" openSettings="ChangeSettingsMBState" />
 }
 
+@if (ShowDbSessionsMessageBox)
+{
+	<DbSessionsPage buttonClose="ChangeDbSessionsMBState" />
+}
+
+
+
+
+@if(ShowMarriagePercentWaringMessageBox)
+{
+	
+	<BigMarriageProcentMessageBox buttonClose="HideBigMarriageProcentMB"/>
+}
+
+
+
+@if (ShowMarriageCountInRowWaringMessageBox)
+{
+	<BigMarriageCountInRowMessageBox buttonClose="HideBigMarriageCountInRowMB"/>
+}
+
+
+
+ 
 @if (ShowMainContent)
 {
-	<div class="PageGrid">
+	<div class="pageGrid">
 
 		<div class="CameraStatusItemPlace">
 			<div class="objectFullScale">
-				@if(IsCameraConnected)
+				@if (IsCameraConnected)
 				{
-					<div class="oi oi-camera-slr headerIconics defaultBackground defaultContainerShadows" />
+					<div class="oi oi-camera-slr headerIconics defaultBackground defaultContainerShadows"/>
 				}
 				else
 				{
-					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" />
+					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick=ChangeCameraLostConnectionMBState/>
 				}
 			</div>
 		</div>
@@ -57,10 +83,10 @@
 
 
 		<div class="mainContentPlace">
-			<ProductDetail product="productDataToView" />
+			<ProductDetail product="productDataToView"/>
 		</div>
 
-		<div class="statisticsPlace" style="text-align:center">
+		<div class="statisticsPlace defaultBackground defaultContainerShadows">
 			<div class="textDisplay">
 				@statistic
 			</div>
@@ -86,23 +112,25 @@
 
 		<div class="buttonsPlace">
 			<div class="subContainer">
+				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="TestConnection">
+					one
+				</button>
 
-			<button class="btn btn-primary adminButtonsStyle" @onclick="TestConnection">
-				one
-			</button>
+				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="ChangeDbUsersMBState">
+					БД пользователи
+				</button>
 
-			<button class="btn btn-primary adminButtonsStyle" @onclick="ChangeDbUsersMBState">
-				БД пользователи
-			</button>
+				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="ChangeDbProductsMBState">
+					БД продукты
+				</button>
 
+				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="ChangeDbSessionsMBState">
+					БД сессии
+				</button>
 
-			<button class="btn btn-primary adminButtonsStyle" @onclick="ChangeDbProductsMBState" >
-				БД продукты
-			</button>
-
-			<button class="btn btn-primary adminButtonsStyle" @onclick="ButtonFourClicked">
-				four
-			</button>
+				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="UpdateStats">
+					Обнулить счётчик
+				</button>
 			</div>
 		</div>
 	</div>
@@ -110,34 +138,36 @@
 }
 
 @code {
-	private string statistic = "продуктов считано 1000, из них брковано 10 (1%)";
+	private string statistic = "Тут будет отображаться статистика серии";
 
 	private bool ShowSettingsMessageBox = false;
 	private bool ShowCameraUnavalibleMessageBox = false;
 
 	private bool ShowDbUsersMessageBox = false;
 	private bool ShowDbProductsMessageBox = false;
+	private bool ShowDbSessionsMessageBox = false;
 
 	private bool ShowMainContent = true;
 
+
+	private bool ShowMarriagePercentWaringMessageBox = false;//тестики!!!!
+	private bool ShowMarriageCountInRowWaringMessageBox = false;//тестики!!!!
+
+
 	private ProductViewModel productDataToView;
-	private bool IsCameraConnected = true;
+	private bool IsCameraConnected;
 
-
-	private void NewMessageGet(string msg)
+	private void NewMessageHandler(string msg)
 	{
-		statistic = msg;
-		Product newProduct = messageDecoder.MessegeDiplomat(msg);
-		if (newProduct != null)
+
+		Product newProduct = messageDecoder.MessegeDiplomat(msg, out ProductViewModel viewModel, out int checksCompleted);
+
+		if (newProduct != null & viewModel != null)
 		{
-
-			productDataToView.Text = newProduct.text;
-			productDataToView.QRCode = newProduct.code;
-			productDataToView.Quality = newProduct.percent.ToString();
-			productDataToView.Name = newProduct.productName;
-			productDataToView.CodeCorrect = newProduct.quality;
-
-			//ProductsDb.CreateProduct(newProduct);
+			productDataToView = viewModel;
+			statsService.NewProductChecked(checksCompleted);
+			statistic = statsService.GetStatsString();
+			//ProductsDb.CreateProductAsync(newProduct);// 
 		}
 		InvokeAsync(StateHasChanged);
 	}
@@ -145,100 +175,125 @@
 	private void TestConnection()
 	{
 		// tcpService.SendMessage("so");
-		nav.NavigateTo("/login");
 	}
 
 
-	protected override async void OnInitialized()
+	protected override void OnInitialized()
 	{
-
-
-		 productDataToView = new ProductViewModel(true, true, true, true,
+		productDataToView = new ProductViewModel(true, true, true, true,
 		"Название продукта", "Процент качества", "QR при наличии", "Текстовые надписи при наличии");
 
 
-		// tcpService.EventNewMessageGet += NewMessageGet;
-		// tcpService.EventCameraUnavalible += ChangeCameraUnavalibleMBState;
+		tcpService.EventNewMessageGet += NewMessageHandler;
+		tcpService.EventCameraUnavalible += ShowCameraUnavalibleMBState;
+		tcpService.EventCameraConnectedSuccessfully +=HideCameraUnavalibleMBState;
 
-		// tcpService.EventCheckCameraStatus();
+		statsService.EventNewSessionWasLoaded += ShowUploadedSession;
+
+		//tcpService.CheckConnectionNotNull();//if null event will invoke
+
+		Task.Run(tcpService.GetMessages); // read messages
+		statsService.ResetStats();//обновили счетчик статистики
+										// tcpService.StartTimer();
+		IsCameraConnected = configurationService.IsCameraConnected;
+		InvokeAsync(StateHasChanged);
 
 
-		// Task.Run(tcpService.GetMessages);
+		//Делегаты подписаться и установить переменные
+		//statsService.EventBigMarriageCount += 
 
-		// // nav.NavigateTo("/login");
 
+		statsService.StartAutoUploadActiveSessionInDb();
 	}
 
-	private void ChangeCameraUnavalibleMBState()
+	private void ShowCameraUnavalibleMBState()
+	{
+		ShowCameraUnavalibleMessageBox = true;
+		IsCameraConnected = configurationService.IsCameraConnected;
+		InvokeAsync(StateHasChanged);
+	}
+	private void HideCameraUnavalibleMBState()
+	{
+		ShowCameraUnavalibleMessageBox = false;
+		IsCameraConnected = configurationService.IsCameraConnected;
+		InvokeAsync(StateHasChanged);
+	}
+	private void ChangeCameraLostConnectionMBState()
 	{
 		ShowCameraUnavalibleMessageBox = !ShowCameraUnavalibleMessageBox;
 	}
-
 	private void ChangeSettingsMBState()
 	{
 		ShowSettingsMessageBox = !ShowSettingsMessageBox;
 	}
 
-	private void ChangeCantConnectToCameraMBState()
-	{
-		ShowCameraUnavalibleMessageBox = !ShowCameraUnavalibleMessageBox;
-	}
+
 
 	private void ChangeDbUsersMBState()
 	{
 		ShowDbUsersMessageBox = !ShowDbUsersMessageBox;
 		ShowMainContent = !ShowMainContent;
 	}
-
-
+	private void ChangeDbSessionsMBState()
+	{
+		ShowDbSessionsMessageBox = !ShowDbSessionsMessageBox;
+		ShowMainContent = !ShowMainContent;
+	}
 	private void ChangeDbProductsMBState()
 	{
 		ShowDbProductsMessageBox = !ShowDbProductsMessageBox;
 		ShowMainContent = !ShowMainContent;
 	}
-
-	private void ButtonFourClicked()
+	private void ChangeRefreshCameraStatusMBState()
 	{
-		nav.NavigateTo("/login");
+		IsCameraConnected = tcpService.BooleanCheckCameraStatus();
+		if(IsCameraConnected)
+		{
+			ShowCameraUnavalibleMessageBox = false;
+			InvokeAsync(StateHasChanged);
+		}
+		else
+		{
+			ShowCameraUnavalibleMessageBox = true;
+			InvokeAsync(StateHasChanged);
+		}
 	}
 
 
+	public void ShowBigMarriageProcentMB()
+	{
+		ShowMarriagePercentWaringMessageBox = true;
+	}
 
+	public void HideBigMarriageProcentMB()
+	{
+		ShowMarriagePercentWaringMessageBox = true;
+	}
 
+	public void ShowBigMarriageCountInRowMB()
+	{
+		ShowMarriageCountInRowWaringMessageBox = true;
+	}
 
+	public void HideBigMarriageCountInRowMB()
+	{
+		ShowMarriageCountInRowWaringMessageBox = false;
+	}
 
+	private async void UpdateStats()
+	{
+		await statsService.AutoUpdateOrCreateSession();
+		statsService.ResetStats();
+		statistic = statsService.GetStatsString();
+		await InvokeAsync(StateHasChanged);
+	}
 
-
-
-
-
-	// Определение делегата
-	// public delegate string MessageReceivedDelegate(string message);
-
-	// // Метод, который соответствует сигнатуре делегата
-	// public string OnMessageReceived(string message)
-	// {
-	// 	// Обработка сообщения и возврат текста
-	// 	string response = $"Получено сообщение: {message}";
-	// 	return response;
-		// }
-
-	// // Использование делегата
-	// public void UseDelegate()
-	// {
-	// 	// Создание экземпляра делегата
-	// 	MessageReceivedDelegate messageDelegate = OnMessageReceived;
-
-	// 	// Получение сообщения
-	// 	string message = "Привет, мир!";
-
-	// 	// Вызов делегата и получение текста
-	// 	string response = messageDelegate(message);
-
-	// 	// Вывод ответа
-	// 	Console.WriteLine(response);
-		// }
-
+	private async void ShowUploadedSession()
+	{
+		await statsService.AutoUpdateOrCreateSession();
+		statistic = statsService.GetStatsString();
+		await InvokeAsync(StateHasChanged);
+	}
 }
 
 

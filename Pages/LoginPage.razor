@@ -1,11 +1,31 @@
-﻿@page "/"
+﻿@page "/login"
 @inject UsersDbService userService
 @inject NavigationManager navigationManager
+
+@if (IsLoginFail)
+{
+	<LoginErrorMessageBox buttonClose="ChangeLoginErrorMBState" />
+}
+
+@if (ShowInfoMessageBox)
+{
+	<InfoMessageBox buttonClose="ChangeShowInfoMBState" />
+}
+
+@if (ShowSettingsMessageBox)
+{
+	<SettingMessageBox buttonClose="ChangeSettingsMBState"/>
+}
+
+@if (IsLoginSuccess)
+{
+	<LoginSuccessMessageBox/>
+}
 
 <div class="PageGrid">
 	<div class="navigationItemPlace">
 		<div class="objectFullScale">
-			<div class="oi oi-lock-locked headerIconics customButton" @onclick="ChangeShowInfoMBState" />
+			<div class="oi oi-info headerIconics customButton" @onclick="ChangeShowInfoMBState"></div>
 		</div>
 	</div>
 
@@ -51,20 +71,6 @@
 	</div>
 </div>
 
-@if (IsLoginFail)
-{
-	<LoginErrorMessageBox buttonClose="CloseMessageBox" />
-}
-
-@if (ShowInfoMessageBox)
-{
-	<InfoErrorMessageBox buttonClose="CloseMessageBox" />
-}
-
-@if (ShowSettingsMessageBox)
-{
-	<SettingMessageBox buttonClose="ChangeSettingsMBState"/>
-}
 
 
 @code {
@@ -75,12 +81,24 @@
 
 	private bool ShowSettingsMessageBox = false;
 	private bool ShowInfoMessageBox = false;
+	private bool IsLoginSuccess = false;
+
+	protected override async void OnInitialized()
+	{
+		List<User> usersFromDb = userService.GetUsers();
+		if(usersFromDb.Count == 0)
+		{
+			IsLoginSuccess = true;
+			navigationManager.NavigateTo("/home");
+		}
+	}
 
 	private void buttonLoginClick()
 	{
 		string autintificateStatus = userService.Authentificate(login, password);
 		if (autintificateStatus.Equals("success"))
 		{
+			IsLoginSuccess = true;
 			navigationManager.NavigateTo("/home");
 		}
 		else
@@ -89,7 +107,7 @@
 		}
 	}
 
-	private void CloseMessageBox()
+	private void ChangeLoginErrorMBState()
 	{
 		IsLoginFail = false;
 	}

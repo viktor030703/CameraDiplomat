@@ -1,25 +1,21 @@
 ﻿using System.Net.Sockets;
+using System.Text;
 
 namespace CameraDiplomat.Services
 {
 	public class TCPService
 	{
 		public delegate void NewMessageGetter(string message);
-		public delegate void MessageSenderFeedback(string message);
 		public delegate void MesssageCameraUnavalible();
+		public delegate void CameraConnectedSuccessfully();
 
 		public event NewMessageGetter EventNewMessageGet;
-		public event NewMessageGetter EventSenderFeedback;
 		public event MesssageCameraUnavalible EventCameraUnavalible;
+		public event CameraConnectedSuccessfully EventCameraConnectedSuccessfully;
 
 		private SemaphoreSlim _readLock = new SemaphoreSlim(1, 1);
 
-
-		//Взять с сервиса!
 		private ConfigurationService _configurationService;
-		public string CameraIP;
-		public int CameraPort;
-		//Взять с сервиса!
 
 		private TcpClient _tcpClient;
 		private StreamReader _reader;
@@ -27,48 +23,72 @@ namespace CameraDiplomat.Services
 		private NetworkStream stream;
 
 
-		private int millisecondsToTimerEplisted = 500;
-
 		private System.Timers.Timer timer = new System.Timers.Timer();
-		private int interval = 500;
 
-		public void StartTimer()
-		{
-			timer.Interval = interval;
-			timer.AutoReset = true;
-			timer.Start();
-			timer.Elapsed += (e, args) => MonitorIfCameraConnectedByTimer();
-		}
 
 		public TCPService(ConfigurationService service)
 		{
 			_configurationService = service;
-			CameraIP = service.CameraIP;
-			CameraPort = service.CameraPort;
-
-
-
 			ConnectToCamera();
-
-
+			TimerInitialization();
 		}
 
+		public void CameraDisconnectHandler()
+		{
+			_configurationService.IsCameraConnected = false;
+			EventCameraUnavalible?.Invoke();
+			Disconnect();
+		}
+
+		public void CameraConnectHandler()
+		{
+			_configurationService.IsCameraConnected = true;
+			EventCameraConnectedSuccessfully?.Invoke();
+		}
+
+		private void TimerInitialization()
+		{
+			timer.Interval = _configurationService.tcpTimerInterval;
+			timer.AutoReset = true;
+			timer.Elapsed += (e, args) => MonitorIfCameraConnectedByTimer();
+		}
+		public void StartTimer()
+		{
+			timer.Start();
+		}
 
 		public void MonitorIfCameraConnectedByTimer()
 		{
-			//if (_tcpClient.)
-			//EventCameraUnavalible.Invoke();
-		}
-
-
-		public void EventCheckCameraStatus()
-		{
 			if (_tcpClient == null || _reader == null || _writer == null)
 			{
-				EventCameraUnavalible?.Invoke();
+				try
+				{
+					_writer.WriteLine(".");
+					_writer.Flush();
+				}
+				catch (SocketException ex)
+				{
+					CameraDisconnectHandler();
+
+				}
+				catch (Exception ex)
+				{
+					CameraDisconnectHandler();
+				}
+			}
+			else
+			{
+				CameraDisconnectHandler();
 			}
 		}
 
+		public void CheckConnectionNotNull()
+		{
+			if (_tcpClient == null || _reader == null || _writer == null)
+			{
+				CameraDisconnectHandler();
+			}
+		}
 
 		public bool BooleanCheckCameraStatus()
 		{
@@ -86,39 +106,33 @@ namespace CameraDiplomat.Services
 		{
 			try
 			{
-
-				_tcpClient = new TcpClient(CameraIP, CameraPort);
-
+				_tcpClient = new TcpClient(_configurationService.CameraIP, _configurationService.CameraPort);
 				if (_tcpClient.Connected)
 				{
 					stream = _tcpClient.GetStream();
 					_reader = new StreamReader(stream);
 					_writer = new StreamWriter(stream);
-
-
+					CameraConnectHandler();
 				}
 				else
 				{
-					EventCameraUnavalible?.Invoke();
+					CameraDisconnectHandler();
 				}
 			}
 			catch (SocketException ex)
 			{
-				EventCameraUnavalible?.Invoke();
+				CameraDisconnectHandler();
 			}
 			catch (Exception E)
 			{
-				EventCameraUnavalible?.Invoke();
+				CameraDisconnectHandler();
 			}
 		}
 
 		public void ConnectToCamera(string IP, int port)
 		{
-
-
 			try
 			{
-				//Disconnect();
 				_tcpClient = new TcpClient(IP, port);
 
 				if (_tcpClient.Connected)
@@ -126,44 +140,39 @@ namespace CameraDiplomat.Services
 					stream = _tcpClient.GetStream();
 					_reader = new StreamReader(stream);
 					_writer = new StreamWriter(stream);
+					CameraConnectHandler();
 				}
 				else
 				{
-					EventCameraUnavalible?.Invoke();
+					CameraDisconnectHandler();
 				}
 			}
 			catch (SocketException ex)
 			{
-				EventCameraUnavalible?.Invoke();
+				CameraDisconnectHandler();
 			}
 			catch (Exception E)
 			{
-				EventCameraUnavalible?.Invoke();
+				CameraDisconnectHandler();
 			}
-
 		}
-
-
 		public async void GetMessages()
 		{
 			string? messageFromServer;
-
 			{
-
 				while (true)
 				{
 					if (_reader != null & _writer != null)
 					{
 						try
 						{
-							await _readLock.WaitAsync();
-
+							//await _readLock.WaitAsync();
 							messageFromServer = await _reader.ReadLineAsync();
 							if (!String.IsNullOrEmpty(messageFromServer))
 							{
 								EventNewMessageGet?.Invoke(messageFromServer);
 							}
-							Thread.Sleep(1000);
+							Thread.Sleep(10);
 						}
 						catch (Exception E)
 						{
@@ -171,38 +180,54 @@ namespace CameraDiplomat.Services
 						}
 						finally
 						{
-							_readLock.Release();
+							//_readLock.Release();
 						}
 					}
 					else
 					{
-						Disconnect();
-						EventCameraUnavalible?.Invoke();
+						CameraDisconnectHandler();
 						break;
 					}
 				}
 			}
 		}
 
-		public async Task SendMessage(string message)
+
+		public async Task CustomPingServer()
 		{
+			//if(_tcpClient != null)
+			//{
+			//	byte[] buf = Encoding.ASCII.GetBytes("ping");
+			//	_writer.Write('', 0, buf.Length);
+
+			//}
+			//else
+			//{
+			//	CameraConnectHandler();
+			//}
+		}
+		
+		public async Task<string> SendMessage(string message)
+		{
+			string response = String.Empty;
 			if (_tcpClient == null & _reader != null & _writer != null)
 			{
 				try
 				{
 					await _writer.WriteAsync(message);
 					await _writer.FlushAsync();
-					EventSenderFeedback("ok");
+					response = await _reader.ReadLineAsync();
 				}
 				catch (Exception ex)
 				{
-					EventCameraUnavalible?.Invoke();
+					CameraDisconnectHandler();
 				}
 			}
 			else
 			{
-				EventCameraUnavalible?.Invoke();
+				CameraDisconnectHandler();
 			}
+			return response;
 		}
 
 		public void Disconnect()

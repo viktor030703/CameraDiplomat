@@ -27,8 +27,8 @@
 
 <div class="PageGrid">
 	<div class="navigationItemPlace">
-		<div class="objectFullScale">
-			<div class="oi oi-chevron-left headerIconics customButton" @onclick="()=>buttonClose.InvokeAsync()" />
+		<div class="objectFullScale customButton">
+			<div class="oi oi-chevron-left headerIconics" @onclick="()=>buttonClose.InvokeAsync()" />
 		</div>
 	</div>
 
@@ -39,8 +39,8 @@
 	</div>
 
 	<div class="settingsIconPlace">
-		<div class="objectFullScale">
-			<div class="oi oi-cog headerIconics customButton" @onclick="()=>openSettings.InvokeAsync()" />
+		<div class="objectFullScale customButton">
+			<div class="oi oi-cog headerIconics " @onclick="()=>openSettings.InvokeAsync()" />
 		</div>
 	</div>
 
@@ -50,10 +50,10 @@
 
 	<div class="buttonsPlace">
 		<div class="buttonsContainer">
-			<button class="btn btn-primary customButton" @onclick="ChangeAddProductMBState">Добавить</button>
-			<button class="btn btn-danger customButton" @onclick="ChangeDeleteProductMBState">Удалить</button>
-			<button class="btn btn-primary customButton" @onclick="ChangeGetProductInfoMBState">Подробнее</button>
-			<button class="btn btn-danger customButton" @onclick="ChangeDeleteProductsDbMBState">Удалить всё</button>
+			<button class="btn customButton" @onclick="ChangeAddProductMBState">Добавить</button>
+			<button class="btn customButton errorBackground" @onclick="ChangeDeleteProductMBState">Удалить</button>
+			<button class="btn customButton errorBackground" @onclick="ChangeDeleteProductsDbMBState">Удалить всё</button>
+			<button class="btn customButton" @onclick="ChangeGetProductInfoMBState">Подробнее</button>
 		</div>
 	</div>
 </div>

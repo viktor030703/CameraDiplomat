@@ -1,0 +1,15 @@
+﻿.uploadButtonStyle{
+    position: relative;
+    top: 1vh;
+    height: 7vh;
+    width: 50%;
+}
+
+.otherButtonsStyle {
+    width: 40vw;
+    height:7vh
+}
+
+.subContainer{
+    height: 7vh;
+}

@@ -3,7 +3,7 @@
 <div class="messageBox successContainerShadows">
 	<div class="container">
 		<div class="headerPlace textHeader successTextShadows addBottomBorder">
-			Данные пользователя
+			Данные сессии
 		</div>
 
 		@if (thereIsError)
@@ -22,10 +22,10 @@
 		<div class="textPlace textContent">
 			<div class="subContainer">
 				<div class="textContent">
-					Имя:
+					Добавил:
 				</div>
 				<div class="textContent">
-					@Login
+					@userLogin
 				</div>
 			</div>
 		</div>
@@ -33,32 +33,43 @@
 		<div class="textPlace textContent">
 			<div class="subContainer">
 				<div class="textContent">
-					Пароль:
+					Всего продукта:
+				</div>
+				<div class="textContent">
+					@totalCount
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Всего брака:
+				</div>
+				<div class="textContent">
+					@marriageCount
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Процент брака:
+				</div>
+				<div class="textContent">
+					@marriagePercent
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Начали/закончили:
 				</div>
 				<div class="textContent textScroll">
-					@Password
-				</div>
-			</div>
-		</div>
-
-		<div class="textPlace textContent">
-			<div class="subContainer">
-				<div class="textContent">
-					Роль:
-				</div>
-				<div class="textContent">
-					@Role
-				</div>
-			</div>
-		</div>
-
-		<div class="textPlace textContent">
-			<div class="subContainer">
-				<div class="textContent">
-					Последний вход:
-				</div>
-				<div class="textContent">
-					@LoginData
+					@time
 				</div>
 			</div>
 		</div>
@@ -74,24 +85,27 @@
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
-	[Parameter] public User userToGetInfo { get; set; }
+	[Parameter] public Session sessionToGetInfo { get; set; }
 
-	private string Login { get; set; }
-	private string Password { get; set; }
-	private string Role { get; set; }
-	private string LoginData { get; set; }
+
+	private string userLogin { get; set; }
+	private int totalCount { get; set; }
+	private int marriageCount { get; set; }
+	private string time { get; set; }
+	private string marriagePercent { get; set; }
 
 	private string message = "Данные загружены";
 	private bool thereIsError = false;
 
 	protected override void OnInitialized()
 	{
-		if (userToGetInfo != null)
+		if (sessionToGetInfo != null)
 		{
-			Login = userToGetInfo.login;
-			Password = userToGetInfo.password;
-			Role = userToGetInfo.role;
-			LoginData = userToGetInfo.lastLoginData;
+			userLogin = sessionToGetInfo.creatorsLogin;
+			totalCount = sessionToGetInfo.TotalCount;
+			marriageCount = sessionToGetInfo.MarriageCount;
+			marriagePercent = sessionToGetInfo.MarriagePercent;
+			time = sessionToGetInfo.Data;
 		}
 		else
 		{

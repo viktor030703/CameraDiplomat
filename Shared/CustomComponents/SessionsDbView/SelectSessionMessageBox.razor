@@ -1,4 +1,4 @@
-﻿<div class="messageBoxBackground" @onclick="buttonClose" />
+﻿<div class="messageBoxBackground" @onclick="() => buttonClose.InvokeAsync()" />
 
 <div class="messageBox errorContainerShadows">
 	<div class="container">
@@ -10,7 +10,7 @@
 			Пожалуйста, выберите объект из таблицы
 		</div>
 
-		<button class="btn btn-primary buttonPlace" @onclick="()=>buttonClose.InvokeAsync()">
+		<button class="btn btn-primary buttonPlace buttonUp" @onclick="()=>buttonClose.InvokeAsync()">
 			Закрыть и выбрать
 		</button>
 

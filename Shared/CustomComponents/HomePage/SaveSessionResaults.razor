@@ -1,0 +1,56 @@
+﻿@inject UsersDbService dbService
+
+<div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
+
+
+@if(OperationResault)
+{
+<div class="messageBox successContainerShadows">
+	<div class="container">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows">
+			Успешно
+		</div>
+
+
+		<div class="textPlace textContent">
+			Операция успешно выполнена!
+		</div>
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+				Закрыть
+			</button>
+		</div>
+	</div>
+	</div>
+}
+else
+{
+	<div class="messageBox errorContainerShadows">
+		<div class="container">
+			<div class="headerPlace textHeader addBottomBorder errorTextShadows">
+				Не вышло
+			</div>
+
+
+			<div class="textPlace textContent">
+				Не удалось провести операцию!
+			</div>
+
+			<div class="subContainer buttonUp">
+				<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
+					Закрыть
+				</button>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	[Parameter] public bool OperationResault{ get; set; }
+}
+
+
+

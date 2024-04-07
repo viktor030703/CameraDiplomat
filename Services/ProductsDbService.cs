@@ -1,31 +1,32 @@
 ﻿using CameraDiplomat.Context;
 using CameraDiplomat.Entities;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace CameraDiplomat.Services
 {
 	public class ProductsDbService
 	{
-		ApplicationContext db = new ApplicationContext();
+		ApplicationContext _db;
 
-	
+		public ProductsDbService(ApplicationContext db)
+		{
+			_db = db;
+		}
 		public void CheckDbExist()
 		{
-			db.Database.EnsureCreated();
-			db.SaveChanges();
+			_db.Database.EnsureCreated();
+			_db.SaveChanges();
 		}
 
 		public async Task CreateProductAsync(Product newProduct)
 		{
-			db.Products.Add(newProduct);
-			await db.SaveChangesAsync();
+			_db.Products.Add(newProduct);
+			await _db.SaveChangesAsync();
 		}
 
 		public async Task ChangeProductAsync(Product oldProduct, Product newProduct)
 		{
-			await db.Products.FindAsync(oldProduct);
-			db.Products.Update(oldProduct);
+			await _db.Products.FindAsync(oldProduct);
+			_db.Products.Update(oldProduct);
 
 			if(!String.IsNullOrEmpty(newProduct.Id)) 
 				oldProduct.Id = newProduct.Id;
@@ -35,40 +36,29 @@ namespace CameraDiplomat.Services
 
 			if (!String.IsNullOrEmpty(newProduct.text))
 				oldProduct.text = newProduct.text;
-
-			
+	
 			oldProduct.percent = newProduct.percent;
 			oldProduct.quality = newProduct.quality;
 
-			await db.SaveChangesAsync();
-
+			await _db.SaveChangesAsync();
 		}
 
 		public async Task DeleteProductAsync(Product userToDelete)
 		{
-			db.Products.Remove(userToDelete);
-			await db.SaveChangesAsync();
+			_db.Products.Remove(userToDelete);
+			await _db.SaveChangesAsync();
 		}
 
 		public List<Product> GetProducts()
 		{
-			return db.Products.ToList();
+			return _db.Products.ToList();
 		}
-
 
 		public async Task ClearProductDbAsync()
 		{
-
-			var table = db.Set<Product>();
-
-			db.RemoveRange(table);
-			await db.SaveChangesAsync();
+			var table = _db.Set<Product>();
+			_db.RemoveRange(table);
+			await _db.SaveChangesAsync();
 		}
 	}
-	
-		
-
-
-
-
 }
