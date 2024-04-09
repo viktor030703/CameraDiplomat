@@ -1,4 +1,17 @@
 ﻿<div class="flexTable">
+
+		<div class="item">
+		<div class="searchItem">
+			<input type="text" class="objectFullScale" @bind="substringToSerch" />
+		</div>
+
+		<div class="cell">
+			<button class="btn btn-primary fullScale customButton defaultBackground" @onclick="LaunchNewFilter">
+					<div class="oi oi-magnifying-glass" />
+			</button>
+		</div>
+	</div>
+
 	<div class="item">
 		<div class="addWideBorderToCell cell"> Логин </div>
 		<div class="addWideBorderToCell cell"> Пароль </div>
@@ -6,34 +19,51 @@
 		<div class="addWideBorderToCell cell"> Входил </div>
 	</div>
 
-	@foreach (User user in usersFromDb)
+	@if (usersAfterFilter.Count() != 0)
 	{
-		@if (user == userToAddBackgroung)
+		@foreach (User user in usersAfterFilter)
 		{
-			<div class="item addBackgroungToElement" @onclick="()=>selectedUser.InvokeAsync(user)">
-				<div class="addNarrowBorderToCell cell"> @user.login </div>
-				<div class="addNarrowBorderToCell cell"> @user.password </div>
-				<div class="addNarrowBorderToCell cell"> @user.role </div>
-				<div class="addNarrowBorderToCell cell"> @user.lastLoginData </div>
-			</div>
-		}
-		else
-		{
-			<div class="itemToSelect" @onclick="()=>UserSelectSmb(user)">
-				<div class="addNarrowBorderToCell cell"> @user.login </div>
-				<div class="addNarrowBorderToCell cell"> @user.password </div>
-				<div class="addNarrowBorderToCell cell"> @user.role </div>
-				<div class="addNarrowBorderToCell cell"> @user.lastLoginData </div>
-			</div>
+			@if (user == userToAddBackgroung)
+			{
+				<div class="item addBackgroungToElement" @onclick="()=>selectedUser.InvokeAsync(user)">
+					<div class="addNarrowBorderToCell cell"> @user.login </div>
+					<div class="addNarrowBorderToCell cell"> @user.password </div>
+					<div class="addNarrowBorderToCell cell"> @user.role </div>
+					<div class="addNarrowBorderToCell cell"> @user.lastLoginData </div>
+				</div>
+			}
+			else
+			{
+				<div class="itemToSelect" @onclick="()=>UserSelectSmb(user)">
+					<div class="addNarrowBorderToCell cell"> @user.login </div>
+					<div class="addNarrowBorderToCell cell"> @user.password </div>
+					<div class="addNarrowBorderToCell cell"> @user.role </div>
+					<div class="addNarrowBorderToCell cell"> @user.lastLoginData </div>
+				</div>
+			}
 		}
 	}
+	else
+	{
+		<h1 class="textHeader addBottomBorder"> Ничего не найдено</h1>
+	}
+
 </div>
 
 @code {
 	[Parameter] public List<User> usersFromDb { get; set; }
 	[Parameter] public EventCallback<User> selectedUser { get; set; }
 
+	private string substringToSerch;
+	private List<User> usersAfterFilter { get; set; }
+
 	private User userToAddBackgroung { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		LaunchNewFilter();
+		StateHasChanged();
+	}
 
 	private async Task UserSelectSmb(User user)
 	{
@@ -45,5 +75,19 @@
 	private async Task ReturnSelectedUser(User user)
 	{
 		await selectedUser.InvokeAsync(user);
+	}
+
+	private void LaunchNewFilter()
+	{
+		if (!string.IsNullOrEmpty(substringToSerch))
+		{
+			usersAfterFilter = usersFromDb.Where(h => h.login.Contains(substringToSerch) || h.password.Contains(substringToSerch)
+			|| h.role.Contains(substringToSerch)).ToList();
+		}
+		else
+		{
+			usersAfterFilter = usersFromDb;
+		}
+		InvokeAsync(StateHasChanged);
 	}
 }

@@ -1,5 +1,5 @@
-﻿@inject ProductsDbService productService
-
+﻿@inject IProductsDbService productService
+@inject ConfigurationService configurationService
 
 <div class="messageBoxBackground" @onclick="buttonClose" />
 
@@ -40,7 +40,7 @@
 					Качество
 				</div>
 				<div class="textContent">
-					<select class="form-select" aria-label="default exapmple" @bind=quality>
+					<select class="form-select" aria-label="default exapmple" style="text-align:center" @bind=quality>
 						<option selected>Выбрать качество</option>
 						<option value="true">Хорошее</option>
 						<option value="false">Брак</option>
@@ -130,6 +130,7 @@
 				newProduct.quality = Boolean.Parse(quality);
 				newProduct.text = text;
 				newProduct.code = code;
+				newProduct.loginUserWichLeaveProduct = configurationService.activeUser.login;
 				try
 				{
 					newProduct.percent = Int32.Parse(percent);
@@ -159,6 +160,3 @@
 		}
 	}
 }
-
-
-

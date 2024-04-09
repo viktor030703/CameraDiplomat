@@ -1,15 +1,25 @@
 ﻿.uploadButtonStyle{
     position: relative;
     top: 1vh;
-    height: 7vh;
+    height: 5vh;
     width: 50%;
 }
 
 .otherButtonsStyle {
     width: 40vw;
-    height:7vh
+    height:5vh
 }
 
 .subContainer{
-    height: 7vh;
+    height: 5vh;
+}
+
+.titleHeight{
+    height : 10vh;
+}
+
+.styleForTextCentrise {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

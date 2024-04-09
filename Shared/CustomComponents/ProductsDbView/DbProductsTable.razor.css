@@ -22,6 +22,14 @@
     width: 100%;
 }
 
+.searchItem {
+    display: flex;
+    width: 100%;
+    flex-basis: 83.4%;
+    margin-top:1vh;
+    margin-bottom:1vh;
+}
+
 .itemToSelect {
     display: flex;
     width: 100%;

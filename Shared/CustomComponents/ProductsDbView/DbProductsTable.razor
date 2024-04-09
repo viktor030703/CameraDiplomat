@@ -1,4 +1,17 @@
 ﻿<div class="flexTable">
+
+	<div class="item">
+		<div class="searchItem">
+			<input type="text" class="objectFullScale" @bind="substringToSerch" />
+		</div>
+
+		<div class="cell">
+			<button class="btn btn-primary fullScale customButton defaultBackground" @onclick="LaunchNewFilter">
+					<div class="oi oi-magnifying-glass" />
+			</button>
+		</div>
+	</div>
+
 	<div class="item">
 		<div class="addWideBorderToCell cell"> Название </div>
 		<div class="addWideBorderToCell cell"> Качество </div>
@@ -7,8 +20,9 @@
 		<div class="addWideBorderToCell cell"> Надпись </div>
 		<div class="addWideBorderToCell cell"> Дата </div>
 	</div>
-
-	@foreach (Product product in productsFromDb)
+	@if(productsAfterFilter.Count() != 0)
+	{
+	@foreach (Product product in productsAfterFilter)
 	{
 		@if (product == userToAddBackgroung)
 		{
@@ -33,6 +47,11 @@
 			</div>
 		}
 	}
+	}
+	else
+	{
+		<h1 class="textHeader addBottomBorder"> Ничего не найдено</h1>
+	}
 </div>
 
 
@@ -43,6 +62,15 @@
 
 	private Product userToAddBackgroung { get; set; }
 
+	private string substringToSerch;
+	private List<Product>? productsAfterFilter { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		LaunchNewFilter();
+		StateHasChanged();
+	}
+
 	private async Task UserSelectSmb(Product productUserClicked)
 	{
 		userToAddBackgroung = productUserClicked;
@@ -50,9 +78,23 @@
 		StateHasChanged();
 	}
 
-
 	private async Task ReturnSelectedProduct(Product product)
 	{
 		await selectedProduct.InvokeAsync(product);
+	}
+
+	private void LaunchNewFilter()
+	{
+		if(!string.IsNullOrEmpty(substringToSerch))
+		{
+			productsAfterFilter = productsFromDb.Where(h => h.text.Contains(substringToSerch) || h.productName.Contains(substringToSerch)
+			|| h.code.Contains(substringToSerch) || h.data.Contains(substringToSerch) || h.quality.ToString().Contains(substringToSerch) 
+			|| h.percent.ToString().Contains(substringToSerch) || h.loginUserWichLeaveProduct.Contains(substringToSerch)).ToList();
+		}
+		else
+		{
+			productsAfterFilter = productsFromDb;
+		}
+		InvokeAsync(StateHasChanged);
 	}
 }

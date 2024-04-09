@@ -1,0 +1,9 @@
+﻿.textScroll {
+    overflow: scroll;
+}
+
+.subContainer {
+    overflow: hidden;
+    border-radius:5px;
+    border: solid 2px black;
+}

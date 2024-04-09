@@ -1,31 +1,40 @@
 ﻿using CameraDiplomat.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CameraDiplomat.Interfaces;
+using Serilog;
 
 namespace CameraDiplomat.Services
 {
-	public class DbMainController
+	public class DbMainController : IDbMainController
 	{
-		private ApplicationContext db = new ApplicationContext();
+		private readonly ApplicationContext _db;
+		private readonly ConfigurationService _configurationService;
+		public DbMainController(ApplicationContext db, ConfigurationService configurationService)
+		{
+			_db = db;
+			_configurationService = configurationService;
+		}
 		public void DeleteDb()
 		{
-			db.Database.EnsureDeleted();
-			db.SaveChanges();
+			Log.Error(_configurationService.activeUser.login + "удаляет базу данных");
+			_db.dbAccessSemaphore.Wait();
+			_db.Database.EnsureDeleted();
+			_db.SaveChanges();
+			_db.dbAccessSemaphore.Release();
 		}
 		public void CreateDb()
 		{
-			db.Database.EnsureCreated();
-			db.SaveChanges();
+			Log.Error(_configurationService.activeUser.login + "создает НОВУЮ базу данных");
+			_db.dbAccessSemaphore.Wait();
+			_db.Database.EnsureCreated();
+			_db.SaveChanges();
+			_db.dbAccessSemaphore.Release();
 		}
-
 		public bool CheckDbExist()
 		{
-			bool response = db.Database.CanConnect();
+			_db.dbAccessSemaphore.Wait();
+			bool response = _db.Database.CanConnect();
+			_db.dbAccessSemaphore.Release();
 			return response;
 		}
-
 	}
 }

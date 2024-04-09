@@ -1,10 +1,1 @@
-{
-  "exclude": [
-    "**/bin",
-    "**/bower_components",
-    "**/jspm_packages",
-    "**/node_modules",
-    "**/obj",
-    "**/platforms"
-  ]
-}
+{"activeUser":{"id":"f3c5d80f-54d5-46fc-a43b-391bee201f1b","login":"user","password":"la2VJZx1dn5tI1hfggBEhYbGBLoYktFzfew9NrZRGLfDo4sHHsFkXYTa0aPe8TOy","role":"admin","lastLoginData":"-"},"CameraPort":6000,"CameraIP":"10.162.0.99","TcpTimeout":250,"PathToJson":"D:\\Projects\\CameraDiplomat\\AppConfiguretion.json","PathToLoggerFile":"D:\\Projects\\CameraDiplomat\\Logs.txt","PathToDb":"D:\\Projects\\CameraDiplomat\\CamerasDimplomat.db","LogsTimerInterval":11000,"DbTimerInterval":10,"IsSettingFromJSON":true,"IsDbFatalError":false,"SaveDataInAppFolder":true,"IsCameraConnected":false,"MonitorMarriagePercent":false,"MonitorMarriageCountInRow":false,"PartsCodeIncludeAfterSplit":13,"TextPattern":"Hello","SymbolsByWichWeSplit":["<",">"],"CodeLength":10,"TotalChecksCount":3,"MarriageMaxCountInRow":3,"MarriageMaxPercent":60.0,"MinMathSet":10}

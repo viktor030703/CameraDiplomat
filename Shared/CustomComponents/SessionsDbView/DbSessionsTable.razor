@@ -1,4 +1,17 @@
 ﻿<div class="flexTable">
+
+	<div class="item">
+		<div class="searchItem">
+			<input type="text" class="objectFullScale" @bind="substringToSerch" />
+		</div>
+
+		<div class="cell">
+			<button class="btn btn-primary fullScale customButton defaultBackground" @onclick="LaunchNewFilter">
+				<div class="oi oi-magnifying-glass" />
+			</button>
+		</div>
+	</div>
+
 	<div class="item">
 		<div class="addWideBorderToCell bigCell"> Добавил </div>
 		<div class="addWideBorderToCell cell"> Всего </div>
@@ -7,7 +20,9 @@
 		<div class="addWideBorderToCell bigCell"> Начал/завершил </div>
 	</div>
 
-	@foreach (Session session in sessionsFromDb)
+	@if(sessionsAfterFilter.Count() != 0)
+	{
+	@foreach (Session session in sessionsAfterFilter)
 	{
 		@if (session == sessionToAddBackgroung)
 		{
@@ -29,6 +44,11 @@
 				<div class="addNarrowBorderToCell bigCell"> @session.Data </div>
 			</div>
 		}
+		}
+	}
+	else
+	{
+		<h1 class="textHeader addBottomBorder"> Ничего не найдено</h1>
 	}
 </div>
 
@@ -36,7 +56,15 @@
 	[Parameter] public List<Session> sessionsFromDb { get; set; }
 	[Parameter] public EventCallback<Session> newSelectedSession { get; set; }
 
+	private string substringToSerch;
 	private Session sessionToAddBackgroung { get; set; }
+	private List<Session> sessionsAfterFilter { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		LaunchNewFilter();
+		StateHasChanged();
+	}
 
 	private async Task UserSelectSmt(Session session)
 	{
@@ -48,5 +76,20 @@
 	private async Task ReturnSelectedUser(Session session)
 	{
 		await newSelectedSession.InvokeAsync(session);
+	}
+
+	private void LaunchNewFilter()
+	{
+		if (!string.IsNullOrEmpty(substringToSerch))
+		{
+			sessionsAfterFilter = sessionsFromDb.Where(h => h.creatorsLogin.Contains(substringToSerch) || h.Data.Contains(substringToSerch)
+			|| h.MarriageCount.ToString().Contains(substringToSerch) || h.MarriagePercent.Contains(substringToSerch) ||
+			h.TotalCount.ToString().Contains(substringToSerch)).ToList();
+		}
+		else
+		{
+			sessionsAfterFilter = sessionsFromDb;
+		}
+		InvokeAsync(StateHasChanged);
 	}
 }

@@ -5,3 +5,11 @@
 .subContainer {
 	overflow: hidden;
 }
+
+
+.messageBox {
+	height: 96vh;
+	width: 80%;
+	left: 10%;
+	top: 2vh;
+}

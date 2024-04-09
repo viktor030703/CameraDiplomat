@@ -1,16 +1,10 @@
-﻿using CameraDiplomat.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CameraDiplomat.Entities;
+﻿using CameraDiplomat.Entities;
 
 namespace CameraDiplomat.Services
 {
 	public class SessionCustomDesigner
 	{
-		private ConfigurationService _configurationService;
+		private readonly ConfigurationService _configurationService;
 		public SessionCustomDesigner(ConfigurationService configurationService)
 		{
 			_configurationService = configurationService;
@@ -24,14 +18,8 @@ namespace CameraDiplomat.Services
 			session.MarriageCount = marrageCount;
 			double MarriagePercent = (double)marrageCount / totalCount * 100;
 			session.MarriagePercent = MarriagePercent.ToString("F2") + "%";
-			if(_configurationService.activeUser!=null)
-			{
-				session.creatorsLogin = _configurationService.activeUser.login;
-			}
-			else
-			{
-				session.creatorsLogin = "*userLogOut*";
-			}
+			session.creatorsLogin = _configurationService.activeUser.login;
+
 			return session;
 		}
 		public Session DesigneNewEntity(string id, DateTime startData, int totalCount, int marrageCount)
@@ -53,7 +41,5 @@ namespace CameraDiplomat.Services
 			}
 			return session;
 		}
-
-
 	}
 }

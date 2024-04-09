@@ -1,6 +1,4 @@
-﻿/*the styles have been finalized and moved to app.css*/
-
-.textScroll {
+﻿.textScroll {
     overflow: scroll;
 }
 

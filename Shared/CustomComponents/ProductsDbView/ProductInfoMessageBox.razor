@@ -2,24 +2,24 @@
 
 <div class="messageBox successContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader addBottomBorder successTextShadows">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows limitConteiner">
 			Информация о продукте
 		</div>
 
 		@if (thereIsError)
 		{
-			<div class="textPlace textContent errorTextShadows">
+			<div class="textPlace textContent errorTextShadows limitConteiner">
 				@message
 			</div>
 		}
 		else
 		{
-			<div class="textPlace textContent successTextShadows">
+			<div class="textPlace textContent successTextShadows limitConteiner">
 				@message
 			</div>
 		}
 
-		<div class="textPlace textContent">
+		<div class="textPlace textContent limitConteiner">
 			<div class="subContainer">
 				<div class="textContent ">
 					Название:
@@ -30,7 +30,18 @@
 			</div>
 		</div>
 
-		<div class="textPlace textContent">
+		<div class="textPlace textContent limitConteiner">
+			<div class="subContainer">
+				<div class="textContent">
+					Добавил:
+				</div>
+				<div class="textContent textScroll">
+					@userLogin
+				</div>
+			</div>
+		</div>
+
+		<div class="textPlace textContent limitConteiner">
 			<div class="subContainer">
 				<div class="textContent">
 					Качество
@@ -41,7 +52,7 @@
 			</div>
 		</div>
 
-		<div class="textPlace textContent">
+		<div class="textPlace textContent limitConteiner">
 			<div class="subContainer">
 				<div class="textContent">
 					Уверенность:
@@ -52,7 +63,7 @@
 			</div>
 		</div>
 
-		<div class="textPlace textContent">
+		<div class="textPlace textContent limitConteiner">
 			<div class="subContainer">
 				<div class="textContent">
 					Код:
@@ -64,7 +75,7 @@
 		</div>
 
 
-		<div class="textPlace textContent">
+		<div class="textPlace textContent limitConteiner">
 			<div class="subContainer">
 				<div class="textContent">
 					Надпись:
@@ -75,12 +86,11 @@
 			</div>
 		</div>
 
-		<div class="subContainer ">
+		<div class="subContainer limitConteiner buttonUp">
 			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
 				Закрыть
 			</button>
 		</div>
-
 	</div>
 </div>
 
@@ -93,6 +103,7 @@
 	private string percent { get; set; }
 	private string QrCode { get; set; }
 	private string text { get; set; }
+	private string userLogin { get; set; }
 
 
 	private string message = "Информация о продукте";
@@ -107,6 +118,7 @@
 			percent = productToShowInfo.percent.ToString() + "%";
 			QrCode = productToShowInfo.code;
 			text = productToShowInfo.text;
+			userLogin = productToShowInfo.loginUserWichLeaveProduct;
 		}
 		else
 		{

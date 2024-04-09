@@ -1,25 +1,20 @@
 ﻿using CameraDiplomat.DTO;
 using CameraDiplomat.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CameraDiplomat.Interfaces;
+using Serilog;
 
 namespace CameraDiplomat.Services
 {
-	public class MessageDecoder
+	public class MessageDecoder : IMessageDecoder
 	{
-		private ConfigurationService _configurationService;
-
+		private readonly ConfigurationService _configurationService;
 		public MessageDecoder(ConfigurationService configurationService)
 		{
 			_configurationService = configurationService;
 		}
 
 		//message must to have next format: <strat>Cavivar<quality>false3<percent>50<codeIs>123456789abcdef<textIs>none<end>
-		public Product MessegeDiplomat(string messageToDiplomating, out ProductViewModel viewModel, out int checksCompleted)
+		public Product DecodeMessege(string messageToDecode, out ProductViewModel viewModel, out int checksCompleted)
 		{
 			string[] messages;
 
@@ -31,8 +26,8 @@ namespace CameraDiplomat.Services
 			
 			try
 			{
-				messages = messageToDiplomating.Split('<', '>');
-				if (messages.Count() == 13)
+				messages = messageToDecode.Split(_configurationService.SymbolsByWichWeSplit);
+				if (messages.Count() == _configurationService.PartsCodeIncludeAfterSplit)
 				{
 					Product newProduct = new Product();
 					newProduct.Id = Guid.NewGuid().ToString();
@@ -42,7 +37,7 @@ namespace CameraDiplomat.Services
 					newProduct.code = messages[8];
 					newProduct.text = messages[10];
 					newProduct.data = DateTime.Now.ToString();
-
+					newProduct.loginUserWichLeaveProduct = _configurationService.activeUser.login;
 					if(newProduct.quality)
 					{
 						isQualityOk = true;
@@ -50,13 +45,13 @@ namespace CameraDiplomat.Services
 						checksCompleted++;
 					}
 
-					if(newProduct.text.Contains(_configurationService.textPattern))
+					if(newProduct.text.Contains(_configurationService.TextPattern))
 					{
 						isTextOk = true;
 						checksCompleted++;
 					}
 
-					if(newProduct.code.Length == _configurationService.codeLength)
+					if(newProduct.code.Length == _configurationService.CodeLength)
 					{
 						isCodeOK = true;
 						checksCompleted++;
@@ -69,12 +64,14 @@ namespace CameraDiplomat.Services
 				}
 				else
 				{
+					Log.Warning("Нестандартное собщение от камеры:" + messageToDecode);
 					viewModel = null;
 					return null;
 				}
 			}
 			catch (Exception ex)
 			{
+				Log.Error("Исключение во время декодирования" + ex.Message.ToString());
 				viewModel = null;
 				return null;
 			}

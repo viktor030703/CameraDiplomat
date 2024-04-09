@@ -1,4 +1,5 @@
-﻿@inject UsersDbService userService
+﻿@inject IUsersDbService userService
+@inject ConfigurationService configurationService
 
 @if (showAddUserMBState)
 {
@@ -53,10 +54,13 @@
 
 	<div class="buttonsPlace">
 		<div class="buttonsContainer">
-			<button class="btn customButton" @onclick="ChangeAddUserMBState">Добавить</button>
-			<button class="btn customButton" @onclick="ChangeEditUserMBState">Изменить</button>
-			<button class="btn customButton errorBackground" @onclick="ChangeDeleteUserMBState">Удалить</button>
-			<button class="btn customButton" @onclick="ChangeGetUserInfoMBState">Подробнее</button>
+			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student"))
+			{
+				<button class="btn customButton" @onclick="ChangeAddUserMBState">Добавить</button>
+				<button class="btn customButton" @onclick="ChangeEditUserMBState">Изменить</button>
+				<button class="btn customButton errorBackground" @onclick="ChangeDeleteUserMBState">Удалить</button>
+				<button class="btn customButton" @onclick="ChangeGetUserInfoMBState">Подробнее</button>
+			}
 		</div>
 	</div>
 </div>
@@ -77,7 +81,6 @@
 
 	protected override void OnInitialized()
 	{
-		//Add linq filter???
 		usersFromDb = userService.GetUsers();
 		InvokeAsync(StateHasChanged);
 	}
@@ -137,7 +140,6 @@
 		{
 			showDeleteUserMBState = !showDeleteUserMBState;
 			RefreshUsersFromDb();
-			// selectedUser = null;
 		}
 	}
 

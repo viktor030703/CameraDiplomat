@@ -1,0 +1,114 @@
+﻿@inject ITCPService tcpService
+@inject ConfigurationService configurationService
+
+<div class="messageBoxBackground" @onclick="buttonClose" />
+
+<div class="messageBox">
+	<div class="container successContainerShadows">
+		<div class="headerPlace textHeader errorTextShadows addBottomBorder limitConteiner">
+			Отправка команды
+		</div>
+
+		<div class="subContainer textPlace textContent ">
+			<div class="subContainer">
+				<div class="textContent">
+					Команда
+				</div>
+				<div class="textContent fullScale">
+					<input type="text" @bind=messageToCamera />
+				</div>
+			</div>
+		</div>
+
+		<div class="subContainer defaultBackground">
+
+			<div class="textContent addBottomBorder">
+				Статус
+			</div>
+
+			<div class="textContent textScroll">
+				@messageToUser
+			</div>
+		</div>
+
+		<div class="subContainer defaultBackground">
+
+			<div class="textContent addBottomBorder">
+				Получено от камеры:
+			</div>
+
+			<div class="textContent textScroll">
+				@messageFromCamera
+			</div>
+		</div>
+
+		<div class="subContainer buttonUp">
+			<button class="btn btn-danger fullScale" @onclick="()=>SendMessage(messageToCamera)">
+				Отправить
+			</button>
+			@if (HideCodes)
+			{
+				<button class="btn btn-primary fullScale" @onclick="ChangeHideCodesState">
+					Все ответы
+				</button>
+			}
+			else
+			{
+				<button class="btn btn-primary fullScale" @onclick="ChangeHideCodesState">
+					Скрыть коды
+				</button>
+			}
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private bool HideCodes = false;
+
+	private string messageToUser;
+
+	private string messageFromCamera;
+	private string messageToCamera;
+
+	protected override void OnInitialized()
+	{
+		tcpService.EventNewMessageGet += ShowNewMessage;
+	}
+
+	private async Task SendMessage(string message)
+	{
+		if (await tcpService.SendMessage(message))
+		{
+			messageToUser = DateTime.Now.ToString() + " успешно отправлено";
+		}
+		else
+		{
+			messageToUser = DateTime.Now.ToString() + " не удалось доставить";
+		}
+	}
+
+	private void ShowNewMessage(string messageFromService)
+	{
+		if (HideCodes)
+		{
+			if (messageFromService.Split('<', '>').Count() != configurationService.PartsCodeIncludeAfterSplit)
+			{
+				messageFromCamera = messageFromService;
+			}
+		}
+		else
+		{
+			messageFromCamera = messageFromService;
+		}
+	}
+
+	private void ChangeHideCodesState()
+	{
+		HideCodes = !HideCodes;
+		messageFromCamera = "";
+	}
+
+}

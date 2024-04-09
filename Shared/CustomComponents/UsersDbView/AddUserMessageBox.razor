@@ -1,10 +1,10 @@
-﻿@inject UsersDbService dbService
+﻿@inject IUsersDbService dbService
 
 <div class="messageBoxBackground" @onclick="buttonClose" />
 
 <div class="messageBox successContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader addBottomBorder successTextShadows">
+		<div class="headerPlace textHeader addBottomBorder successTextShadows limitConteinerHeight">
 			Добавление пользователя
 		</div>
 
@@ -49,7 +49,7 @@
 					Роль
 				</div>
 				<div class="textContent textSuccessContent">
-					<select class="form-select" aria-label="default exapmple" @bind="userRole">
+					<select class="form-select" aria-label="default exapmple" style="text-align:center" @bind="userRole">
 						<option selected>Выбрать роль</option>
 						<option value="admin">Администратор</option>
 						<option value="master">Мастер</option>
@@ -121,6 +121,3 @@
 		}
 	}
 }
-
-
-

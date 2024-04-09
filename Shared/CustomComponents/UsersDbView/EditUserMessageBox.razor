@@ -1,4 +1,4 @@
-﻿@inject UsersDbService dbService
+﻿@inject IUsersDbService dbService
 
 <div class="messageBoxBackground" @onclick="buttonClose" />
 
@@ -49,7 +49,7 @@
 					Роль
 				</div>
 				<div class=" textContent successTextShadows">
-					<select class="form-select" aria-label="default exapmple" @bind=newRole>
+					<select class="form-select" aria-label="default exapmple" style="text-align:center"  @bind=newRole>
 						<option selected>Выбрать роль</option>
 						<option value="admin">Администратор</option>
 						<option value="master">Мастер</option>
@@ -88,7 +88,6 @@
 		if (userToEdit != null)
 		{
 			newLogin = userToEdit.login;
-			newPassword = userToEdit.password;
 			newRole = userToEdit.role;
 			newLoginData = userToEdit.lastLoginData;
 		}
@@ -96,7 +95,7 @@
 
 	private async void editUser()
 	{
-		if (!String.IsNullOrEmpty(newLogin) & !String.IsNullOrEmpty(newPassword) & !String.IsNullOrEmpty(newRole))
+		if (!String.IsNullOrEmpty(newLogin) & !String.IsNullOrEmpty(newRole))
 		{
 			try
 			{
@@ -108,15 +107,16 @@
 						role = newRole,
 						lastLoginData = newLoginData,
 					};
-				message = await dbService.EditUserAsync(userToEdit, newUserData);
+				bool IsOperationSuccess = await dbService.EditUserAsync(userToEdit, newUserData);
 
-				if (String.Equals(message, "success"))
+				if (IsOperationSuccess)
 				{
 					thereIsError = false;
 					await buttonClose.InvokeAsync();
 				}
 				else
 				{
+					message = "Не удалось изменить пользователя";
 					thereIsError = true;
 				}
 

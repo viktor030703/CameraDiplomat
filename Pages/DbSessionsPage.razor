@@ -1,4 +1,5 @@
-﻿@inject SessionsDbService sessionDbService
+﻿@inject ISessionsDbService sessionDbService
+@inject ConfigurationService configurationService
 
 @if (showAddsessionMBState)
 {
@@ -24,6 +25,11 @@
 @if (showSelectSessionMBState)
 {
 	<SelectSessionMessageBox buttonClose="ChangeSelectSomethingMBState" />
+}
+
+@if (showDeleteAllSessionsMBState)
+{
+	<DeleteAllSessionsMessageBox buttonClose="ChangeDeleteAllSessionsMBState"/>
 }
 
 <div class="PageGrid">
@@ -52,10 +58,14 @@
 
 	<div class="buttonsPlace">
 		<div class="buttonsContainer">
-			<button class="btn customButton" @onclick="ChangeAddSessionMBState">Добавить</button>
-			<button class="btn customButton errorBackground" @onclick="ChangeDeleteSessionMBState">Удалить</button>
-			<button class="btn customButton" @onclick="ChangeGetSessionInfoMBState">Подробнее</button>
-			<button  class="btn customButton" @onclick="ChangeUploadSessionMBState">Загрузить</button>
+			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student"))
+			{
+				<button class="btn customButton" @onclick="ChangeAddSessionMBState">Добавить</button>
+				<button class="btn customButton errorBackground" @onclick="ChangeDeleteSessionMBState">Удалить</button>
+				<button class="btn customButton" @onclick="ChangeDeleteAllSessionsMBState">Удалить все</button>
+			}
+				<button class="btn customButton" @onclick="ChangeGetSessionInfoMBState">Подробнее</button>
+				<button  class="btn customButton" @onclick="ChangeUploadSessionMBState">Загрузить</button>
 		</div>
 	</div>
 </div>
@@ -71,13 +81,13 @@
 	private bool showDeletesessionMBState = false;
 	private bool showSessionInformationMBState = false;
 	private bool showUploadSessionMBState = false;
+	private bool showDeleteAllSessionsMBState = false;
 
 	private bool showSelectSessionMBState = false;
 
 	protected async override Task OnInitializedAsync()
 	{
-		//Add linq filter???
-		sessionsFromDb = await sessionDbService.GetSessionsAsync();
+		sessionsFromDb = sessionDbService.GetSessions();
 		await InvokeAsync(StateHasChanged);
 	}
 
@@ -119,6 +129,19 @@
 			showDeletesessionMBState = !showDeletesessionMBState;
 			ClearSelectedSession();
 			await RefreshSessionsFromDb();
+		}
+	}
+
+	private async Task ChangeDeleteAllSessionsMBState()
+	{
+		if(showDeleteAllSessionsMBState)
+		{
+			showDeleteAllSessionsMBState = false;
+			await RefreshSessionsFromDb();
+		}
+		else
+		{
+			showDeleteAllSessionsMBState = true;
 		}
 	}
 
@@ -176,7 +199,7 @@
 
 	private async Task RefreshSessionsFromDb()
 	{
-		sessionsFromDb = await sessionDbService.GetSessionsAsync();
+		sessionsFromDb = sessionDbService.GetSessions();
 		await InvokeAsync(StateHasChanged);
 	}
 

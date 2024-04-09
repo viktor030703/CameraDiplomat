@@ -1,10 +1,13 @@
 ﻿using System.Net.Sockets;
-using System.Text;
+using CameraDiplomat.Interfaces;
+using Serilog;
 
 namespace CameraDiplomat.Services
 {
-	public class TCPService
+	public class TCPService : ITCPService
 	{
+		private readonly ConfigurationService _configurationService;
+
 		public delegate void NewMessageGetter(string message);
 		public delegate void MesssageCameraUnavalible();
 		public delegate void CameraConnectedSuccessfully();
@@ -13,83 +16,38 @@ namespace CameraDiplomat.Services
 		public event MesssageCameraUnavalible EventCameraUnavalible;
 		public event CameraConnectedSuccessfully EventCameraConnectedSuccessfully;
 
-		private SemaphoreSlim _readLock = new SemaphoreSlim(1, 1);
-
-		private ConfigurationService _configurationService;
+		private SemaphoreSlim _semaphoreRead;
+		private SemaphoreSlim _semaphoreWrite;
 
 		private TcpClient _tcpClient;
 		private StreamReader _reader;
 		private StreamWriter _writer;
 		private NetworkStream stream;
 
-
-		private System.Timers.Timer timer = new System.Timers.Timer();
-
-
 		public TCPService(ConfigurationService service)
 		{
 			_configurationService = service;
+			_semaphoreRead = new SemaphoreSlim(1, 1);
+			_semaphoreWrite = new SemaphoreSlim(1, 1);
 			ConnectToCamera();
-			TimerInitialization();
 		}
-
 		public void CameraDisconnectHandler()
 		{
+			_tcpClient?.Close();
+			_reader?.Close();
+			_writer?.Close();
 			_configurationService.IsCameraConnected = false;
 			EventCameraUnavalible?.Invoke();
-			Disconnect();
+			Log.Information("Камера отключена");
+			Log.CloseAndFlush();
 		}
-
 		public void CameraConnectHandler()
 		{
 			_configurationService.IsCameraConnected = true;
 			EventCameraConnectedSuccessfully?.Invoke();
+			Log.Information("Камера успешно подключена");
+			Log.CloseAndFlush();
 		}
-
-		private void TimerInitialization()
-		{
-			timer.Interval = _configurationService.tcpTimerInterval;
-			timer.AutoReset = true;
-			timer.Elapsed += (e, args) => MonitorIfCameraConnectedByTimer();
-		}
-		public void StartTimer()
-		{
-			timer.Start();
-		}
-
-		public void MonitorIfCameraConnectedByTimer()
-		{
-			if (_tcpClient == null || _reader == null || _writer == null)
-			{
-				try
-				{
-					_writer.WriteLine(".");
-					_writer.Flush();
-				}
-				catch (SocketException ex)
-				{
-					CameraDisconnectHandler();
-
-				}
-				catch (Exception ex)
-				{
-					CameraDisconnectHandler();
-				}
-			}
-			else
-			{
-				CameraDisconnectHandler();
-			}
-		}
-
-		public void CheckConnectionNotNull()
-		{
-			if (_tcpClient == null || _reader == null || _writer == null)
-			{
-				CameraDisconnectHandler();
-			}
-		}
-
 		public bool BooleanCheckCameraStatus()
 		{
 			if (_tcpClient == null || _reader == null || _writer == null)
@@ -101,7 +59,6 @@ namespace CameraDiplomat.Services
 				return true;
 			}
 		}
-
 		public void ConnectToCamera()
 		{
 			try
@@ -121,38 +78,12 @@ namespace CameraDiplomat.Services
 			}
 			catch (SocketException ex)
 			{
+				Log.Error("Исключение во время подключения камеры:"+ ex.Message.ToString());
 				CameraDisconnectHandler();
 			}
-			catch (Exception E)
+			catch (Exception ex)
 			{
-				CameraDisconnectHandler();
-			}
-		}
-
-		public void ConnectToCamera(string IP, int port)
-		{
-			try
-			{
-				_tcpClient = new TcpClient(IP, port);
-
-				if (_tcpClient.Connected)
-				{
-					stream = _tcpClient.GetStream();
-					_reader = new StreamReader(stream);
-					_writer = new StreamWriter(stream);
-					CameraConnectHandler();
-				}
-				else
-				{
-					CameraDisconnectHandler();
-				}
-			}
-			catch (SocketException ex)
-			{
-				CameraDisconnectHandler();
-			}
-			catch (Exception E)
-			{
+				Log.Error("Исключение во время подключения камеры:" + ex.Message.ToString());
 				CameraDisconnectHandler();
 			}
 		}
@@ -166,7 +97,7 @@ namespace CameraDiplomat.Services
 					{
 						try
 						{
-							//await _readLock.WaitAsync();
+							await _semaphoreRead.WaitAsync();
 							messageFromServer = await _reader.ReadLineAsync();
 							if (!String.IsNullOrEmpty(messageFromServer))
 							{
@@ -174,68 +105,55 @@ namespace CameraDiplomat.Services
 							}
 							Thread.Sleep(10);
 						}
-						catch (Exception E)
+						catch (Exception ex)
 						{
-
+							Log.Error("Исключение во время получения сообщения от камеры:" + ex.Message.ToString());
+							Log.CloseAndFlush();
 						}
 						finally
 						{
-							//_readLock.Release();
+							_semaphoreRead?.Release();
 						}
 					}
 					else
 					{
+						Log.Error("Ошибка получения сообщени: потоки чтения и записи не существуют");
 						CameraDisconnectHandler();
 						break;
 					}
 				}
 			}
 		}
-
-
-		public async Task CustomPingServer()
-		{
-			//if(_tcpClient != null)
-			//{
-			//	byte[] buf = Encoding.ASCII.GetBytes("ping");
-			//	_writer.Write('', 0, buf.Length);
-
-			//}
-			//else
-			//{
-			//	CameraConnectHandler();
-			//}
-		}
-		
-		public async Task<string> SendMessage(string message)
+		public async Task<bool> SendMessage(string message)
 		{
 			string response = String.Empty;
-			if (_tcpClient == null & _reader != null & _writer != null)
+
+			if (_tcpClient != null & _reader != null & _writer != null)
 			{
 				try
 				{
-					await _writer.WriteAsync(message);
+					await _semaphoreWrite.WaitAsync();
+					await _writer.WriteLineAsync(message);
 					await _writer.FlushAsync();
-					response = await _reader.ReadLineAsync();
+					Log.Information("Сообщение " + message + " отправлено на камеру");
+					_semaphoreWrite.Release();
+					return true;
 				}
 				catch (Exception ex)
 				{
+					Log.Error("Исключение во время отправки сообщения от камеры:" + ex.Message.ToString());
 					CameraDisconnectHandler();
+					_semaphoreWrite.Release();
+					return false;
 				}
+
 			}
 			else
 			{
+				Log.Error("Ошибка отправки сообщени: потоки чтения и записи не существуют");
 				CameraDisconnectHandler();
+				return false;
 			}
-			return response;
-		}
-
-		public void Disconnect()
-		{
-			_tcpClient?.Close();
-			_reader?.Close();
-			_writer?.Close();
-
 		}
 	}
 }

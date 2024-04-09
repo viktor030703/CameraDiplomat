@@ -41,20 +41,14 @@
 }
 
 .buttonsContainer {
-
-	transform: translate(0, -5vh);
-
+	position:fixed;
+	transform: translate(0, -3vh);
 	width: 20vw;
 	height: 80vh;
 	display: flex;
-
-	position:fixed;
-
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: flex-end;
-
-	/*background-color: red;*/
 }
 
 

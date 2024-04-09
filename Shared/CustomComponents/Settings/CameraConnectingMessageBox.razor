@@ -1,4 +1,4 @@
-﻿@inject TCPService tcpService
+﻿@inject ITCPService tcpService
 @inject ConfigurationService configurationService;
 
 <div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
@@ -10,35 +10,37 @@
 		</div>
 
 		<div class="textPlace textContent">
-			Проверьте подключение к камере и нажмите повторить или закройе это сообщение
+			@message
 		</div>
 
-
-		<div class="textPlace textContent">
-			<div class="subContainer">
-				<div class="textContent">
-					IP камеры:
-				</div>
-				<div class="textContent">
-					<input type="text" @bind=cameraIP />
+		@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
+			String.Equals(configurationService.activeUser.role, "master"))
+		{
+			<div class="textPlace textContent">
+				<div class="subContainer">
+					<div class="textContent">
+						IP камеры:
+					</div>
+					<div class="textContent">
+						<input type="text" @bind=cameraIP />
+					</div>
 				</div>
 			</div>
-		</div>
 
 
-		<div class="textPlace textContent">
-			<div class="subContainer">
-				<div class="textContent">
-					порт камеры:
-				</div>
-				<div class="textContent">
-					<input type="number" @bind=cameraPort />
+			<div class="textPlace textContent">
+				<div class="subContainer">
+					<div class="textContent">
+						порт камеры:
+					</div>
+					<div class="textContent">
+						<input type="number" @bind=cameraPort />
+					</div>
 				</div>
 			</div>
-		</div>
+		}
 
-
-		<button class="buttonPlace btn btn-primary buttonUp" @onclick="TryToConnected">
+		<button class="buttonPlace btn btn-primary buttonUp customButton" @onclick="()=>TryToConnected()">
 			Подключиться
 		</button>
 
@@ -50,22 +52,28 @@
 
 	private string cameraIP;
 	private int cameraPort;
-
-
+	private string message;
 
 	protected override void OnInitialized()
 	{
+		message = "Проверьте подключение к камере и нажмите повторить или закройе это сообщение";
 		configurationService.GetCameraIPandPort(out cameraIP, out cameraPort);
 	}
 
-	public void TryToConnected()
+	public async Task TryToConnected()
 	{
-		tcpService.ConnectToCamera(cameraIP, cameraPort);
+		configurationService.CameraIP = cameraIP;
+		configurationService.CameraPort = cameraPort;
+		await configurationService.SaveCofigurationInJSONAsync();
+		tcpService.ConnectToCamera();
 		if(tcpService.BooleanCheckCameraStatus())
 		{
 			Task.Run(()=>tcpService.GetMessages());
 			buttonClose.InvokeAsync();
 		}
+		else
+		{
+			message = "Не удаеться подключиться";
+		}
 	}
-
 }

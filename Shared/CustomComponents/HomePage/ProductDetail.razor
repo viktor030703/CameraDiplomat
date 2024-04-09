@@ -1,114 +1,106 @@
 ﻿<div class="componentGrid defaultBackground defaultContainerShadows">
-	@if(product != null)
+	@if (product != null)
 	{
-		
-	@if (product.NameCorrect)
-	{
-		<div class="productNamePlac textContent successBackground">
-			@product.Name
-		</div>
+		@if (product.NameCorrect)
+		{
+			<div class="productNamePlac textContent successBackground">
+				@product.Name
+			</div>
 
-		<div class="productStatusNamePlace Iconics successBackground">
-			<div class="oi oi-check" />
-		</div>
-	}
-	else
-	{
-		<div class="productNamePlace textContent errorBackground">
-			@product.Name
-		</div>
+			<div class="productStatusNamePlace Iconics successBackground">
+				<div class="oi oi-check" />
+			</div>
+		}
+		else
+		{
+			<div class="productNamePlace textContent errorBackground">
+				@product.Name
+			</div>
 
-		<div class="productStatusNamePlace Iconics errorBackground">
-			<div class="oi oi-x" />
-		</div>
-	}
+			<div class="productStatusNamePlace Iconics errorBackground">
+				<div class="oi oi-x" />
+			</div>
+		}
 
+		@if (product.QualityCorrect)
+		{
+			<div class="productQualityPercentPlace textContent  successBackground">
+				@product.Quality
+			</div>
 
+			<div class="productStatusQualityPercentPlace Iconics successBackground">
+				<div class="oi oi-check" />
+			</div>
+		}
+		else
+		{
+			<div class="productQualityPercentPlace textContent errorBackground">
+				@product.Quality
+			</div>
 
+			<div class="productStatusQualityPercentPlace Iconics errorBackground">
+				<div class="oi oi-x" />
+			</div>
+		}
 
-	@if (product.QualityCorrect)
-	{
-		<div class="productQualityPercentPlace textContent  successBackground">
-			@product.Quality
-		</div>
+		@if (product.CodeCorrect)
+		{
+			<div class="productCodePlace textContent  successBackground">
+				@product.QRCode
+			</div>
 
-		<div class="productStatusQualityPercentPlace Iconics successBackground">
-			<div class="oi oi-check" />
-		</div>
-	}
-	else
-	{
-		<div class="productQualityPercentPlace textContent errorBackground">
-			@product.Quality
-		</div>
+			<div class="productStatusCodePlace Iconics  successBackground">
+				<div class="oi oi-check" />
+			</div>
+		}
+		else
+		{
+			<div class="productCodePlace textContent errorBackground">
+				@product.QRCode
+			</div>
 
-		<div class="productStatusQualityPercentPlace Iconics errorBackground">
-			<div class="oi oi-x" />
-		</div>
-	}
+			<div class="productStatusCodePlace Iconics errorBackground">
+				<div class="oi oi-x" />
+			</div>
+		}
 
+		@if (product.TextCorrect)
+		{
+			<div class="productTextPlace textContent successBackground">
+				@product.Text
+			</div>
 
+			<div class="productStatusTextPlace Iconics successBackground">
+				<div class="oi oi-check" />
+			</div>
+		}
+		else
+		{
+			<div class="productTextPlace textContent errorBackground">
+				@product.Text
+			</div>
 
-	@if (product.CodeCorrect)
-	{
-		<div class="productCodePlace textContent  successBackground">
-			@product.QRCode
-		</div>
+			<div class="productStatusTextPlace Iconics errorBackground">
+				<div class="oi oi-x" />
+			</div>
+		}
 
-		<div class="productStatusCodePlace Iconics  successBackground">
-			<div class="oi oi-check" />
-		</div>
-
-	}
-	else
-	{
-		<div class="productCodePlace textContent errorBackground">
-			@product.QRCode
-		</div>
-
-		<div class="productStatusCodePlace Iconics errorBackground">
-			<div class="oi oi-x" />
-		</div>
-	}
-
-	@if (product.TextCorrect)
-	{
-		<div class="productTextPlace textContent successBackground">
-			@product.Text
-		</div>
-
-		<div class="productStatusTextPlace Iconics successBackground">
-			<div class="oi oi-check" />
-		</div>
-
-	}
-	else
-	{
-		<div class="productTextPlace textContent errorBackground">
-			@product.Text
-		</div>
-
-		<div class="productStatusTextPlace Iconics errorBackground">
-			<div class="oi oi-x" />
-		</div>
-	}
-
-	@if (@product.NameCorrect & @product.QualityCorrect & @product.CodeCorrect & product.TextCorrect)
-	{
-		<div class="productResaultPlace MainIconic  successBackground">
-			<div class="oi oi-check" />
-		</div>
-	}
-	else
-	{
-		<div class="productResaultPlace MainIconic errorBackground">
-			<div class="oi oi-x" />
-		</div>
+		@if (@product.NameCorrect & @product.QualityCorrect & @product.CodeCorrect & product.TextCorrect)
+		{
+			<div class="productResaultPlace MainIconic  successBackground">
+				<div class="oi oi-check" />
+			</div>
+		}
+		else
+		{
+			<div class="productResaultPlace MainIconic errorBackground">
+				<div class="oi oi-x" />
+			</div>
 		}
 	}
 	else
 	{
-		<div class="productNamePlac textContent  successTextShadows">
+		<div class="productNamePlace textHeader successTextShadows">
 			Загрузка
 		</div>
 	}

@@ -1,24 +1,31 @@
 ﻿using CameraDiplomat.Context;
 using CameraDiplomat.Entities;
+using CameraDiplomat.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CameraDiplomat.Services
 {
-	public class SessionsDbService
+	public class SessionsDbService : ISessionsDbService
 	{
-		private ApplicationContext _db;
-
-		public SessionsDbService(ApplicationContext db)
+		private readonly ApplicationContext _db;
+		private readonly ConfigurationService _configurationService;
+		public SessionsDbService(ApplicationContext db, ConfigurationService configurationService)
 		{
 			_db = db;
+			_configurationService = configurationService;
 		}
 
 		public async Task<bool> CreateSessionAsync(Session sessionToAddInDb)
 		{
+
 			if (sessionToAddInDb != null)
 			{
+				await _db.dbAccessSemaphore.WaitAsync();
 				_db.Sessions.Add(sessionToAddInDb);
 				await _db.SaveChangesAsync();
+				_db.dbAccessSemaphore.Release();
+				Log.Information(_configurationService.activeUser.login + " создает новую сессию");
 				return true;
 			}
 			else
@@ -32,9 +39,12 @@ namespace CameraDiplomat.Services
 
 			if (sessionToAddInDb != null)
 			{
+				await _db.dbAccessSemaphore.WaitAsync();
 				_db.Sessions.Update(sessionToAddInDb);
 				_db.Remove(sessionToAddInDb);
 				await _db.SaveChangesAsync();
+				_db.dbAccessSemaphore.Release();
+				Log.Information(_configurationService.activeUser.login + " удаляет сессию");
 				return true;
 			}
 			else
@@ -43,16 +53,19 @@ namespace CameraDiplomat.Services
 			}
 		}
 
-		public async Task<List<Session>> GetSessionsAsync()
+		public List<Session> GetSessions()
 		{
-			return await _db.Sessions.ToListAsync();
+			_db.dbAccessSemaphore.Wait();
+			List<Session> sessions = _db.Sessions.ToList();
+			_db.dbAccessSemaphore.Release();
+			return sessions;
 		}
 
 		public async Task AddOrUpdateSession(Session sessionToAddOrUpdate)
 		{
 			try
 			{
-
+				await _db.dbAccessSemaphore.WaitAsync();
 				Session sessionFromDb = await _db.Sessions.FirstOrDefaultAsync(i => i.Id == sessionToAddOrUpdate.Id);
 				if (sessionFromDb != null)
 				{
@@ -64,19 +77,30 @@ namespace CameraDiplomat.Services
 					sessionFromDb.MarriageCount = sessionToAddOrUpdate.MarriageCount;
 
 					await _db.SaveChangesAsync();
-					//может быть косяк
+					_db.dbAccessSemaphore.Release();
 				}
 				else
 				{
 					await _db.Sessions.AddAsync(sessionToAddOrUpdate);
 					await _db.SaveChangesAsync();
-					//и тут
+					_db.dbAccessSemaphore.Release();
 				}
 			}
 			catch (Exception ex)
 			{
-
+				_db.dbAccessSemaphore.Release();
+				Log.Information("исключение во время добавления сессии");
 			}
+		}
+
+		public async Task ClearSessionsDbAsync()
+		{
+			await _db.dbAccessSemaphore.WaitAsync();
+			var table = _db.Set<Session>();
+			_db.RemoveRange(table);
+			await _db.SaveChangesAsync();
+			_db.dbAccessSemaphore.Release();
+			Log.Warning(_configurationService.activeUser.login + " очищает всю базу данных сессий");
 		}
 	}
 }

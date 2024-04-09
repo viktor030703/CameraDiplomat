@@ -1,19 +1,21 @@
-﻿@page "/"
-@inject TCPService tcpService 
-@inject MessageDecoder messageDecoder
-@inject ProductsDbService ProductsDb
-@inject SessionsDbService SessionsDb
-@inject StatsService statsService
+﻿@page "/home"
+
 @inject ConfigurationService configurationService
+@inject IStatisticService statsService
+@inject ISessionsDbService SessionsDb
+
+@inject ITCPService tcpService
+@inject IMessageDecoder messageDecoder
+@inject IProductsDbService ProductsDb
 
 @if (ShowSettingsMessageBox)
 {
-	<SettingMessageBox buttonClose="ChangeSettingsMBState"/>
+	<SettingMessageBox buttonClose="ChangeSettingsMBState" showCameraConnectingMBEvent="ShowCameraUnavalibleMBState"/>
 }
 
 @if (ShowCameraUnavalibleMessageBox)
 {
-	<CameraConnectingMessageBox buttonClose="ChangeCameraLostConnectionMBState" />
+	<CameraConnectingMessageBox buttonClose="HideCameraUnavalibleMBState" />
 }
 
 @if (ShowDbUsersMessageBox)
@@ -28,41 +30,41 @@
 
 @if (ShowDbSessionsMessageBox)
 {
-	<DbSessionsPage buttonClose="ChangeDbSessionsMBState" />
+	<DbSessionsPage buttonClose="ChangeDbSessionsMBState" openSettings="ChangeSettingsMBState" />
 }
 
-
-
-
-@if(ShowMarriagePercentWaringMessageBox)
+@if (ShowMarriagePercentWaringMessageBox)
 {
-	
-	<BigMarriageProcentMessageBox buttonClose="HideBigMarriageProcentMB"/>
+
+	<BigMarriageProcentMessageBox buttonClose="HideBigMarriageProcentMB" />
 }
-
-
 
 @if (ShowMarriageCountInRowWaringMessageBox)
 {
-	<BigMarriageCountInRowMessageBox buttonClose="HideBigMarriageCountInRowMB"/>
+	<BigMarriageCountInRowMessageBox buttonClose="HideBigMarriageCountInRowMB" />
+}
+
+@if (ShowSendMessageToCameraMessageBox)
+{
+	<SendMessageToCameraMessageBox buttonClose="ChangeShowMessageToCameraMBState" />
 }
 
 
 
- 
+
 @if (ShowMainContent)
 {
 	<div class="pageGrid">
 
 		<div class="CameraStatusItemPlace">
 			<div class="objectFullScale">
-				@if (IsCameraConnected)
+				@if (configurationService.IsCameraConnected)
 				{
-					<div class="oi oi-camera-slr headerIconics defaultBackground defaultContainerShadows"/>
+					<div class="oi oi-camera-slr headerIconics defaultBackground defaultContainerShadows" />
 				}
 				else
 				{
-					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick=ChangeCameraLostConnectionMBState/>
+					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick=ShowCameraUnavalibleMBState />
 				}
 			</div>
 		</div>
@@ -83,7 +85,7 @@
 
 
 		<div class="mainContentPlace">
-			<ProductDetail product="productDataToView"/>
+			<ProductDetail product="productDataToView" />
 		</div>
 
 		<div class="statisticsPlace defaultBackground defaultContainerShadows">
@@ -92,43 +94,32 @@
 			</div>
 		</div>
 
-		@* 	<div class="buttonsPlace">
-	<button class="btn btn-primary userButtonsStyle">
-	one
-	</button>
-
-	<button class="btn btn-primary userButtonsStyle">
-	two
-	</button>
-
-
-	<button class="btn btn-primary userButtonsStyle">
-	three
-	</button>
-
-
-
-	</div> *@
 
 		<div class="buttonsPlace">
 			<div class="subContainer">
-				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="TestConnection">
-					one
-				</button>
-
-				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="ChangeDbUsersMBState">
-					БД пользователи
-				</button>
-
-				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="ChangeDbProductsMBState">
+				<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeDbProductsMBState">
 					БД продукты
 				</button>
 
-				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="ChangeDbSessionsMBState">
-					БД сессии
-				</button>
+				@if (String.Equals(configurationService.activeUser.role, "admin"))
+				{
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeDbUsersMBState">
+						БД пользователи
+					</button>
+				}
+				@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
+				String.Equals(configurationService.activeUser.role, "master"))
+				{
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeDbSessionsMBState">
+						БД сессии
+					</button>
 
-				<button class="btn btn-primary adminButtonsStyle customButton" @onclick="UpdateStats">
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeShowMessageToCameraMBState">
+						Команда камере
+					</button>
+				}
+
+				<button class="btn btn-primary buttonsStyle customButton" @onclick="UpdateStats">
 					Обнулить счётчик
 				</button>
 			</div>
@@ -147,11 +138,13 @@
 	private bool ShowDbProductsMessageBox = false;
 	private bool ShowDbSessionsMessageBox = false;
 
+	private bool ShowSendMessageToCameraMessageBox = false;
+
 	private bool ShowMainContent = true;
 
 
-	private bool ShowMarriagePercentWaringMessageBox = false;//тестики!!!!
-	private bool ShowMarriageCountInRowWaringMessageBox = false;//тестики!!!!
+	private bool ShowMarriagePercentWaringMessageBox = false;
+	private bool ShowMarriageCountInRowWaringMessageBox = false;
 
 
 	private ProductViewModel productDataToView;
@@ -160,21 +153,21 @@
 	private void NewMessageHandler(string msg)
 	{
 
-		Product newProduct = messageDecoder.MessegeDiplomat(msg, out ProductViewModel viewModel, out int checksCompleted);
+		Product newProduct = messageDecoder.DecodeMessege(msg, out ProductViewModel viewModel, out int checksCompleted);
 
 		if (newProduct != null & viewModel != null)
 		{
 			productDataToView = viewModel;
 			statsService.NewProductChecked(checksCompleted);
 			statistic = statsService.GetStatsString();
-			//ProductsDb.CreateProductAsync(newProduct);// 
+			ProductsDb.CreateProductAsync(newProduct);// добавление продукта в бд
 		}
 		InvokeAsync(StateHasChanged);
 	}
 
-	private void TestConnection()
+	private void ChangeShowMessageToCameraMBState()
 	{
-		// tcpService.SendMessage("so");
+		ShowSendMessageToCameraMessageBox = !ShowSendMessageToCameraMessageBox;
 	}
 
 
@@ -186,7 +179,7 @@
 
 		tcpService.EventNewMessageGet += NewMessageHandler;
 		tcpService.EventCameraUnavalible += ShowCameraUnavalibleMBState;
-		tcpService.EventCameraConnectedSuccessfully +=HideCameraUnavalibleMBState;
+		tcpService.EventCameraConnectedSuccessfully += HideCameraUnavalibleMBState;
 
 		statsService.EventNewSessionWasLoaded += ShowUploadedSession;
 
@@ -198,10 +191,10 @@
 		IsCameraConnected = configurationService.IsCameraConnected;
 		InvokeAsync(StateHasChanged);
 
+		// tcpService.TimerInitializationAndStart();
 
-		//Делегаты подписаться и установить переменные
-		//statsService.EventBigMarriageCount += 
-
+		statsService.EventBigMarriageCountInRow += ShowBigMarriageCountInRowMB;
+		statsService.EventBigMarriagePercent += ShowBigMarriageProcentMB;
 
 		statsService.StartAutoUploadActiveSessionInDb();
 	}
@@ -218,10 +211,7 @@
 		IsCameraConnected = configurationService.IsCameraConnected;
 		InvokeAsync(StateHasChanged);
 	}
-	private void ChangeCameraLostConnectionMBState()
-	{
-		ShowCameraUnavalibleMessageBox = !ShowCameraUnavalibleMessageBox;
-	}
+
 	private void ChangeSettingsMBState()
 	{
 		ShowSettingsMessageBox = !ShowSettingsMessageBox;
@@ -247,7 +237,7 @@
 	private void ChangeRefreshCameraStatusMBState()
 	{
 		IsCameraConnected = tcpService.BooleanCheckCameraStatus();
-		if(IsCameraConnected)
+		if (IsCameraConnected)
 		{
 			ShowCameraUnavalibleMessageBox = false;
 			InvokeAsync(StateHasChanged);
@@ -267,7 +257,7 @@
 
 	public void HideBigMarriageProcentMB()
 	{
-		ShowMarriagePercentWaringMessageBox = true;
+		ShowMarriagePercentWaringMessageBox = false;
 	}
 
 	public void ShowBigMarriageCountInRowMB()

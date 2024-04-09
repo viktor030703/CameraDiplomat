@@ -1,52 +1,58 @@
-﻿@inject ConfigurationService configurationService
+﻿@inject IStatisticService statsService
+@inject IDbMainController dbMainController
+@inject ITCPService tcpService
+@inject ConfigurationService configurationService
 @inject NavigationManager navigationManager
-@inject StatsService statsService
-@inject DbMainController dbMainController
+@inject ILoggerService loggerService;
 
-@if (ChangeCameraIPandPort)
-{
-	<CameraConnectingMessageBox buttonClose="ChangeCameraConnectionMBState" />
-}
+<div class="messageBoxBackground objectFullScale" @onclick="()=>buttonCloseProcessing()" />
 
-@if (ShowSettings)
-{
-	<div class="messageBoxBackground objectFullScale" @onclick="()=>buttonClose.InvokeAsync()" />
+<div class="messageBox">
+	<div class="container">
 
-	<div class="messageBox">
-		<div class="container">
+		@if (configurationService.IsSettingFromJSON)
+		{
+			<div class="headerPlace textHeader defaultBackground defaultContainerShadows titleHeight">
+				Настройки (конфигурация)
+			</div>
+		}
+		else
+		{
+			<div class="headerPlace textHeader defaultBackground defaultContainerShadows titleHeight">
+				Настройки (стандартные)
+			</div>
+		}
 
-			<div class="headerPlace textHeader defaultBackground defaultContainerShadows">
-				Настройки
+		<div class="textContent">
+			<div class="subContainer">
+				<div class="textContent">
+					Искать надпись:
+				</div>
+				<div class="textContent">
+					<input type="text" class="fullScale" @bind=patternToSearch />
+				</div>
+
+				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadNewTextPattern">
+					Применить
+				</button>
 			</div>
 
-			<div class="textContent">
-				<div class="subContainer">
-					<div class="textContent">
-						Искать надпись:
-					</div>
-					<div class="textContent">
-						<input type="text" class="fullScale" @bind=patternToSearch />
-					</div>
-
-					<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="UploadNewTextPattern">
-						Применить
-					</button>
+			<div class="subContainer">
+				<div class="textContent">
+					Длинна кода:
+				</div>
+				<div class="textContent">
+					<input type="number" class="fullScale" @bind=patternCodeLength />
 				</div>
 
-				<div class="subContainer">
-					<div class="textContent">
-						Длинна кода:
-					</div>
-					<div class="textContent">
-						<input type="number" class="fullScale" @bind=patternCodeLength />
-					</div>
+				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadNewCodePatternLength">
+					Применить
+				</button>
+			</div>
 
-					<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="UploadNewCodePatternLength">
-						Применить
-					</button>
-				</div>
-
-
+			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
+					String.Equals(configurationService.activeUser.role, "master"))
+			{
 				<div class="subContainer">
 					<div class="textContent">
 						Интревал таймера БД:
@@ -55,154 +61,166 @@
 						<input type="number" class="fullScale" @bind=bdTimerInterval />
 					</div>
 
-					<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="UploadDbTimerInterval">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadDbTimerInterval">
 						Применить
 					</button>
 				</div>
 
 				<div class="subContainer">
 					<div class="textContent">
-						Интревал таймера tcp:
+						Интревал таймера логов:
 					</div>
 					<div class="textContent">
-						<input type="number" class="fullScale" @bind=tcpTimerInterval />
+						<input type="number" class="fullScale" @bind=logsTimerInterval />
 					</div>
 
-					<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="UploadTCPTimerInterval">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadTCPTimerInterval">
 						Применить
 					</button>
 				</div>
 
-
 				<div class="subContainer">
 					<div class="textContent">
-						Макс. % брака:
+						TCP таймаут:
 					</div>
 					<div class="textContent">
-						<input type="number" class="fullScale" @bind=maxMarriageProcent/>
+						<input type="number" class="fullScale" @bind=tcpTimeout />
 					</div>
 
-					@if(monitorMarriageProcent)
-					{
-						<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="ChangeMonitorMarriageProcentState">
-							Отключить
-						</button>
-					}
-					else
-					{
-						<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="ChangeMonitorMarriageProcentState">
-							Включить
-						</button>
-					}
-
-				</div>
-
-
-				<div class="subContainer">
-					<div class="textContent">
-						Макс. брака подряд:
-					</div>
-					<div class="textContent">
-						<input type="number" class="fullScale" @bind=maxMarriageInRowCount />
-					</div>
-
-					@if(monitorMarriageInRowCount)
-					{
-						<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="ChangeMonitorMarriageCountInRowState">
-							Включить
-						</button>
-					}
-					else
-					{
-						<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="ChangeMonitorMarriageCountInRowState">
-							Отключить
-						</button>
-					}
-
-				</div>
-
-
-				<div class="subContainer">
-					<div class="textContent">
-						Мин. выборка для %:
-					</div>
-					<div class="textContent">
-						<input type="number" class="fullScale" @bind=minMathSet />
-					</div>
-
-					<button class="buttonPlace btn customButton uploadButtonStyle" @onclick="UploadMinMathSet">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadTCPTimeout">
 						Применить
 					</button>
 				</div>
-
-
-				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle" @onclick="()=>logOut()">
-						Сменить аккаунт
-					</button>
+			}
+			<div class="subContainer">
+				<div class="textContent">
+					Макс. % брака:
+				</div>
+				<div class="textContent">
+					<input type="number" class="fullScale" @bind=maxMarriageProcent />
 				</div>
 
+				@if (monitorMarriageProcent)
+				{
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageProcentState">
+						Отключить
+					</button>
+				}
+				else
+				{
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageProcentState">
+						Включить
+					</button>
+				}
+
+			</div>
+
+			<div class="subContainer">
+				<div class="textContent">
+					Макс. брака подряд:
+				</div>
+				<div class="textContent">
+					<input type="number" class="fullScale" @bind=maxMarriageInRowCount />
+				</div>
+
+				@if (monitorMarriageInRowCount)
+				{
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageCountInRowState">
+						Отключить
+					</button>
+				}
+				else
+				{
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageCountInRowState">
+						Включить
+					</button>
+				}
+
+			</div>
+
+			<div class="subContainer">
+				<div class="textContent">
+					Мин. выборка для %:
+				</div>
+				<div class="textContent">
+					<input type="number" class="fullScale" @bind=minMathSet />
+				</div>
+
+				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadMinMathSet">
+					Применить
+				</button>
+			</div>
+
+			<div class="subContainer">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>logOut()">
+					Сменить аккаунт
+				</button>
+			</div>
+
+			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
+					String.Equals(configurationService.activeUser.role, "master"))
+			{
 				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle" @onclick="ChangeCameraConnectionMBState">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="ShowCameraConnectionMB">
 						Переподключиться к камере
 					</button>
 				</div>
 
+			}
+
+			@if (String.Equals(configurationService.activeUser.role, "admin"))
+			{
 				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle" @onclick="RebuildDb">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="RebuildDb">
 						Очистить базу данных
 					</button>
 				</div>
+			}
 
-				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle" @onclick="()=>buttonClose.InvokeAsync()">
-						Закрыть
-					</button>
-				</div>
-
+			<div class="subContainer">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="CloseTCPConnection">
+					Отключиться от камеры
+				</button>
 			</div>
 
-
+			<div class="subContainer">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>buttonCloseProcessing()">
+					Закрыть
+				</button>
+			</div>
 		</div>
 	</div>
-}
+</div>
+
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
-
-	private bool AdminSettings;
-
-	private bool ChangeCameraIPandPort = false;
-
-	private bool ShowSettings = true;
-
-	private int bdTimerInterval;
-	private int tcpTimerInterval;
-
-
-	private string patternToSearch;
-	private int patternCodeLength;
-
-	private int maxMarriageInRowCount;
-	private float  maxMarriageProcent;
-	private int minMathSet;
+	[Parameter] public EventCallback showCameraConnectingMBEvent { get; set; }
 
 	private bool monitorMarriageProcent;
 	private bool monitorMarriageInRowCount;
 
+	private string patternToSearch;
+	private int patternCodeLength;
+
+	private float maxMarriageProcent;
+	private int minMathSet;
+	private int maxMarriageInRowCount;
+
+	private int bdTimerInterval;
+	private int logsTimerInterval;
+
+	private int tcpTimeout;
 
 	protected override void OnInitialized()
 	{
-		if (configurationService.ActiveUserRole == "admin")
-		{
-			AdminSettings = true;
-		}
-		patternCodeLength = configurationService.codeLength;
-		patternToSearch = configurationService.textPattern;
+		patternCodeLength = configurationService.CodeLength;
+		patternToSearch = configurationService.TextPattern;
 
 		bdTimerInterval = configurationService.DbTimerInterval;
-		tcpTimerInterval = configurationService.tcpTimerInterval;
 
+		tcpTimeout = configurationService.TcpTimeout;
+		logsTimerInterval = configurationService.LogsTimerInterval;
 
 		maxMarriageInRowCount = configurationService.MarriageMaxCountInRow;
 		maxMarriageProcent = configurationService.MarriageMaxPercent;
@@ -210,18 +228,20 @@
 
 		monitorMarriageProcent = configurationService.MonitorMarriagePercent;
 		monitorMarriageInRowCount = configurationService.MonitorMarriageCountInRow;
+
 	}
 
-	private void ChangeCameraConnectionMBState()
+	private void ShowCameraConnectionMB()
 	{
-		ChangeCameraIPandPort = !ChangeCameraIPandPort;
+		showCameraConnectingMBEvent.InvokeAsync();
+		buttonClose.InvokeAsync();
 	}
 
 	private void ChangeMonitorMarriageProcentState()
 	{
 		monitorMarriageProcent = !monitorMarriageProcent;
 		configurationService.MonitorMarriagePercent = monitorMarriageProcent;
-		if(monitorMarriageProcent)
+		if (monitorMarriageProcent)
 		{
 			UploadMarriageProcent();
 		}
@@ -231,15 +251,20 @@
 	{
 		monitorMarriageInRowCount = !monitorMarriageInRowCount;
 		configurationService.MonitorMarriageCountInRow = monitorMarriageInRowCount;
-		if(monitorMarriageInRowCount)
+		if (monitorMarriageInRowCount)
 		{
-			UploadMarriageCountInRow();	
+			UploadMarriageCountInRow();
 		}
 	}
 
 	private void UploadMarriageProcent()
 	{
 		configurationService.MarriageMaxPercent = maxMarriageProcent;
+	}
+
+	private void UploadTCPTimeout()
+	{
+		configurationService.TcpTimeout = tcpTimeout;
 	}
 
 	private void UploadMarriageCountInRow()
@@ -254,39 +279,41 @@
 
 	private void UploadNewTextPattern()
 	{
-		configurationService.textPattern = patternToSearch;
+		configurationService.TextPattern = patternToSearch;
 	}
 
 	private void UploadNewCodePatternLength()
 	{
-		configurationService.codeLength = patternCodeLength;
+		configurationService.CodeLength = patternCodeLength;
 	}
 
 	private void UploadDbTimerInterval()
 	{
 		configurationService.DbTimerInterval = patternCodeLength;
+		statsService.TimerIntervalUpdate();
 	}
 
 
 	private void UploadTCPTimerInterval()
 	{
-		configurationService.tcpTimerInterval = tcpTimerInterval;
+		configurationService.LogsTimerInterval = logsTimerInterval;
 	}
 
 
+	private void CloseTCPConnection()
+	{
+		tcpService.CameraDisconnectHandler();
+		buttonClose.InvokeAsync();
+	}
+
 	private async Task logOut()
 	{
-		buttonClose.InvokeAsync();
-		//Мб сохранить сессию?
-		//она еще запущена?! да
-		if(configurationService.activeUser != null)
-		{
-			configurationService.activeUser = null;
-		}
 		await statsService.AutoUpdateOrCreateSession();
+		configurationService.CreateEmptyUser();
 		statsService.ResetStats();
-
-		navigationManager.NavigateTo("/login");
+		navigationManager.NavigateTo("/");
+		loggerService.UpdateSaveLogs();
+		buttonCloseProcessing();
 	}
 
 	private void RebuildDb()
@@ -295,4 +322,9 @@
 		dbMainController.CreateDb();
 	}
 
+	private async Task buttonCloseProcessing()
+	{
+		buttonClose.InvokeAsync();
+		configurationService.SaveCofigurationInJSONAsync();
+	}
 }

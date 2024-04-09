@@ -51,12 +51,7 @@
 	align-content: center;
 }
 
-.adminButtonsStyle {
-	width: 20%;
-	height: 100%;
+.buttonsStyle {
+	flex:1;
 }
 
-.userButtonsStyle {
-	width: 32%;
-	height: 100%;
-}

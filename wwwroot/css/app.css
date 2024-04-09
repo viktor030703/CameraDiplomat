@@ -281,3 +281,18 @@ a, .btn-link {
     .inputBlockStyle:focus {
         box-shadow: 0px 0px 25px 1px blue;
     }
+
+
+.limitConteiner {
+    height: 15vh;
+}
+
+.backgroungVideo{
+    position:absolute;
+    z-index:3;
+ 
+    height:100vh;
+    width:100%;
+    object-fit: cover;
+
+}

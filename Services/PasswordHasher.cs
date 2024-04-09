@@ -1,6 +1,5 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Security.Cryptography;
+using Serilog;
 
 namespace CameraDiplomat.Services
 {
@@ -29,20 +28,24 @@ namespace CameraDiplomat.Services
 			}
 			catch (Exception ex)
 			{
+				Log.Error("Исключение во время хэширования пароля: " + ex.Message.ToString());
 				return "error";
 			}
 		}
 		public static bool VerificatePassword(string password, string hashPasswordFromDb)
 		{
+			Log.Information("Попытка авторицзации");
 			try
 			{
 				if (String.IsNullOrEmpty(password) || String.IsNullOrEmpty(hashPasswordFromDb))
 				{
+					Log.Information("Логин или пароль пусты");
 					return false;
 				}
 
 				if (String.Equals(password, "error") || String.Equals(hashPasswordFromDb, "error"))
 				{
+					Log.Warning("Неверный логин или пароль");
 					return false;
 				}
 
@@ -60,13 +63,17 @@ namespace CameraDiplomat.Services
 				for (int i = 0; i < HashSize; i++)
 				{
 					if (hashBytes[i + SaltSize] != computedHash[i])
+					{
+						Log.Warning("Пароль неверен!");
 						return false;
+					}	
 				}
 
 				return true;
 			}
 			catch (Exception ex)
 			{
+				Log.Error("Исключение во время верификации пароля: " + ex.Message.ToString());
 				return false;
 			}
 		}

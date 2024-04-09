@@ -1,12 +1,6 @@
 ﻿using CameraDiplomat.Context;
-using CameraDiplomat.Data;
-using CameraDiplomat.Entities;
 using CameraDiplomat.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Reflection;
-
+using CameraDiplomat.Interfaces;
 
 namespace CameraDiplomat
 {
@@ -30,30 +24,34 @@ namespace CameraDiplomat
 #endif
 			//builder.Configuration.GetConnectionString("");
 			// Adding configuration file
-			var a = Assembly.GetExecutingAssembly();
-			using var stream = a.GetManifestResourceStream("CameraDiplomat.AppConfiguretion.json");
-			var config = new ConfigurationBuilder()
-						.AddJsonStream(stream)
-						.Build();
-			builder.Configuration.AddConfiguration(config);
-
-			builder.Services.AddSingleton<ConfigurationService>();
+			//var a = Assembly.GetExecutingAssembly();
+			//using var stream = a.GetManifestResourceStream("CameraDiplomat.AppConfiguretion.json");
+			//var config = new ConfigurationBuilder()
+			//			.AddJsonStream(stream)
+			//			.Build();
+			//builder.Configuration.AddConfiguration(config);
 
 			//builder.Services.AddDbContext<ApplicationContext>(options =>
 			//{
 			//	options.UseSqlite(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "CamerasDimplomat.db"));
 			//});
 
+			builder.Services.AddSingleton<ConfigurationService>();
+			builder.Services.AddSingleton<ILoggerService, LoggerService>();
+			builder.Services.AddSingleton<IStatisticService, StatisticService>();
+
 			builder.Services.AddSingleton<ApplicationContext>();
-			builder.Services.AddSingleton<TCPService>();
-			builder.Services.AddSingleton<MessageDecoder>();
-			builder.Services.AddSingleton<UsersDbService>();
-			builder.Services.AddSingleton<ProductsDbService>();
-			builder.Services.AddSingleton<PasswordHasher>();
+			builder.Services.AddSingleton<ITCPService, TCPService>();
+			builder.Services.AddSingleton<IDbMainController, DbMainController>();
+			builder.Services.AddSingleton<IProductsDbService, ProductsDbService>();
+			builder.Services.AddSingleton<ISessionsDbService, SessionsDbService>();
+
+			builder.Services.AddSingleton<IMessageDecoder, MessageDecoder>();
+			builder.Services.AddSingleton<IUsersDbService, UsersDbService>();
+
 			builder.Services.AddSingleton<SessionCustomDesigner>();
-			builder.Services.AddSingleton<SessionsDbService>();
-			builder.Services.AddSingleton<StatsService>();
-			builder.Services.AddSingleton<DbMainController>();
+			builder.Services.AddSingleton<PasswordHasher>();
+
 
 
 			return builder.Build();

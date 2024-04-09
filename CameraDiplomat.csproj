@@ -58,10 +58,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Remove="AppConfiguretion.json" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Pages\DbCodesPage.razor.css" />
       <None Remove="Pages\DbProductsPage.razor.css" />
       <None Remove="Pages\DbSessionsPage.razor.css" />
@@ -73,16 +69,22 @@
       <None Remove="Shared\CustomComponents\ColorSelector.razor.css" />
       <None Remove="Shared\CustomComponents\DbUsersContentMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\DbUsersTable.razor.css" />
+      <None Remove="Shared\CustomComponents\HomePage\AddProductMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\HomePage\AddUserMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\HomePage\BigMarriageCountInRowMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\HomePage\BigMarriageProcentMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\HomePage\CameraConnectingMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\HomePage\ProductDetail.razor.css" />
       <None Remove="Shared\CustomComponents\HomePage\SaveSessionResaults.razor.css" />
+      <None Remove="Shared\CustomComponents\HomePage\SendMessageToCameraMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\HomePage\SessionStatsSave.razor.css" />
       <None Remove="Shared\CustomComponents\LoginErrorMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\LoginErrorMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\LoginPage\InfoErrorMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\LoginPage\InfoMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\LoginPage\LoginErrorMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\LoginPage\LoginErrorMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\LoginPage\LoginSuccessMessage.razor.css" />
       <None Remove="Shared\CustomComponents\MessageBoxWaring.razor.css" />
       <None Remove="Pages\HomePage.razor.css" />
       <None Remove="Pages\LoginPage.razor.css" />
@@ -101,6 +103,8 @@
       <None Remove="Shared\CustomComponents\ProductsDbView\UserInfoMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\SessionsDbView\AddSessionMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\SessionsDbView\DbSessionsTable.razor.css" />
+      <None Remove="Shared\CustomComponents\SessionsDbView\DeleteAllSessionsMessageBox.razor.css" />
+      <None Remove="Shared\CustomComponents\SessionsDbView\DeleteSessionMessageBox - Копировать.razor.css" />
       <None Remove="Shared\CustomComponents\SessionsDbView\DeleteSessionMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\SessionsDbView\SelectSessionMessageBox.razor.css" />
       <None Remove="Shared\CustomComponents\SessionsDbView\SessionInfoMessageBox.razor.css" />
@@ -121,12 +125,17 @@
       <Content Include="Pages\DbProductsPage.razor.css" />
       <Content Include="Pages\DbSessionsPage.razor.css" />
       <Content Include="Pages\DbUsersPage.razor.css" />
+      <Content Include="Shared\CustomComponents\HomePage\BigMarriageCountInRowMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\HomePage\BigMarriageProcentMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\HomePage\ProductDetail.razor.css" />
       <Content Include="Pages\HomePage.razor.css" />
       <Content Include="Pages\LoginPage.razor.css" />
       <Content Include="Pages\Scroll.razor.css" />
       <Content Include="Shared\CustomComponents\HomePage\SaveSessionResaults.razor.css" />
+      <Content Include="Shared\CustomComponents\HomePage\SendMessageToCameraMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\LoginPage\InfoMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\LoginPage\LoginErrorMessageBox.razor.css" />
+      <Content Include="Shared\CustomComponents\LoginPage\LoginSuccessMessage.razor.css" />
       <Content Include="Shared\CustomComponents\ProductsDbView\AddProductMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\ProductsDbView\DeleteProductMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\ProductsDbView\DeleteProductsDbMessageBox.razor.css" />
@@ -134,6 +143,7 @@
       <Content Include="Shared\CustomComponents\ProductsDbView\SelectProductMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\SessionsDbView\AddSessionMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\SessionsDbView\DbSessionsTable.razor.css" />
+      <Content Include="Shared\CustomComponents\SessionsDbView\DeleteAllSessionsMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\SessionsDbView\DeleteSessionMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\SessionsDbView\SelectSessionMessageBox.razor.css" />
       <Content Include="Shared\CustomComponents\SessionsDbView\SessionInfoMessageBox.razor.css" />
@@ -148,18 +158,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="AppConfiguretion.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
