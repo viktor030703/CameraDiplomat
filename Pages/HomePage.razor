@@ -50,8 +50,6 @@
 }
 
 
-
-
 @if (ShowMainContent)
 {
 	<div class="pageGrid">
@@ -64,11 +62,10 @@
 				}
 				else
 				{
-					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick=ShowCameraUnavalibleMBState />
+					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick="()=>ShowCameraUnavalibleMBState()"/>
 				}
 			</div>
 		</div>
-
 
 		<div class="appTitlePlace">
 			<span class="applicationHeader ">
@@ -78,11 +75,9 @@
 
 		<div class="settingsIconPlace">
 			<div class="objectFullScale">
-				<div class="oi oi-cog headerIconics customButton" @onclick="ChangeSettingsMBState" />
+				<div class="oi oi-cog headerIconics customButton" @onclick="()=>ChangeSettingsMBState()"/>
 			</div>
 		</div>
-
-
 
 		<div class="mainContentPlace">
 			<ProductDetail product="productDataToView" />
@@ -94,38 +89,36 @@
 			</div>
 		</div>
 
-
 		<div class="buttonsPlace">
 			<div class="subContainer">
-				<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeDbProductsMBState">
+				<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeDbProductsMBState()">
 					БД продукты
 				</button>
 
 				@if (String.Equals(configurationService.activeUser.role, "admin"))
 				{
-					<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeDbUsersMBState">
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeDbUsersMBState()">
 						БД пользователи
 					</button>
 				}
 				@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
 				String.Equals(configurationService.activeUser.role, "master"))
 				{
-					<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeDbSessionsMBState">
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeDbSessionsMBState()">
 						БД сессии
 					</button>
 
-					<button class="btn btn-primary buttonsStyle customButton" @onclick="ChangeShowMessageToCameraMBState">
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeShowMessageToCameraMBState()">
 						Команда камере
 					</button>
 				}
 
-				<button class="btn btn-primary buttonsStyle customButton" @onclick="UpdateStats">
+				<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>UpdateStats()">
 					Обнулить счётчик
 				</button>
 			</div>
 		</div>
 	</div>
-
 }
 
 @code {
@@ -142,17 +135,14 @@
 
 	private bool ShowMainContent = true;
 
-
 	private bool ShowMarriagePercentWaringMessageBox = false;
 	private bool ShowMarriageCountInRowWaringMessageBox = false;
-
 
 	private ProductViewModel productDataToView;
 	private bool IsCameraConnected;
 
 	private void NewMessageHandler(string msg)
 	{
-
 		Product newProduct = messageDecoder.DecodeMessege(msg, out ProductViewModel viewModel, out int checksCompleted);
 
 		if (newProduct != null & viewModel != null)
@@ -185,10 +175,10 @@
 
 		//tcpService.CheckConnectionNotNull();//if null event will invoke
 
-		Task.Run(tcpService.GetMessages); // read messages
+		IsCameraConnected = configurationService.IsCameraConnected;
+
 		statsService.ResetStats();//обновили счетчик статистики
 										// tcpService.StartTimer();
-		IsCameraConnected = configurationService.IsCameraConnected;
 		InvokeAsync(StateHasChanged);
 
 		// tcpService.TimerInitializationAndStart();
@@ -216,8 +206,6 @@
 	{
 		ShowSettingsMessageBox = !ShowSettingsMessageBox;
 	}
-
-
 
 	private void ChangeDbUsersMBState()
 	{

@@ -13,7 +13,7 @@ namespace CameraDiplomat.Services
 			_configurationService = configurationService;
 		}
 
-		//message must to have next format: <strat>Cavivar<quality>false3<percent>50<codeIs>123456789abcdef<textIs>none<end>
+		//message must to have next format: <strat>Cavivar<quality>false<percent>50<codeIs>123456789abcdef<textIs>none<end>
 		public Product DecodeMessege(string messageToDecode, out ProductViewModel viewModel, out int checksCompleted)
 		{
 			string[] messages;

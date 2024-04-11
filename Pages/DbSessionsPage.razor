@@ -8,9 +8,8 @@
 
 @if (showDeletesessionMBState)
 {
-	<DeleteSessionMessageBox buttonClose="ChangeDeleteSessionMBState" sessionToDelete="selectedSession"/>
+	<DeleteSessionMessageBox buttonClose="ChangeDeleteSessionMBState" sessionToDelete="selectedSession" buttonDelete="ClearSelectedSession" />
 }
-
 
 @if (showSessionInformationMBState)
 {
@@ -24,7 +23,7 @@
 
 @if (showSelectSessionMBState)
 {
-	<SelectSessionMessageBox buttonClose="ChangeSelectSomethingMBState" />
+	<SelectSessionMessageBox buttonClose="ChangeSelectSomethingMBState"/>
 }
 
 @if (showDeleteAllSessionsMBState)
@@ -60,12 +59,12 @@
 		<div class="buttonsContainer">
 			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student"))
 			{
-				<button class="btn customButton" @onclick="ChangeAddSessionMBState">Добавить</button>
-				<button class="btn customButton errorBackground" @onclick="ChangeDeleteSessionMBState">Удалить</button>
-				<button class="btn customButton" @onclick="ChangeDeleteAllSessionsMBState">Удалить все</button>
+				<button class="btn customButton" @onclick="()=>ChangeAddSessionMBState()">Добавить</button>
+				<button class="btn customButton errorBackground" @onclick="()=>ChangeDeleteSessionMBState()">Удалить</button>
+				<button class="btn customButton" @onclick="()=>ChangeDeleteAllSessionsMBState()">Удалить все</button>
 			}
-				<button class="btn customButton" @onclick="ChangeGetSessionInfoMBState">Подробнее</button>
-				<button  class="btn customButton" @onclick="ChangeUploadSessionMBState">Загрузить</button>
+				<button class="btn customButton" @onclick="()=>ChangeGetSessionInfoMBState()">Подробнее</button>
+				<button  class="btn customButton" @onclick="()=>ChangeUploadSessionMBState()">Загрузить</button>
 		</div>
 	</div>
 </div>
@@ -127,7 +126,6 @@
 		else
 		{
 			showDeletesessionMBState = !showDeletesessionMBState;
-			ClearSelectedSession();
 			await RefreshSessionsFromDb();
 		}
 	}

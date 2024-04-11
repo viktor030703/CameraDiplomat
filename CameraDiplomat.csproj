@@ -178,4 +178,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Images\" />
+      <Folder Include="Videos\" />
+      <Folder Include="Sounds\" />
+    </ItemGroup>
+
 </Project>

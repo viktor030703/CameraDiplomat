@@ -14,7 +14,7 @@
 		</div>
 
 		@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
-			String.Equals(configurationService.activeUser.role, "master"))
+				String.Equals(configurationService.activeUser.role, "master"))
 		{
 			<div class="textPlace textContent">
 				<div class="subContainer">
@@ -44,6 +44,12 @@
 			Подключиться
 		</button>
 
+		@if (configurationService.SoundsOn)
+		{
+			<audio autoplay>
+				<source src="CameraDisconnected.mp3" type="audio/mp3" />
+			</audio>
+		}
 	</div>
 </div>
 
@@ -65,10 +71,9 @@
 		configurationService.CameraIP = cameraIP;
 		configurationService.CameraPort = cameraPort;
 		await configurationService.SaveCofigurationInJSONAsync();
-		tcpService.ConnectToCamera();
-		if(tcpService.BooleanCheckCameraStatus())
+		await Task.Run(() => tcpService.ConnectToCamera());
+		if (tcpService.BooleanCheckCameraStatus())
 		{
-			Task.Run(()=>tcpService.GetMessages());
 			buttonClose.InvokeAsync();
 		}
 		else

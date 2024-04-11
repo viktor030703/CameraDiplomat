@@ -53,11 +53,11 @@
 		<div class="buttonsContainer">
 			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student"))
 			{
-			<button class="btn customButton" @onclick="ChangeAddProductMBState">Добавить</button>
-			<button class="btn customButton errorBackground" @onclick="ChangeDeleteProductMBState">Удалить</button>
-			<button class="btn customButton errorBackground" @onclick="ChangeDeleteProductsDbMBState">Удалить всё</button>
+			<button class="btn customButton" @onclick="()=>ChangeAddProductMBState()">Добавить</button>
+			<button class="btn customButton errorBackground" @onclick="()=>ChangeDeleteProductMBState()">Удалить</button>
+			<button class="btn customButton errorBackground" @onclick="()=>ChangeDeleteProductsDbMBState()">Удалить всё</button>
 			}
-			<button class="btn customButton" @onclick="ChangeGetProductInfoMBState">Подробнее</button>
+			<button class="btn customButton" @onclick="()=>ChangeGetProductInfoMBState()">Подробнее</button>
 		</div>
 	</div>
 </div>

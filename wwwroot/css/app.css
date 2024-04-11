@@ -287,12 +287,24 @@ a, .btn-link {
     height: 15vh;
 }
 
-.backgroungVideo{
-    position:absolute;
-    z-index:3;
- 
-    height:100vh;
-    width:100%;
-    object-fit: cover;
+.backgroundVideoContainer {
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    z-index: -1;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+    background-color:black;
+    background-image:url("../loading.gif");
+}
 
+.backgroundVideo {
+    width : 100vh;
+    height: 100vw;
+}
+
+addBorder{
+    border-radius: 5px;
+    border: solid 2px black
 }

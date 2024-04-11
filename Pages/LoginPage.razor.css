@@ -1,4 +1,8 @@
 ﻿.PageGrid {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
     display: grid;
     height: 100vh;
     width: 100%;
@@ -65,4 +69,9 @@
 .objectPartScale {
     height: 80%;
     width: 100%;
+}
+
+.translateObjectBottom {
+    position: relative;
+    transform: translate(0px, 10%);
 }

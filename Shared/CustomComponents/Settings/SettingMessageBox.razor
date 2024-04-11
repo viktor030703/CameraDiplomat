@@ -32,7 +32,7 @@
 					<input type="text" class="fullScale" @bind=patternToSearch />
 				</div>
 
-				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadNewTextPattern">
+				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadNewTextPattern()">
 					Применить
 				</button>
 			</div>
@@ -45,7 +45,7 @@
 					<input type="number" class="fullScale" @bind=patternCodeLength />
 				</div>
 
-				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadNewCodePatternLength">
+				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadNewCodePatternLength()">
 					Применить
 				</button>
 			</div>
@@ -55,26 +55,39 @@
 			{
 				<div class="subContainer">
 					<div class="textContent">
-						Интревал таймера БД:
+						Таймер БД (мс):
 					</div>
 					<div class="textContent">
 						<input type="number" class="fullScale" @bind=bdTimerInterval />
 					</div>
 
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadDbTimerInterval">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadDbTimerInterval()">
 						Применить
 					</button>
 				</div>
 
 				<div class="subContainer">
 					<div class="textContent">
-						Интревал таймера логов:
+						Пройти проверок:
+					</div>
+					<div class="textContent">
+						<input type="number" class="fullScale" @bind=checksCount />
+					</div>
+
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadChecksCount()">
+						Применить
+					</button>
+				</div>
+
+				<div class="subContainer">
+					<div class="textContent">
+						Таймер логов (мс):
 					</div>
 					<div class="textContent">
 						<input type="number" class="fullScale" @bind=logsTimerInterval />
 					</div>
 
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadTCPTimerInterval">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadTCPTimerInterval()">
 						Применить
 					</button>
 				</div>
@@ -87,7 +100,20 @@
 						<input type="number" class="fullScale" @bind=tcpTimeout />
 					</div>
 
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadTCPTimeout">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadTCPTimeout()">
+						Применить
+					</button>
+				</div>
+
+				<div class="subContainer">
+					<div class="textContent">
+						Мин. выборка для %:
+					</div>
+					<div class="textContent">
+						<input type="number" class="fullScale" @bind=minMathSet />
+					</div>
+
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadMinMathSet()">
 						Применить
 					</button>
 				</div>
@@ -102,13 +128,13 @@
 
 				@if (monitorMarriageProcent)
 				{
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageProcentState">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>ChangeMonitorMarriageProcentState()">
 						Отключить
 					</button>
 				}
 				else
 				{
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageProcentState">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>ChangeMonitorMarriageProcentState()">
 						Включить
 					</button>
 				}
@@ -125,13 +151,13 @@
 
 				@if (monitorMarriageInRowCount)
 				{
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageCountInRowState">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>ChangeMonitorMarriageCountInRowState()">
 						Отключить
 					</button>
 				}
 				else
 				{
-					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="ChangeMonitorMarriageCountInRowState">
+					<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>ChangeMonitorMarriageCountInRowState()">
 						Включить
 					</button>
 				}
@@ -139,20 +165,7 @@
 			</div>
 
 			<div class="subContainer">
-				<div class="textContent">
-					Мин. выборка для %:
-				</div>
-				<div class="textContent">
-					<input type="number" class="fullScale" @bind=minMathSet />
-				</div>
-
-				<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="UploadMinMathSet">
-					Применить
-				</button>
-			</div>
-
-			<div class="subContainer">
-				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>logOut()">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="logOut">
 					Сменить аккаунт
 				</button>
 			</div>
@@ -161,7 +174,7 @@
 					String.Equals(configurationService.activeUser.role, "master"))
 			{
 				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="ShowCameraConnectionMB">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>ShowCameraConnectionMB()">
 						Переподключиться к камере
 					</button>
 				</div>
@@ -171,17 +184,34 @@
 			@if (String.Equals(configurationService.activeUser.role, "admin"))
 			{
 				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="RebuildDb">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>RebuildDb()">
 						Очистить базу данных
 					</button>
 				</div>
 			}
 
 			<div class="subContainer">
-				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="CloseTCPConnection">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>CloseTCPConnection()">
 					Отключиться от камеры
 				</button>
 			</div>
+
+			@if (SoundsOn)
+			{
+				<div class="subContainer">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise successBackground" @onclick="()=>ChangeSoundsOnState()">
+						Выключить звуки
+					</button>
+				</div>
+			}
+			else
+			{
+				<div class="subContainer">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise errorBackground" @onclick="()=>ChangeSoundsOnState()">
+						Включить звуки
+					</button>
+				</div>
+			}
 
 			<div class="subContainer">
 				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>buttonCloseProcessing()">
@@ -206,11 +236,14 @@
 	private float maxMarriageProcent;
 	private int minMathSet;
 	private int maxMarriageInRowCount;
+	private int checksCount;
 
 	private int bdTimerInterval;
 	private int logsTimerInterval;
 
 	private int tcpTimeout;
+
+	private bool SoundsOn;
 
 	protected override void OnInitialized()
 	{
@@ -225,10 +258,12 @@
 		maxMarriageInRowCount = configurationService.MarriageMaxCountInRow;
 		maxMarriageProcent = configurationService.MarriageMaxPercent;
 		minMathSet = configurationService.MinMathSet;
+		checksCount = configurationService.TotalChecksCount;
 
 		monitorMarriageProcent = configurationService.MonitorMarriagePercent;
 		monitorMarriageInRowCount = configurationService.MonitorMarriageCountInRow;
 
+		SoundsOn = configurationService.SoundsOn;
 	}
 
 	private void ShowCameraConnectionMB()
@@ -266,6 +301,12 @@
 	{
 		configurationService.TcpTimeout = tcpTimeout;
 	}
+
+	private void UploadChecksCount()
+	{
+		configurationService.TotalChecksCount = checksCount;
+	}
+
 
 	private void UploadMarriageCountInRow()
 	{
@@ -320,6 +361,12 @@
 	{
 		dbMainController.DeleteDb();
 		dbMainController.CreateDb();
+	}
+
+	private void ChangeSoundsOnState()
+	{
+		SoundsOn = !SoundsOn;
+		configurationService.SoundsOn = SoundsOn;
 	}
 
 	private async Task buttonCloseProcessing()

@@ -29,7 +29,8 @@ namespace CameraDiplomat.Services
 			_configurationService = service;
 			_semaphoreRead = new SemaphoreSlim(1, 1);
 			_semaphoreWrite = new SemaphoreSlim(1, 1);
-			ConnectToCamera();
+			Task.Run(ConnectToCamera);
+			//ConnectToCamera();
 		}
 		public void CameraDisconnectHandler()
 		{
@@ -70,6 +71,7 @@ namespace CameraDiplomat.Services
 					_reader = new StreamReader(stream);
 					_writer = new StreamWriter(stream);
 					CameraConnectHandler();
+					Task.Run(GetMessages);
 				}
 				else
 				{

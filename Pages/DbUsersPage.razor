@@ -16,8 +16,6 @@
 	<DeleteUserMessageBox buttonClose="ChangeDeleteUserMBState" userToDelete="selectedUser" buttonDelete="ClearSelectedUser"/>
 }
 
-
-
 @if (showUserInformationMBState)
 {
 	<UserInfoMessageBox buttonClose="ChangeGetUserInfoMBState" userToGetInfo="selectedUser" />
@@ -56,10 +54,10 @@
 		<div class="buttonsContainer">
 			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student"))
 			{
-				<button class="btn customButton" @onclick="ChangeAddUserMBState">Добавить</button>
-				<button class="btn customButton" @onclick="ChangeEditUserMBState">Изменить</button>
-				<button class="btn customButton errorBackground" @onclick="ChangeDeleteUserMBState">Удалить</button>
-				<button class="btn customButton" @onclick="ChangeGetUserInfoMBState">Подробнее</button>
+				<button class="btn customButton" @onclick="()=>ChangeAddUserMBState()">Добавить</button>
+				<button class="btn customButton" @onclick="()=>ChangeEditUserMBState()">Изменить</button>
+				<button class="btn customButton errorBackground" @onclick="()=>ChangeDeleteUserMBState()">Удалить</button>
+				<button class="btn customButton" @onclick="()=>ChangeGetUserInfoMBState()">Подробнее</button>
 			}
 		</div>
 	</div>

@@ -4,7 +4,7 @@
 
 <div class="messageBox errorContainerShadows">
 	<div class="container">
-		<div class="headerPlace textHeader addBottomBorder errorTextShadows">
+		<div class="headerPlace textHeader addBottomBorder errorTextShadows limitConteiner">
 			Превышен число брака подряд!
 		</div>
 
@@ -20,6 +20,14 @@
 				Отключить проверку
 			</button>
 		</div>
+
+
+		@if (configurationService.SoundsOn)
+		{
+			<audio autoplay>
+				<source src="BigMarriageCountInRow.mp3" type="audio/mp3" />
+			</audio>
+		}
 	</div>
 </div>
 

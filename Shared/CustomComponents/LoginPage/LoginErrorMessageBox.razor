@@ -1,4 +1,5 @@
-﻿<div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
+﻿@inject ConfigurationService configurationService
+<div class="messageBoxBackground" @onclick="()=>buttonClose.InvokeAsync()" />
 
 <div class="messageBox errorContainerShadows">
 	<div class="container">
@@ -14,6 +15,13 @@
 			Повторить
 		</button>
 	</div>
+
+	@if (configurationService.SoundsOn)
+	{
+		<audio autoplay>
+			<source src="LoginFalse.mp3" type="audio/mp3" />
+		</audio>
+	}
 </div>
 
 @code {

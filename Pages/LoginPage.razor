@@ -7,7 +7,6 @@
 
 @inject ILoggerService CallUpLogsDesigner
 
-
 @if (IsLoginFail)
 {
 	<LoginErrorMessageBox buttonClose="ChangeLoginErrorMBState" />
@@ -20,12 +19,12 @@
 
 @if (ShowSettingsMessageBox)
 {
-	<SettingMessageBox buttonClose="ChangeSettingsMBState"/>
+	<SettingMessageBox buttonClose="ChangeSettingsMBState" />
 }
 
 @if (IsLoginSuccess)
 {
-	<LoginSuccessMessage/>
+	<LoginSuccessMessage />
 }
 
 <div class="PageGrid">
@@ -43,17 +42,17 @@
 
 	<div class="settingsIconPlace">
 		<div class="objectFullScale">
-			<div class="oi oi-lock-locked headerIconics customButton" />
+			<div class="oi oi-lock-locked headerIconics defaultBackground addBorder" />
 		</div>
 	</div>
 
 	<div class="userIconPlace">
 		<center>
-			<div class="oi oi-person userIcon" />
+			<div class="oi oi-person userIcon defaultBackground" />
 		</center>
 	</div>
 
-	<div class="loginTextPlace textContent">
+	<div class="loginTextPlace textContent addBorder defaultBackground objectPartScale translateObjectBottom">
 		Логин:
 	</div>
 
@@ -62,12 +61,12 @@
 	</div>
 
 
-	<div class="passwordTextPlace textContent">
+	<div class="passwordTextPlace textContent addBorder defaultBackground objectPartScale translateObjectBottom">
 		Пароль:
 	</div>
 
 	<div class="passwordInputPlace textContent">
-		<input type="password" class="objectPartScale inputBlockStyle" @bind="password"/>
+		<input type="password" class="objectPartScale inputBlockStyle" @bind="password" />
 	</div>
 
 	<div class="buttonLoginPlace">
@@ -76,7 +75,6 @@
 		</div>
 	</div>
 </div>
-
 
 
 @code {
@@ -91,15 +89,15 @@
 
 	protected override async void OnInitialized()
 	{
-		if(configurationService.IsDbFatalError)
+		if (configurationService.IsDbFatalError)
 		{
-			dbMainController.DeleteDb(); 
+			dbMainController.DeleteDb();
 			dbMainController.CreateDb();
 			navigationManager.NavigateTo("/home");
 		}
 
 		List<User> usersFromDb = userService.GetUsers();
-		if(usersFromDb.Count == 0)
+		if (usersFromDb.Count == 0)
 		{
 			IsLoginSuccess = true;
 			navigationManager.NavigateTo("/home");

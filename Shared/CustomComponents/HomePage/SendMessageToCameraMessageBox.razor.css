@@ -1,9 +1,25 @@
-﻿.textScroll {
+﻿.messageBox {
+    position: fixed;
+    height: 96vh;
+    width: 90%;
+    left: 5%;
+    top: 2vh;
+}
+
+.textScroll {
     overflow: scroll;
 }
 
 .subContainer {
     overflow: hidden;
-    border-radius:5px;
-    border: solid 2px black;
+}
+
+.objectHeight{
+    margin: 1vh;
+    height: 20vh;
+}
+
+.objectTwiceHeight {
+    margin: 1vh;
+    height: 20vh;
 }

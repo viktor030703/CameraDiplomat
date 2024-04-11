@@ -13,6 +13,7 @@ namespace CameraDiplomat.Services
 		public int CameraPort = 6000;
 		public string CameraIP = "10.162.0.99";
 		public int TcpTimeout = 250;
+		public string LastMessageToServer;
 
 		//File IO settings
 		private string pathFolderWithData;
@@ -27,7 +28,7 @@ namespace CameraDiplomat.Services
 		public bool IsSettingFromJSON = false;
 		public bool IsDbFatalError = false;
 		public bool SaveDataInAppFolder = true;
-		public bool IsCameraConnected;
+		public bool IsCameraConnected = false;
 
 		//Для контроля качества
 		public bool MonitorMarriagePercent = false;
@@ -42,6 +43,7 @@ namespace CameraDiplomat.Services
 		public float MarriageMaxPercent = 60;
 		public int MinMathSet = 10;
 
+		public bool SoundsOn = true;
 		public ConfigurationService()
 		{
 			PathCreator();
@@ -67,7 +69,7 @@ namespace CameraDiplomat.Services
 					CameraIP = json["CameraIP"].ToString();
 					CameraPort = Int32.Parse(json["CameraPort"].ToString());
 					TcpTimeout = Int32.Parse(json["TcpTimeout"].ToString());
-
+					LastMessageToServer = json["LastMessageToServer"].ToString();
 
 					LogsTimerInterval = Int32.Parse(json["LogsTimerInterval" ].ToString());
 					DbTimerInterval = Int32.Parse(json["DbTimerInterval"].ToString());
@@ -78,6 +80,8 @@ namespace CameraDiplomat.Services
 					CodeLength = Int32.Parse(json["CodeLength"].ToString());
 					TotalChecksCount = Int32.Parse(json["TotalChecksCount"].ToString());
 					MinMathSet = Int32.Parse(json["MinMathSet"].ToString());
+
+					SoundsOn = Boolean.Parse(json["SoundsOn"].ToString());
 
 					return true;
 				}
