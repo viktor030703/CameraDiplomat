@@ -1,8 +1,9 @@
 ﻿using CameraDiplomat.Entities;
+using CameraDiplomat.Interfaces;
 
 namespace CameraDiplomat.Services
 {
-	public class SessionCustomDesigner
+	public class SessionCustomDesigner : ISessionCustomDesigner
 	{
 		private readonly ConfigurationService _configurationService;
 		public SessionCustomDesigner(ConfigurationService configurationService)

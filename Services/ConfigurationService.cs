@@ -15,6 +15,19 @@ namespace CameraDiplomat.Services
 		public int TcpTimeout = 250;
 		public string LastMessageToServer;
 
+		//Cognex Camera Settings
+		public bool CameraNeedAutohorise = false;
+		public bool CameraAutoLogin = true;
+		public string CameraLoginRequirement = "login";
+		public string CameraPasswordRequirement = "password";
+		public string CameraConnectedMessage = "ok";
+		public string CameraRetryMessage = "try again";
+		public string CameraLogin = "admin";
+		public string CameraPassword = "is2801c";
+		public int CameraConnectionAttemps = 3;
+		public int TimeBeforeOperations = 50;
+		public int TimeBeforeNextConnectionAttempt = 50;
+
 		//File IO settings
 		private string pathFolderWithData;
 		public string PathToJson;
@@ -65,6 +78,17 @@ namespace CameraDiplomat.Services
 
 					IsDbFatalError = Boolean.Parse(json["IsDbFatalError"].ToString());
 					SaveDataInAppFolder = Boolean.Parse(json["SaveDataInAppFolder"].ToString());
+
+					CameraAutoLogin = Boolean.Parse(json["CameraAutoLogin"].ToString());
+					CameraPassword = json["CameraPassword"].ToString();
+					CameraLogin = json["CameraLogin"].ToString();
+					CameraLoginRequirement = json["CameraLoginRequirement"].ToString();
+					CameraPasswordRequirement = json["CameraPasswordRequirement"].ToString();
+					CameraRetryMessage = json["CameraRetryMessage"].ToString();
+					CameraConnectionAttemps = Int32.Parse(json["CameraConnectionAttemps"].ToString());
+					CameraConnectedMessage = json["CameraConnectedMessage"].ToString();
+					TimeBeforeOperations = Int32.Parse(json["TimeBeforeOperations"].ToString());
+					TimeBeforeNextConnectionAttempt = Int32.Parse(json["TimeBeforeNextConnectionAttempt"].ToString());
 
 					CameraIP = json["CameraIP"].ToString();
 					CameraPort = Int32.Parse(json["CameraPort"].ToString());

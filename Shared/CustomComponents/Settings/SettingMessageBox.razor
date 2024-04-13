@@ -5,7 +5,7 @@
 @inject NavigationManager navigationManager
 @inject ILoggerService loggerService;
 
-<div class="messageBoxBackground objectFullScale" @onclick="()=>buttonCloseProcessing()" />
+<div class="messageBoxBackground objectFullScale" @onclick="()=>buttonCloseHandler()" />
 
 <div class="messageBox">
 	<div class="container">
@@ -22,6 +22,8 @@
 				Настройки (стандартные)
 			</div>
 		}
+
+
 
 		<div class="textContent">
 			<div class="subContainer">
@@ -188,6 +190,12 @@
 						Очистить базу данных
 					</button>
 				</div>
+
+				<div class="subContainer">
+					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>ShowSpecialCameraSettings()">
+						Спец настройки камеры
+					</button>
+				</div>
 			}
 
 			<div class="subContainer">
@@ -213,8 +221,9 @@
 				</div>
 			}
 
+
 			<div class="subContainer">
-				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>buttonCloseProcessing()">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>buttonCloseHandler()">
 					Закрыть
 				</button>
 			</div>
@@ -226,6 +235,7 @@
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
 	[Parameter] public EventCallback showCameraConnectingMBEvent { get; set; }
+	[Parameter] public EventCallback showSpecialCameraSettingsEvent { get; set; }
 
 	private bool monitorMarriageProcent;
 	private bool monitorMarriageInRowCount;
@@ -354,7 +364,7 @@
 		statsService.ResetStats();
 		navigationManager.NavigateTo("/");
 		loggerService.UpdateSaveLogs();
-		buttonCloseProcessing();
+		buttonCloseHandler();
 	}
 
 	private void RebuildDb()
@@ -369,7 +379,13 @@
 		configurationService.SoundsOn = SoundsOn;
 	}
 
-	private async Task buttonCloseProcessing()
+	private void ShowSpecialCameraSettings()
+	{
+		buttonCloseHandler();
+		showSpecialCameraSettingsEvent.InvokeAsync();
+	}
+
+	private async Task buttonCloseHandler()
 	{
 		buttonClose.InvokeAsync();
 		configurationService.SaveCofigurationInJSONAsync();

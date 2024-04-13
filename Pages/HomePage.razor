@@ -8,9 +8,19 @@
 @inject IMessageDecoder messageDecoder
 @inject IProductsDbService ProductsDb
 
+@inject ICameraConnectionService cameraConnectionService
+@inject INonStandartMessageHandler nonStandartMessegeHandler
+
+
 @if (ShowSettingsMessageBox)
 {
-	<SettingMessageBox buttonClose="ChangeSettingsMBState" showCameraConnectingMBEvent="ShowCameraUnavalibleMBState"/>
+	<SettingMessageBox buttonClose="ChangeSettingsMBState" showCameraConnectingMBEvent="ShowCameraUnavalibleMBState"
+												showSpecialCameraSettingsEvent="ChangeSpecialCameraSettingsMBState" />
+}
+
+@if(ShowSpecialCameraSettingsMessageBox)
+{
+	<SpecialCameraSettings buttonClose="ChangeSpecialCameraSettingsMBState"/>
 }
 
 @if (ShowCameraUnavalibleMessageBox)
@@ -46,7 +56,7 @@
 
 @if (ShowSendMessageToCameraMessageBox)
 {
-	<SendMessageToCameraMessageBox buttonClose="ChangeShowMessageToCameraMBState" />
+	<SendMessageToCameraMessageBox buttonClose="ChangeSendMessageToCameraMBState" MessageFromCamera="@messageFromCamera" />
 }
 
 
@@ -56,13 +66,13 @@
 
 		<div class="CameraStatusItemPlace">
 			<div class="objectFullScale">
-				@if (configurationService.IsCameraConnected)
+				@if (configurationService.IsCameraConnected & !configurationService.CameraNeedAutohorise)
 				{
-					<div class="oi oi-camera-slr headerIconics defaultBackground defaultContainerShadows" />
+					<div class="oi oi-camera-slr headerIconics successBackground defaultContainerShadows" />
 				}
 				else
 				{
-					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick="()=>ShowCameraUnavalibleMBState()"/>
+					<div class="oi oi-camera-slr headerIconics errorContainerShadows errorBackground" @onclick="()=>ShowCameraUnavalibleMBState()" />
 				}
 			</div>
 		</div>
@@ -75,7 +85,7 @@
 
 		<div class="settingsIconPlace">
 			<div class="objectFullScale">
-				<div class="oi oi-cog headerIconics customButton" @onclick="()=>ChangeSettingsMBState()"/>
+				<div class="oi oi-cog headerIconics addBorder customButton" @onclick="()=>ChangeSettingsMBState()" />
 			</div>
 		</div>
 
@@ -83,7 +93,7 @@
 			<ProductDetail product="productDataToView" />
 		</div>
 
-		<div class="statisticsPlace defaultBackground defaultContainerShadows">
+		<div class="statisticsPlace defaultBackground defaultContainerShadows noEdges">
 			<div class="textDisplay">
 				@statistic
 			</div>
@@ -102,13 +112,13 @@
 					</button>
 				}
 				@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
-				String.Equals(configurationService.activeUser.role, "master"))
+						String.Equals(configurationService.activeUser.role, "master"))
 				{
 					<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeDbSessionsMBState()">
 						БД сессии
 					</button>
 
-					<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeShowMessageToCameraMBState()">
+					<button class="btn btn-primary buttonsStyle customButton" @onclick="()=>ChangeSendMessageToCameraMBState()">
 						Команда камере
 					</button>
 				}
@@ -125,6 +135,7 @@
 	private string statistic = "Тут будет отображаться статистика серии";
 
 	private bool ShowSettingsMessageBox = false;
+	private bool ShowSpecialCameraSettingsMessageBox = false;
 	private bool ShowCameraUnavalibleMessageBox = false;
 
 	private bool ShowDbUsersMessageBox = false;
@@ -132,6 +143,7 @@
 	private bool ShowDbSessionsMessageBox = false;
 
 	private bool ShowSendMessageToCameraMessageBox = false;
+	private string messageFromCamera;
 
 	private bool ShowMainContent = true;
 
@@ -155,38 +167,27 @@
 		InvokeAsync(StateHasChanged);
 	}
 
-	private void ChangeShowMessageToCameraMBState()
-	{
-		ShowSendMessageToCameraMessageBox = !ShowSendMessageToCameraMessageBox;
-	}
-
 
 	protected override void OnInitialized()
 	{
 		productDataToView = new ProductViewModel(true, true, true, true,
 		"Название продукта", "Процент качества", "QR при наличии", "Текстовые надписи при наличии");
 
-
 		tcpService.EventNewMessageGet += NewMessageHandler;
 		tcpService.EventCameraUnavalible += ShowCameraUnavalibleMBState;
 		tcpService.EventCameraConnectedSuccessfully += HideCameraUnavalibleMBState;
 
 		statsService.EventNewSessionWasLoaded += ShowUploadedSession;
+		statsService.EventBigMarriageCountInRow += ShowBigMarriageCountInRowMB;
+		statsService.EventBigMarriagePercent += ShowBigMarriageProcentMB;
+		statsService.StartAutoUploadActiveSessionInDb();
 
-		//tcpService.CheckConnectionNotNull();//if null event will invoke
+		nonStandartMessegeHandler.needUserReaction += NeedUserReactionWithCameraCommunicating;
+
 
 		IsCameraConnected = configurationService.IsCameraConnected;
 
-		statsService.ResetStats();//обновили счетчик статистики
-										// tcpService.StartTimer();
 		InvokeAsync(StateHasChanged);
-
-		// tcpService.TimerInitializationAndStart();
-
-		statsService.EventBigMarriageCountInRow += ShowBigMarriageCountInRowMB;
-		statsService.EventBigMarriagePercent += ShowBigMarriageProcentMB;
-
-		statsService.StartAutoUploadActiveSessionInDb();
 	}
 
 	private void ShowCameraUnavalibleMBState()
@@ -271,6 +272,22 @@
 		await statsService.AutoUpdateOrCreateSession();
 		statistic = statsService.GetStatsString();
 		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task NeedUserReactionWithCameraCommunicating(string message)
+	{
+		messageFromCamera = message;
+		ShowSendMessageToCameraMessageBox = true;
+	}
+
+	private void ChangeSendMessageToCameraMBState()
+	{
+		ShowSendMessageToCameraMessageBox = !ShowSendMessageToCameraMessageBox;
+	}
+
+	private void ChangeSpecialCameraSettingsMBState()
+	{
+		ShowSpecialCameraSettingsMessageBox = !ShowSpecialCameraSettingsMessageBox;
 	}
 }
 

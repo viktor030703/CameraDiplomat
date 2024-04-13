@@ -145,51 +145,61 @@ a, .btn-link {
     left: 15%;
     top: 5vh;
     border-radius: 5px;
-    background-color: white;
+    background-color: azure;
     border: solid black 2px;
     z-index: 5;
 }
 
-.errorContainerShadows {
-    box-shadow: 0px 0px 35px 3px red;
+.noEdges{
+    border-radius: 5px;
 }
-.errorTextShadows {
-    text-shadow: 2px 2px 20px red;
-}
+
 
 .errorBackground {
-    background-color: red;
+    background-color: lightcoral;
     border-radius: 5px;
     border: solid black 2px;
-    /*opacity: 0.9;*/
+    opacity: 0.9;
 }
 
-.successBackground {
-    background-color: green;
-    border-radius: 5px;
-    border: solid black 2px;
-    /*opacity: 0.3;*/
+.errorContainerShadows {
+    box-shadow: 0px 0px 35px 3px lightcoral;
+}
+.errorTextShadows {
+    text-shadow: 2px 2px 20px lightcoral;
 }
 
+
+
+.addOpacity{
+    opacity: 0.7;
+}
 
 .defaultBackground {
-    background-color: silver;
+    background-color: aliceblue;
+}
+
+.addBorder {
     border-radius: 5px;
     border: solid black 2px;
-    /*opacity: 0.3;*/
 }
 
 .defaultContainerShadows {
-    box-shadow: 0px 0px 35px 3px silver;
+    box-shadow: 0px 0px 20px 3px aliceblue;
+}
+
+.successBackground {
+    background-color: lightgreen;
+    border-radius: 5px;
+    border: solid black 2px;
 }
 
 .successContainerShadows {
-    box-shadow: 0px 0px 35px 3px green;
+    box-shadow: 0px 0px 35px 3px lightgreen;
 }
 
-
 .successTextShadows {
-    text-shadow: 2px 2px 20px green;
+    text-shadow: 2px 2px 20px lightgreen;
 }
 
 .addBottomBorder{
@@ -231,7 +241,7 @@ a, .btn-link {
 
 
 .customButton {
-    background-color: silver;
+    background-color:aliceblue;
     border-radius: 5px;
     border: solid 2px black;
     box-shadow: 0px 0px 15px 1px silver;
@@ -296,15 +306,15 @@ a, .btn-link {
     left: 0px;
     overflow: hidden;
     background-color:black;
+
+    background-repeat: no-repeat;
+    background-position-y: -50vh;
+    background-position-x: 50%;
+    background-size: cover;
     background-image:url("../loading.gif");
 }
 
 .backgroundVideo {
     width : 100vh;
     height: 100vw;
-}
-
-addBorder{
-    border-radius: 5px;
-    border: solid 2px black
 }

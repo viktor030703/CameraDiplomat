@@ -8,8 +8,6 @@ namespace CameraDiplomat.Interfaces
 		public event StatisticService.NewSessionFromDb EventNewSessionWasLoaded;
 		public event StatisticService.MarriagePercentTooHigh EventBigMarriagePercent;
 		public event StatisticService.MarriageCountInRowToBig EventBigMarriageCountInRow;
-
-
 		void TimerInitialization();
 		void TimerIntervalUpdate();
 		void StartAutoUploadActiveSessionInDb();

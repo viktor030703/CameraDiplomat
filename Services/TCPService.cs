@@ -80,7 +80,7 @@ namespace CameraDiplomat.Services
 			}
 			catch (SocketException ex)
 			{
-				Log.Error("Исключение во время подключения камеры:"+ ex.Message.ToString());
+				Log.Error("Исключение во время подключения камеры:" + ex.Message.ToString());
 				CameraDisconnectHandler();
 			}
 			catch (Exception ex)
@@ -110,7 +110,8 @@ namespace CameraDiplomat.Services
 						catch (Exception ex)
 						{
 							Log.Error("Исключение во время получения сообщения от камеры:" + ex.Message.ToString());
-							Log.CloseAndFlush();
+							CameraDisconnectHandler();
+							break;
 						}
 						finally
 						{
@@ -148,7 +149,6 @@ namespace CameraDiplomat.Services
 					_semaphoreWrite.Release();
 					return false;
 				}
-
 			}
 			else
 			{
@@ -157,5 +157,54 @@ namespace CameraDiplomat.Services
 				return false;
 			}
 		}
+
+
+		public void StopSemaphores()
+		{
+			_semaphoreRead.WaitAsync();
+			_semaphoreWrite.WaitAsync();
+		}
+
+		public void ResumeSemaphores()
+		{
+			_semaphoreRead.Release();
+			_semaphoreWrite.Release();
+		}
+
+
+
+
+
+		public async Task<string> SendMessageAndGetResponce(string message)
+		{
+			string response = String.Empty;
+
+			if (_tcpClient != null & _reader != null & _writer != null)
+			{
+				try
+				{
+					await _writer.WriteLineAsync(message);
+					await _writer.FlushAsync();
+					Log.Information("Сообщение " + message + " отправлено на камеру");
+					response = await _reader.ReadLineAsync();
+					Log.Error("Ответ на команду: " + response);
+					EventNewMessageGet?.Invoke(response);
+					return response;
+				}
+				catch (Exception ex)
+				{
+					Log.Error("Исключение во время отправки сообщения от камеры:" + ex.Message.ToString());
+					CameraDisconnectHandler();
+					return "error";
+				}
+			}
+			else
+			{
+				Log.Error("Ошибка отправки сообщени: потоки чтения и записи не существуют");
+				CameraDisconnectHandler();
+				return "error";
+			}
+		}
+
 	}
 }

@@ -12,5 +12,8 @@ namespace CameraDiplomat.Interfaces
 		bool BooleanCheckCameraStatus();
 		void GetMessages();
 		Task<bool> SendMessage(string message);
+		Task<string> SendMessageAndGetResponce(string message);
+		void StopSemaphores();
+		void ResumeSemaphores();
 	}
 }

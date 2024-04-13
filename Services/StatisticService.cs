@@ -7,7 +7,7 @@ namespace CameraDiplomat.Services
 	public class StatisticService : IStatisticService
 	{
 		private readonly ConfigurationService _configurationService;
-		private readonly SessionCustomDesigner _sessionCustomDesigner;
+		private readonly ISessionCustomDesigner _sessionCustomDesigner;
 		private readonly ISessionsDbService _sessionsDbService;
 
 		public delegate void NewSessionFromDb();
@@ -28,7 +28,7 @@ namespace CameraDiplomat.Services
 
 
 		private System.Timers.Timer timerToUploadActiveSessionPerTime;
-		public StatisticService(ConfigurationService configurationService, SessionCustomDesigner customDesigner, ISessionsDbService sessionsDbService)
+		public StatisticService(ConfigurationService configurationService, ISessionCustomDesigner customDesigner, ISessionsDbService sessionsDbService)
 		{
 			_configurationService = configurationService;
 			_sessionCustomDesigner = customDesigner;

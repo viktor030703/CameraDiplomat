@@ -1,0 +1,261 @@
+﻿@inject ConfigurationService configurationService
+
+<div class="messageBoxBackground objectFullScale" @onclick="()=>buttonCloseHandler()" />
+
+<div class="messageBox">
+	<div class="container">
+
+		@if (configurationService.IsSettingFromJSON)
+		{
+			<div class="headerPlace textHeader defaultBackground defaultContainerShadows titleHeight">
+				Автовход в камеру (конфигурация)
+			</div>
+		}
+		else
+		{
+			<div class="headerPlace textHeader defaultBackground defaultContainerShadows titleHeight">
+				Автовход в камеру (стандартные)
+			</div>
+		}
+
+		<div class="subContainer">
+			<div class="textContent">
+				Между попытками (мс)
+			</div>
+			<div class="textContent">
+				<input type="number" class="fullScale" @bind=TimeBeforeNextConnectionAttempt />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadTimeBeforeNextConnectionAttempt()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Попыток
+			</div>
+			<div class="textContent">
+				<input type="number" class="fullScale" @bind=CameraConnectionAttemps/>
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraConnectionAttemps()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Между операциями
+			</div>
+			<div class="textContent">
+				<input type="number" class="fullScale" @bind=TimeBeforeOperations />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadTimeBeforeOperations()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Запрос логина
+			</div>
+			<div class="textContent">
+				<input type="text" class="fullScale" @bind=CameraLoginRequirement />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraLoginRequirement()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Запрос пароля
+			</div>
+			<div class="textContent">
+				<input type="text" class="fullScale" @bind=CameraPasswordRequirement />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraPasswordRequirement()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Вход успешен
+			</div>
+			<div class="textContent">
+				<input type="text" class="fullScale" @bind=CameraConnectedMessage />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraConnectedMessage()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Повторите попытку
+			</div>
+			<div class="textContent">
+				<input type="text" class="fullScale" @bind=CameraRetryMessage />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraRetryMessage()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Ваш логин
+			</div>
+			<div class="textContent">
+				<input type="text" class="fullScale" @bind=CameraLogin />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraLogin()">
+				Применить
+			</button>
+		</div>
+
+
+		<div class="subContainer">
+			<div class="textContent">
+				Ваш пароль
+			</div>
+			<div class="textContent">
+				<input type="text" class="fullScale" @bind=CameraPassword />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadCameraPassword()">
+				Применить
+			</button>
+		</div>
+
+
+		@if (CameraAutoLogin)
+		{
+			<div class="subContainer">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise successBackground" @onclick="()=>ChangeCameraAutoLoginState()">
+					Выключить автовход в камеру
+				</button>
+			</div>
+		}
+		else
+		{
+			<div class="subContainer">
+				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise errorBackground" @onclick="()=>ChangeCameraAutoLoginState()">
+					Включить автовход в камеру
+				</button>
+			</div>
+		}
+
+
+		<div class="subContainer">
+			<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>buttonCloseHandler()">
+				Закрыть
+			</button>
+		</div>
+	</div>
+</div>
+
+
+
+@code {
+	[Parameter] public EventCallback buttonClose { get; set; }
+
+	private bool CameraNeedAutohorise;
+	private bool CameraAutoLogin;
+	private string CameraLoginRequirement;
+	private string CameraPasswordRequirement;
+	private string CameraConnectedMessage;
+	private string CameraRetryMessage;
+	private string CameraLogin;
+	private string CameraPassword;
+	private int CameraConnectionAttemps;
+	private int TimeBeforeOperations;
+	private int TimeBeforeNextConnectionAttempt;
+
+
+	protected override void OnInitialized()
+	{
+		CameraAutoLogin = configurationService.CameraAutoLogin;
+		CameraLoginRequirement = configurationService.CameraLoginRequirement;
+		CameraPasswordRequirement = configurationService.CameraPasswordRequirement;
+		CameraConnectedMessage = configurationService.CameraConnectedMessage;
+		CameraRetryMessage = configurationService.CameraRetryMessage;
+		CameraLogin = configurationService.CameraLogin;
+		CameraPassword = configurationService.CameraPassword;
+		CameraConnectionAttemps = configurationService.CameraConnectionAttemps;
+		TimeBeforeOperations = configurationService.TimeBeforeOperations;
+		TimeBeforeNextConnectionAttempt = configurationService.TimeBeforeNextConnectionAttempt;
+	}
+
+
+	private void ChangeCameraAutoLoginState()
+	{
+		configurationService.CameraAutoLogin = !configurationService.CameraAutoLogin;
+	}
+
+	private void UploadTimeBeforeNextConnectionAttempt()
+	{
+		configurationService.TimeBeforeNextConnectionAttempt = TimeBeforeNextConnectionAttempt;
+	}
+
+	private void UploadTimeBeforeOperations()
+	{
+		configurationService.TimeBeforeOperations = TimeBeforeOperations;
+	}
+
+	private void UploadCameraConnectionAttemps()
+	{
+		configurationService.CameraConnectionAttemps = CameraConnectionAttemps;
+	}
+
+	private void UploadCameraPassword()
+	{
+		configurationService.CameraPassword = CameraPassword;
+	}
+
+	private void UploadCameraLogin()
+	{
+		configurationService.CameraLogin = CameraLogin;
+	}
+
+	private void UploadCameraConnectedMessage()
+	{
+		configurationService.CameraConnectedMessage = CameraConnectedMessage;
+	}
+
+	private void UploadCameraPasswordRequirement()
+	{
+		configurationService.CameraPasswordRequirement = CameraPasswordRequirement;
+	}
+
+	private void UploadCameraLoginRequirement()
+	{
+		configurationService.CameraLoginRequirement = CameraLoginRequirement;
+	}
+
+	private void UploadCameraRetryMessage()
+	{
+		configurationService.CameraRetryMessage = CameraRetryMessage;
+	}
+
+	private async Task buttonCloseHandler()
+	{
+		buttonClose.InvokeAsync();
+		configurationService.SaveCofigurationInJSONAsync();
+	}
+}

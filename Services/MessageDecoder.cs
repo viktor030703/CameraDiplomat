@@ -7,6 +7,10 @@ namespace CameraDiplomat.Services
 {
 	public class MessageDecoder : IMessageDecoder
 	{
+		public delegate Task NonStandartMessage(string message);
+		public event NonStandartMessage nonStandartMessage;
+
+
 		private readonly ConfigurationService _configurationService;
 		public MessageDecoder(ConfigurationService configurationService)
 		{
@@ -64,6 +68,7 @@ namespace CameraDiplomat.Services
 				}
 				else
 				{
+					nonStandartMessage?.Invoke(messageToDecode);
 					Log.Warning("Нестандартное собщение от камеры:" + messageToDecode);
 					viewModel = null;
 					return null;

@@ -4,68 +4,31 @@
 <div class="messageBoxBackground" @onclick="buttonClose" />
 
 <div class="messageBox">
-	<div class="container successContainerShadows">
-		<div class="headerPlace textHeader addBottomBorder objectHeight successTextShadows">
-			Отправка команды
+	<div class="container">
+
+		<div class="objectTwoHeight defaultBackground defaultContainerShadows addBorder">
+
+			<div class="textContent objectHeight addBottomBorder ">
+				Получено от камеры:
+			</div>
+
+			<div class="textContent objectHeight textScroll">
+				@messageFromCamera
+			</div>
 		</div>
 
-		<div class="subContainer objectHeight">
-			<button class="btn btn-primary fullScale customButton" @onclick="ChangeHideCodesState">
-				К1
-			</button>
-
-			<button class="btn btn-primary fullScale customButton" @onclick="ChangeHideCodesState">
-				К2
-			</button>
-
-			<button class="btn btn-primary fullScale customButton" @onclick="ChangeHideCodesState">
-				К3
-			</button>
-		</div>
-
-
-		<div class="subContainer objectHeight">
-			<button class="btn btn-primary fullScale customButton" @onclick="ChangeHideCodesState">
-				К4
-			</button>
-
-			<button class="btn btn-primary fullScale customButton" @onclick="ChangeHideCodesState">
-				К5
-			</button>
-
-			<button class="btn btn-primary fullScale customButton" @onclick="ChangeHideCodesState">
-				К6
-			</button>
-		</div>
-
-
-			<div class="textContent objectHeight addBottomBorder successBackground">
+		<div class="objectThreeHeight defaultBackground defaultContainerShadows addBorder">
+			<div class="textContent objectHeight addBottomBorder">
 				Команда:
 			</div>
 			<div class="textContent objectHeight">
-			<input type="text" class="fullScale" placeholder="messageToCamera" @bind=messageToCamera />
+				<input type="text" class="fullScale" placeholder="Что отправить?" @bind=messageToCamera />
 			</div>
 
-
-	
-
-
-		<div class="textContent objectHeight addBottomBorder successBackground">
-			Статус отправки:
+			<div class="textContent  objectHeight textScroll">
+				@messageToUser:
+			</div>
 		</div>
-
-		<div class="textContent  objectHeight textScroll">
-			@messageToUser:
-		</div>
-
-		<div class="textContent objectHeight addBottomBorder successBackground">
-			Получено от камеры:
-		</div>
-
-		<div class="textContent objectHeight textScroll">
-			@messageFromCamera
-		</div>
-
 
 		<div class="subContainer objectHeight buttonUp">
 			<button class="btn fullScale customButton" @onclick="()=>SendMessage(messageToCamera)">
@@ -88,28 +51,28 @@
 					Скрыть коды
 				</button>
 			}
-
 		</div>
-
 	</div>
 </div>
 
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
+	[Parameter] public string MessageFromCamera { get; set; }
 
 	private bool HideCodes = false;
 
 	private string messageToUser;
-
 	private string messageFromCamera;
 	private string messageToCamera;
 
 	protected override void OnInitialized()
 	{
 		tcpService.EventNewMessageGet += ShowNewMessage;
-		messageToUser = "*Тут будет указан статус отправки*";
-		messageFromCamera = "*Тут будет сообщение с камеры*";
-		messageToCamera = "*Введите сюда сообщение для передачи*";
+		if (!string.IsNullOrEmpty(MessageFromCamera))
+			messageFromCamera = MessageFromCamera;
+		else
+			messageFromCamera = "Тут будет сообщение с камеры";
+		messageToUser = "Введите команду камере";
 	}
 
 	private async Task SendMessage(string message)
@@ -137,12 +100,18 @@
 		{
 			messageFromCamera = messageFromService;
 		}
+
+		if (messageFromService == configurationService.CameraConnectedMessage)
+		{
+			configurationService.CameraNeedAutohorise = false;
+		}
 	}
 
 	private void ChangeHideCodesState()
 	{
 		HideCodes = !HideCodes;
-		messageFromCamera = "";
+		messageFromCamera = string.Empty;
+		ShowNewMessage(messageFromCamera);
 	}
 
 }

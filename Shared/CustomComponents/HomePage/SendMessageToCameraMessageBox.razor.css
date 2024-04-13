@@ -4,7 +4,10 @@
     width: 90%;
     left: 5%;
     top: 2vh;
+    background-color:lightblue;
 }
+
+
 
 .textScroll {
     overflow: scroll;
@@ -12,14 +15,19 @@
 
 .subContainer {
     overflow: hidden;
+    flex-basis: 15vh;
 }
 
 .objectHeight{
-    margin: 1vh;
-    height: 20vh;
+    height: 15vh;
 }
 
-.objectTwiceHeight {
-    margin: 1vh;
-    height: 20vh;
+.objectTwoHeight {
+    margin: 4vh 0vh 2vh 0vh;
+    flex-basis: 20vh;
+}
+
+.objectThreeHeight {
+    margin: 2vh 0vh 4vh 0vh;
+    flex-basis: 30vh;
 }

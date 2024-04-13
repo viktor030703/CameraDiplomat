@@ -1,5 +1,5 @@
 ﻿@inject ISessionsDbService dbService
-@inject SessionCustomDesigner sessionDesigner
+@inject ISessionCustomDesigner sessionDesigner
 
 <div class="messageBoxBackground" @onclick="buttonClose" />
 
@@ -56,7 +56,7 @@
 		</div>
 
 		<div class="subContainer buttonUp">
-			<button class="btn btn-danger fullScale" @onclick="createSession">
+			<button class="btn btn-danger fullScale" @onclick="CreateSession">
 				Создать
 			</button>
 			<button class="btn btn-primary fullScale" @onclick="()=>buttonClose.InvokeAsync()">
@@ -83,9 +83,9 @@
 		startTime = DateTime.Now;
 	}
 
-	private async Task createSession()
+	private async Task CreateSession()
 	{
-		if (totalCount > marriageCount & startTime != DateTime.MinValue)
+		if (totalCount >= marriageCount & startTime != DateTime.MinValue)
 		{
 			try
 			{

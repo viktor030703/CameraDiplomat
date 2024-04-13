@@ -38,21 +38,24 @@ namespace CameraDiplomat
 
 			builder.Services.AddSingleton<ConfigurationService>();
 			builder.Services.AddSingleton<ILoggerService, LoggerService>();
+
 			builder.Services.AddSingleton<IStatisticService, StatisticService>();
+			builder.Services.AddSingleton<ISessionCustomDesigner, SessionCustomDesigner>();
 
 			builder.Services.AddSingleton<ApplicationContext>();
-			builder.Services.AddSingleton<ITCPService, TCPService>();
-			builder.Services.AddSingleton<IDbMainController, DbMainController>();
-			builder.Services.AddSingleton<IProductsDbService, ProductsDbService>();
-			builder.Services.AddSingleton<ISessionsDbService, SessionsDbService>();
 
-			builder.Services.AddSingleton<IMessageDecoder, MessageDecoder>();
+			builder.Services.AddSingleton<ITCPService, TCPService>();
+			builder.Services.AddSingleton<ICameraConnectionService, CameraConnectionService>();
+
+			builder.Services.AddSingleton<IDbMainController, DbMainController>();
+			builder.Services.AddSingleton<ISessionsDbService, SessionsDbService>();
+			builder.Services.AddSingleton<IProductsDbService, ProductsDbService>();
 			builder.Services.AddSingleton<IUsersDbService, UsersDbService>();
 
-			builder.Services.AddSingleton<SessionCustomDesigner>();
 			builder.Services.AddSingleton<PasswordHasher>();
 
-
+			builder.Services.AddSingleton<IMessageDecoder, MessageDecoder>();
+			builder.Services.AddSingleton<INonStandartMessageHandler, NonStandartMessageHandler>();
 
 			return builder.Build();
 
