@@ -28,6 +28,7 @@ namespace CameraDiplomat.Services
 		public int TimeBeforeOperations = 50;
 		public int TimeBeforeNextConnectionAttempt = 50;
 
+
 		//File IO settings
 		private string pathFolderWithData;
 		public string PathToJson;
@@ -48,9 +49,10 @@ namespace CameraDiplomat.Services
 		public bool MonitorMarriageCountInRow = false;
 		public int PartsCodeIncludeAfterSplit = 13;
 		public string TextPattern = "Hello";
-		public char[] SymbolsByWichWeSplit = new char[] { '<', '>' };
+		public char[] SymbolsByWichWeSplit = new char[] { '_' };
 		public int CodeLength = 10;
 		public int TotalChecksCount = 3;
+		public int TimeToShutdownLine = 10000;
 
 		public int MarriageMaxCountInRow = 3;
 		public float MarriageMaxPercent = 60;
@@ -63,7 +65,7 @@ namespace CameraDiplomat.Services
 			AddNewWaringLog("Запуск приложения - инициализация сервисов");
 			CreateEmptyUser();
 			IsSettingFromJSON = TryLoadConfigurationFromJson();
-			if(!IsSettingFromJSON)
+			if (!IsSettingFromJSON)
 				CreateNewJsonFile();
 		}
 
@@ -95,7 +97,7 @@ namespace CameraDiplomat.Services
 					TcpTimeout = Int32.Parse(json["TcpTimeout"].ToString());
 					LastMessageToServer = json["LastMessageToServer"].ToString();
 
-					LogsTimerInterval = Int32.Parse(json["LogsTimerInterval" ].ToString());
+					LogsTimerInterval = Int32.Parse(json["LogsTimerInterval"].ToString());
 					DbTimerInterval = Int32.Parse(json["DbTimerInterval"].ToString());
 
 					MonitorMarriageCountInRow = Boolean.Parse(json["MonitorMarriageCountInRow"].ToString());
@@ -104,6 +106,7 @@ namespace CameraDiplomat.Services
 					CodeLength = Int32.Parse(json["CodeLength"].ToString());
 					TotalChecksCount = Int32.Parse(json["TotalChecksCount"].ToString());
 					MinMathSet = Int32.Parse(json["MinMathSet"].ToString());
+					TimeToShutdownLine = Int32.Parse(json["TimeToShutdownLine"].ToString());
 
 					SoundsOn = Boolean.Parse(json["SoundsOn"].ToString());
 
@@ -128,10 +131,10 @@ namespace CameraDiplomat.Services
 		{
 			try
 			{
-			string jsonConfigString = JsonConvert.SerializeObject(this);
-			File.WriteAllText(PathToJson, jsonConfigString);
+				string jsonConfigString = JsonConvert.SerializeObject(this);
+				File.WriteAllText(PathToJson, jsonConfigString);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				AddNewFatalLog("Исключение - невозможно создать JSON файл: " + ex.Message.ToString());
 			}

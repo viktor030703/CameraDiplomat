@@ -3,7 +3,7 @@
 <div class="messageBoxBackground objectFullScale" @onclick="()=>buttonCloseHandler()" />
 
 <div class="messageBox">
-	<div class="container">
+	<div class="container fullScale">
 
 		@if (configurationService.IsSettingFromJSON)
 		{
@@ -128,7 +128,7 @@
 				Применить
 			</button>
 		</div>
-
+		
 
 		<div class="subContainer">
 			<div class="textContent">
@@ -144,7 +144,21 @@
 		</div>
 
 
-		@if (CameraAutoLogin)
+		<div class="subContainer">
+			<div class="textContent">
+				Время реакции на ошибку
+			</div>
+			<div class="textContent">
+				<input type="ште" class="fullScale" @bind=TimeToShutdownLine />
+			</div>
+
+			<button class="buttonPlace btn customButton uploadButtonStyle styleForTextCentrise" @onclick="()=>UploadTimeToShutdownLine()">
+				Применить
+			</button>
+		</div>
+
+
+		@if (configurationService.CameraAutoLogin)
 		{
 			<div class="subContainer">
 				<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise successBackground" @onclick="()=>ChangeCameraAutoLoginState()">
@@ -176,7 +190,6 @@
 	[Parameter] public EventCallback buttonClose { get; set; }
 
 	private bool CameraNeedAutohorise;
-	private bool CameraAutoLogin;
 	private string CameraLoginRequirement;
 	private string CameraPasswordRequirement;
 	private string CameraConnectedMessage;
@@ -186,11 +199,11 @@
 	private int CameraConnectionAttemps;
 	private int TimeBeforeOperations;
 	private int TimeBeforeNextConnectionAttempt;
+	private int TimeToShutdownLine;
 
 
 	protected override void OnInitialized()
 	{
-		CameraAutoLogin = configurationService.CameraAutoLogin;
 		CameraLoginRequirement = configurationService.CameraLoginRequirement;
 		CameraPasswordRequirement = configurationService.CameraPasswordRequirement;
 		CameraConnectedMessage = configurationService.CameraConnectedMessage;
@@ -200,6 +213,7 @@
 		CameraConnectionAttemps = configurationService.CameraConnectionAttemps;
 		TimeBeforeOperations = configurationService.TimeBeforeOperations;
 		TimeBeforeNextConnectionAttempt = configurationService.TimeBeforeNextConnectionAttempt;
+		TimeToShutdownLine = configurationService.TimeToShutdownLine;
 	}
 
 
@@ -207,6 +221,12 @@
 	{
 		configurationService.CameraAutoLogin = !configurationService.CameraAutoLogin;
 	}
+
+	private void UploadTimeToShutdownLine()
+	{
+		configurationService.TimeToShutdownLine = TimeToShutdownLine;
+	}
+
 
 	private void UploadTimeBeforeNextConnectionAttempt()
 	{

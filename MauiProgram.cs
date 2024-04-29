@@ -57,6 +57,8 @@ namespace CameraDiplomat
 			builder.Services.AddSingleton<IMessageDecoder, MessageDecoder>();
 			builder.Services.AddSingleton<INonStandartMessageHandler, NonStandartMessageHandler>();
 
+			builder.Services.AddTransient<IShutdownTimer, ShutdownTimer>();
+
 			return builder.Build();
 
 		}

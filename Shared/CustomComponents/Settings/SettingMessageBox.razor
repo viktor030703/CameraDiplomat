@@ -8,7 +8,7 @@
 <div class="messageBoxBackground objectFullScale" @onclick="()=>buttonCloseHandler()" />
 
 <div class="messageBox">
-	<div class="container">
+	<div class="container fullScale">
 
 		@if (configurationService.IsSettingFromJSON)
 		{
@@ -171,17 +171,6 @@
 					Сменить аккаунт
 				</button>
 			</div>
-
-			@if (String.Equals(configurationService.activeUser.role, "admin") || String.Equals(configurationService.activeUser.role, "student") ||
-					String.Equals(configurationService.activeUser.role, "master"))
-			{
-				<div class="subContainer">
-					<button class="buttonPlace btn customButton otherButtonsStyle styleForTextCentrise" @onclick="()=>ShowCameraConnectionMB()">
-						Переподключиться к камере
-					</button>
-				</div>
-
-			}
 
 			@if (String.Equals(configurationService.activeUser.role, "admin"))
 			{
@@ -364,6 +353,8 @@
 		statsService.ResetStats();
 		navigationManager.NavigateTo("/");
 		loggerService.UpdateSaveLogs();
+
+		CloseTCPConnection();/////////////////////////////
 		buttonCloseHandler();
 	}
 

@@ -9,7 +9,7 @@ namespace CameraDiplomat.Services
 		private readonly IMessageDecoder _messageDecoder;
 		private readonly ICameraConnectionService _cameraConnectionService;
 
-		public delegate Task NeedUserReaction(string message);
+		public delegate void NeedUserReaction(string message);
 		public event NeedUserReaction needUserReaction;
 
 		private bool IsConnectionSuccess;
@@ -38,13 +38,13 @@ namespace CameraDiplomat.Services
 					{
 						_configurationService.CameraNeedAutohorise = true;
 						Log.Error("Не получается подключится, вывожу сообщение пользователю");
-						await needUserReaction.Invoke(nonStandartMessage);
+						needUserReaction.Invoke(nonStandartMessage);
 					}
 				}
 				else
 				{
 					Log.Warning("Неизвестное сообщение, вывожу его пользователю");
-					await needUserReaction.Invoke(nonStandartMessage);
+					needUserReaction.Invoke(nonStandartMessage);
 				}
 			}
 		}

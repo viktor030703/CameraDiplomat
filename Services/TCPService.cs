@@ -135,18 +135,18 @@ namespace CameraDiplomat.Services
 			{
 				try
 				{
-					await _semaphoreWrite.WaitAsync();
+					//await _semaphoreWrite.WaitAsync();
 					await _writer.WriteLineAsync(message);
 					await _writer.FlushAsync();
 					Log.Information("Сообщение " + message + " отправлено на камеру");
-					_semaphoreWrite.Release();
+					//_semaphoreWrite.Release();
 					return true;
 				}
 				catch (Exception ex)
 				{
 					Log.Error("Исключение во время отправки сообщения от камеры:" + ex.Message.ToString());
 					CameraDisconnectHandler();
-					_semaphoreWrite.Release();
+					//_semaphoreWrite.Release();
 					return false;
 				}
 			}

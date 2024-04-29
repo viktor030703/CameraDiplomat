@@ -184,9 +184,7 @@
 
 		nonStandartMessegeHandler.needUserReaction += NeedUserReactionWithCameraCommunicating;
 
-
 		IsCameraConnected = configurationService.IsCameraConnected;
-
 		InvokeAsync(StateHasChanged);
 	}
 
@@ -274,7 +272,7 @@
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task NeedUserReactionWithCameraCommunicating(string message)
+	private void NeedUserReactionWithCameraCommunicating(string message)
 	{
 		messageFromCamera = message;
 		ShowSendMessageToCameraMessageBox = true;

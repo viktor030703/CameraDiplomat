@@ -1,4 +1,5 @@
 ﻿@inject ConfigurationService configurationService
+@inject IShutdownTimer shutdownTimer;
 
 <div class="messageBoxBackground" @onclick="() => buttonClose.InvokeAsync()" />
 
@@ -6,6 +7,10 @@
 	<div class="container">
 		<div class="headerPlace textHeader addBottomBorder errorTextShadows limitConteiner">
 			Превышен процент брака!
+		</div>
+
+		<div class="textContent">
+			До автоотключения линии осталось @secondsBeforeTimerShutdownLine секунд
 		</div>
 
 		<div class="textContent">
@@ -34,6 +39,16 @@
 @code {
 	[Parameter] public EventCallback buttonClose { get; set; }
 
+	private int secondsBeforeTimerShutdownLine;
+
+
+	protected override void OnInitialized()
+	{
+		secondsBeforeTimerShutdownLine = configurationService.TimeToShutdownLine / 1000;
+		shutdownTimer.timeToShutdownLineEvent += UpdateTimerValue;
+	}
+
+
 	private void DisableMonitorMarriageProcent()
 	{
 		buttonClose.InvokeAsync();
@@ -43,6 +58,22 @@
 	private void OffLine()
 	{
 		buttonClose.InvokeAsync();
-		//Метод для отправки сообщения на камеру. Какой - хз
+		shutdownTimer.StopAndCloseTimer();
+		//сообщение на камеру об отключении линиии (пин)
+
+	}
+
+	private void UpdateTimerValue(int value)
+	{
+		if (value <= 0)
+		{
+			shutdownTimer.timeToShutdownLineEvent -= UpdateTimerValue;
+			OffLine();
+		}
+		else
+		{
+			secondsBeforeTimerShutdownLine = value;
+			InvokeAsync(StateHasChanged);
+		}
 	}
 }
