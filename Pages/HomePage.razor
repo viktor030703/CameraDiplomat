@@ -5,7 +5,11 @@
 @inject ISessionsDbService SessionsDb
 
 @inject ITCPService tcpService
-@inject IMessageDecoder messageDecoder
+
+@inject IMessageAnalyzer messageAnalyzer
+@inject IProductByStringsDesigner productByStringsDesigner
+@inject IProductQualityAnalyzer productQualityAnalyzer
+
 @inject IProductsDbService ProductsDb
 
 @inject ICameraConnectionService cameraConnectionService
@@ -15,12 +19,12 @@
 @if (ShowSettingsMessageBox)
 {
 	<SettingMessageBox buttonClose="ChangeSettingsMBState" showCameraConnectingMBEvent="ShowCameraUnavalibleMBState"
-												showSpecialCameraSettingsEvent="ChangeSpecialCameraSettingsMBState" />
+					   showSpecialCameraSettingsEvent="ChangeSpecialCameraSettingsMBState" userLogoutEvent="UsubscribeFromEvents" />
 }
 
-@if(ShowSpecialCameraSettingsMessageBox)
+@if (ShowSpecialCameraSettingsMessageBox)
 {
-	<SpecialCameraSettings buttonClose="ChangeSpecialCameraSettingsMBState"/>
+	<SpecialCameraSettings buttonClose="ChangeSpecialCameraSettingsMBState" />
 }
 
 @if (ShowCameraUnavalibleMessageBox)
@@ -153,18 +157,39 @@
 	private ProductViewModel productDataToView;
 	private bool IsCameraConnected;
 
-	private void NewMessageHandler(string msg)
+	private void NewMessageHandler(string message)
 	{
-		Product newProduct = messageDecoder.DecodeMessege(msg, out ProductViewModel viewModel, out int checksCompleted);
+		Product newProduct;
+		ProductViewModel viewModel;
+		int successChecksCompleted = 0;
 
-		if (newProduct != null & viewModel != null)
+		string[] productInStrings = messageAnalyzer.DecodeMessege(message);
+		if (productInStrings != null)
 		{
-			productDataToView = viewModel;
-			statsService.NewProductChecked(checksCompleted);
-			statistic = statsService.GetStatsString();
-			ProductsDb.CreateProductAsync(newProduct);// добавление продукта в бд
+			newProduct = productByStringsDesigner.CreateProductByMessages(productInStrings);
+			if (newProduct != null)
+			{
+				viewModel = productQualityAnalyzer.CheckProductQuality(newProduct, out int checksCompleted);
+				successChecksCompleted = checksCompleted;
+
+				if (viewModel != null)
+				{
+					productDataToView = viewModel;
+					statsService.NewProductChecked(successChecksCompleted);
+					statistic = statsService.GetStatsString();
+					ProductsDb.CreateProductAsync(newProduct);// добавление продукта в бд
+				}
+				InvokeAsync(StateHasChanged);
+			}
+			else
+			{
+				return;
+			}
 		}
-		InvokeAsync(StateHasChanged);
+		else
+		{
+			return;
+		}
 	}
 
 
@@ -173,20 +198,42 @@
 		productDataToView = new ProductViewModel(true, true, true, true,
 		"Название продукта", "Процент качества", "QR при наличии", "Текстовые надписи при наличии");
 
+		SubscribeToEvents();
+
+		statsService.StartAutoUploadActiveSessionInDb();
+
+		IsCameraConnected = configurationService.IsCameraConnected;
+		InvokeAsync(StateHasChanged);
+	}
+
+	private void SubscribeToEvents()
+	{
 		tcpService.EventNewMessageGet += NewMessageHandler;
+
 		tcpService.EventCameraUnavalible += ShowCameraUnavalibleMBState;
 		tcpService.EventCameraConnectedSuccessfully += HideCameraUnavalibleMBState;
 
 		statsService.EventNewSessionWasLoaded += ShowUploadedSession;
 		statsService.EventBigMarriageCountInRow += ShowBigMarriageCountInRowMB;
 		statsService.EventBigMarriagePercent += ShowBigMarriageProcentMB;
-		statsService.StartAutoUploadActiveSessionInDb();
 
 		nonStandartMessegeHandler.needUserReaction += NeedUserReactionWithCameraCommunicating;
-
-		IsCameraConnected = configurationService.IsCameraConnected;
-		InvokeAsync(StateHasChanged);
 	}
+
+	private void UsubscribeFromEvents()
+	{
+		tcpService.EventNewMessageGet -= NewMessageHandler;
+
+		tcpService.EventCameraUnavalible -= ShowCameraUnavalibleMBState;
+		tcpService.EventCameraConnectedSuccessfully -= HideCameraUnavalibleMBState;
+
+		statsService.EventNewSessionWasLoaded -= ShowUploadedSession;
+		statsService.EventBigMarriageCountInRow -= ShowBigMarriageCountInRowMB;
+		statsService.EventBigMarriagePercent -= ShowBigMarriageProcentMB;
+
+		nonStandartMessegeHandler.needUserReaction -= NeedUserReactionWithCameraCommunicating;
+	}
+
 
 	private void ShowCameraUnavalibleMBState()
 	{
@@ -276,6 +323,7 @@
 	{
 		messageFromCamera = message;
 		ShowSendMessageToCameraMessageBox = true;
+		InvokeAsync(StateHasChanged);
 	}
 
 	private void ChangeSendMessageToCameraMBState()

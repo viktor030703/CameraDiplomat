@@ -58,6 +58,14 @@ namespace CameraDiplomat.Services
 		public float MarriageMaxPercent = 60;
 		public int MinMathSet = 10;
 
+		//Для хранения загруженной сессии
+		public bool SpecialSessionWasLoaded = false;
+		public string SpecialSessionId = string.Empty;
+		public int SpecialSessionTotalCount = 0;
+		public int SpecialSessionMarriageCount = 0;
+		public DateTime SpecialSessionStartTime = DateTime.Now;
+
+		//Для оператора
 		public bool SoundsOn = true;
 		public ConfigurationService()
 		{

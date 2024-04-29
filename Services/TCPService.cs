@@ -105,7 +105,6 @@ namespace CameraDiplomat.Services
 							{
 								EventNewMessageGet?.Invoke(messageFromServer);
 							}
-							Thread.Sleep(10);
 						}
 						catch (Exception ex)
 						{

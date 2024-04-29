@@ -225,6 +225,7 @@
 	[Parameter] public EventCallback buttonClose { get; set; }
 	[Parameter] public EventCallback showCameraConnectingMBEvent { get; set; }
 	[Parameter] public EventCallback showSpecialCameraSettingsEvent { get; set; }
+	[Parameter] public EventCallback userLogoutEvent { get; set; }
 
 	private bool monitorMarriageProcent;
 	private bool monitorMarriageInRowCount;
@@ -354,7 +355,8 @@
 		navigationManager.NavigateTo("/");
 		loggerService.UpdateSaveLogs();
 
-		CloseTCPConnection();/////////////////////////////
+		CloseTCPConnection();
+		await userLogoutEvent.InvokeAsync();
 		buttonCloseHandler();
 	}
 

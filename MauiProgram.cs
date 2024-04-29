@@ -54,7 +54,12 @@ namespace CameraDiplomat
 
 			builder.Services.AddSingleton<PasswordHasher>();
 
-			builder.Services.AddSingleton<IMessageDecoder, MessageDecoder>();
+			//builder.Services.AddSingleton<IMessageDecoder, MessageDecoder>();//Редумент
+
+			builder.Services.AddSingleton<IMessageAnalyzer, MessageAnalyzer>();
+			builder.Services.AddSingleton<IProductByStringsDesigner, ProductByStringsDesigner>(); 
+			builder.Services.AddSingleton<IProductQualityAnalyzer, ProductQualityAnalyzer>();
+
 			builder.Services.AddSingleton<INonStandartMessageHandler, NonStandartMessageHandler>();
 
 			builder.Services.AddTransient<IShutdownTimer, ShutdownTimer>();

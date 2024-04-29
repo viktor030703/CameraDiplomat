@@ -5,21 +5,25 @@ namespace CameraDiplomat.Services
 {
 	public class NonStandartMessageHandler : INonStandartMessageHandler
 	{
+		private SynchronizationContext _UISynchronizationContext;
+
 		private readonly ConfigurationService _configurationService;
-		private readonly IMessageDecoder _messageDecoder;
+		private readonly IMessageAnalyzer _messageAnalyzer;
 		private readonly ICameraConnectionService _cameraConnectionService;
 
 		public delegate void NeedUserReaction(string message);
 		public event NeedUserReaction needUserReaction;
 
 		private bool IsConnectionSuccess;
-		public NonStandartMessageHandler(ConfigurationService configurationService, ICameraConnectionService cameraConnectionService, IMessageDecoder messageDecoder)
+		public NonStandartMessageHandler(ConfigurationService configurationService, ICameraConnectionService cameraConnectionService, IMessageAnalyzer messageAnalyzer)
 		{
 			_configurationService = configurationService;
-			_messageDecoder = messageDecoder;
+			_messageAnalyzer = messageAnalyzer;
 			_cameraConnectionService = cameraConnectionService;
 
-			_messageDecoder.nonStandartMessage += NewNonStandartMessage;
+			_messageAnalyzer.nonStandartMessage += NewNonStandartMessage;
+
+			_UISynchronizationContext = SynchronizationContext.Current;
 		}
 
 		public async Task NewNonStandartMessage(string nonStandartMessage)
@@ -38,14 +42,22 @@ namespace CameraDiplomat.Services
 					{
 						_configurationService.CameraNeedAutohorise = true;
 						Log.Error("Не получается подключится, вывожу сообщение пользователю");
-						needUserReaction.Invoke(nonStandartMessage);
+						needUserReaction?.Invoke(nonStandartMessage);
 					}
 				}
 				else
 				{
 					Log.Warning("Неизвестное сообщение, вывожу его пользователю");
-					needUserReaction.Invoke(nonStandartMessage);
+					needUserReaction?.Invoke(nonStandartMessage);
 				}
+			}
+			else//Add Switch!!!
+			{
+				Log.Warning("Неизвестное сообщение, вывожу его пользователю");
+				_UISynchronizationContext.Post(new SendOrPostCallback(o =>
+				{
+					needUserReaction?.Invoke(nonStandartMessage);
+				}), null);
 			}
 		}
 	}

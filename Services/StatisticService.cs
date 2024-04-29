@@ -62,6 +62,17 @@ namespace CameraDiplomat.Services
 			Log.Warning(_configurationService.activeUser.login + "обновляет сессию");
 			return "Сессия обновлена";
 		}
+
+		public void LoadSessionFromConfigurationService()
+		{
+			id = _configurationService.SpecialSessionId;
+			_totalCount = _configurationService.SpecialSessionTotalCount;
+			_marriageCount = _configurationService.SpecialSessionMarriageCount;
+			_startTime = _configurationService.SpecialSessionStartTime;
+			CalculatePercent();
+			Log.Warning("загрузка сессии из конфигурационого файла");
+		}
+
 		public async Task AutoUpdateOrCreateSession()
 		{
 			if (_totalCount != 0)
@@ -98,7 +109,19 @@ namespace CameraDiplomat.Services
 			_startTime = DateTime.Parse(startDate[0]);
 			CalculatePercent();
 			Log.Warning(_configurationService.activeUser.login + "загружает сессию из БД");
+			SaveSessionToConfigurationService();
 		}
+
+		private void SaveSessionToConfigurationService()
+		{
+			_configurationService.SpecialSessionWasLoaded = true;
+			_configurationService.SpecialSessionId = id;
+			_configurationService.SpecialSessionTotalCount = _totalCount;
+			_configurationService.SpecialSessionMarriageCount = _marriageCount;
+			_configurationService.SpecialSessionStartTime = _startTime;
+		}
+
+
 		private void CalculatePercent()
 		{
 			if (_marriageCount > 0)
